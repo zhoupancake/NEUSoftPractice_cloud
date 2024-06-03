@@ -1,0 +1,8 @@
+feign:
+  compression:
+    request:
+      enabled: true
+      min-request-size: 512
+    response:
+      enabled: true
+      mime-types: text/xml,application/xml,application/json
