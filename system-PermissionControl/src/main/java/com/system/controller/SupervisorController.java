@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-//@Tag(name="Supervisor_API")
 @RestController
 @RequestMapping("/supervisor")
 @Slf4j

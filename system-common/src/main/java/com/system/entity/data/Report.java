@@ -25,4 +25,5 @@ public class Report {
     private LocalDateTime createdTime;
     private String description;
     private String imageUrl;
+    private String relativeAirDataId;
 }

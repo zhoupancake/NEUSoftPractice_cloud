@@ -24,4 +24,6 @@ public class Task {
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdTime;
     private Integer status;
+    private String relativeAirDataId;
+    private String relativeReportId;
 }

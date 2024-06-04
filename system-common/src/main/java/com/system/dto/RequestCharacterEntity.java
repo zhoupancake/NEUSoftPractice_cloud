@@ -15,7 +15,6 @@ public class RequestCharacterEntity {
     private Integer age;
     private String sex;
     private String idCard;
-
     private String zone;
 
 

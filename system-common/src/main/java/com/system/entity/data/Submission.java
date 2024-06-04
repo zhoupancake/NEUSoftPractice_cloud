@@ -17,9 +17,9 @@ import java.time.LocalDateTime;
 public class Submission {
     @TableId
     private String id;
-    private String request;
+    private String taskId;
     private String description;
-    private String relatedAirData;
+    private String relatedAirDataId;
     private String imageUrl;
     private LocalDateTime submittedTime;
     private String location;

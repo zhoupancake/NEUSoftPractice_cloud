@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8084
 
 spring:
   application:
-    name: system-ReportManage
+    name: system-TaskManage
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

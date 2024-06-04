@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-//@Tag(name="Administrator_API")
 @RestController
 @RequestMapping("/administrator")
 @Slf4j

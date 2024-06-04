@@ -3,6 +3,8 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system-AirDataManage/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system-AirDataManage/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-HumanResource/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-HumanResource/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-PermissionControl/src/main/java" charset="UTF-8" />
@@ -15,5 +17,7 @@
     <file url="file://$PROJECT_DIR$/system-TaskManage/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system-gateway/src/main/resources" charset="UTF-8" />
   </component>
 </project>
