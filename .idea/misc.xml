@@ -10,8 +10,10 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/oauth-server/pom.xml" />
         <option value="$PROJECT_DIR$/system-HumanResource/pom.xml" />
         <option value="$PROJECT_DIR$/system-JWTManage/pom.xml" />
+        <option value="$PROJECT_DIR$/system-gateway/pom.xml" />
       </set>
     </option>
   </component>

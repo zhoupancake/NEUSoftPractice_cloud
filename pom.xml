@@ -12,10 +12,8 @@
     <module>system-ReportManage</module>
     <module>system-TaskManage</module>
     <module>system-SubmissionManage</module>
-    <module>system-gateway</module>
     <module>system-AirDataManage</module>
     <module>system-ZoneManage</module>
-    <module>oauth-server</module>
   </modules>
 
   <properties>
