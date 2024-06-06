@@ -18,10 +18,10 @@ public class Supervisor implements Serializable {
     //Account Attributes
     @TableId
     private String id;
-    private Integer status;
 
     private String tel;
     private String name;
     private Integer age;
     private String sex;
+    private String cityId;
 }

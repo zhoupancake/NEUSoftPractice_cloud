@@ -7,6 +7,7 @@ import xyz.downgoon.snowflake.Snowflake;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 public class SnowflakeUtil {

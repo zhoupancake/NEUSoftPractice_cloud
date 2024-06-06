@@ -1,8 +1,10 @@
 package com.system.dto;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.system.entity.character.Administrator;
 import com.system.entity.character.GridDetector;
 import com.system.entity.character.Supervisor;
+import com.system.entity.data.City;
 
 public class RequestCharacterEntity {
     private String id;
@@ -15,8 +17,9 @@ public class RequestCharacterEntity {
     private Integer age;
     private String sex;
     private String idCard;
-    private String zone;
-
+    private String province;
+    private String city;
+    private String cityId;
 
     public User getUser_create(){
         return User.builder()
@@ -62,7 +65,6 @@ public class RequestCharacterEntity {
     public Supervisor getSupervisor_modify(){
         return Supervisor.builder()
                 .id(id)
-                .status(status)
                 .tel(tel)
                 .name(name)
                 .age(age)
@@ -74,7 +76,6 @@ public class RequestCharacterEntity {
         return GridDetector.builder()
                 .idCard(idCard)
                 .name(name)
-                .zone(zone)
                 .build();
     }
 
@@ -83,7 +84,14 @@ public class RequestCharacterEntity {
                 .id(id)
                 .idCard(idCard)
                 .name(name)
-                .zone(zone)
+                .cityId(cityId)
+                .build();
+    }
+
+    public City getCity(){
+        return City.builder()
+                .province(province)
+                .name(name)
                 .build();
     }
 }

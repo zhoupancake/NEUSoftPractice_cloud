@@ -4,16 +4,20 @@ import com.system.common.HttpResponseEntity;
 import com.system.dto.RequestCharacterEntity;
 import com.system.dto.User;
 import com.system.entity.character.Supervisor;
+import com.system.entity.data.City;
+import com.system.service.CityServiceFeignClient;
 import com.system.service.SupervisorService;
 import com.system.service.UserService;
 import com.system.util.SnowflakeUtil;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,14 +28,21 @@ import java.util.Map;
 public class SupervisorController {
     private final UserService userService;
     private final SupervisorService supervisorService;
+    @Resource
+    private final CityServiceFeignClient cityService;
 
     @PostMapping("/addSupervisor")
     public HttpResponseEntity addSupervisor(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_create();
         User user = requestCharacterEntity.getUser_create();
+        City city = requestCharacterEntity.getCity();
+        Map<String, String> location = new HashMap<String, String>();
+        location.put("province", city.getProvince());
+        location.put("city", city.getName());
+        String cityId = cityService.getCityByLocation(location).getId();
 
         supervisor.setId(SnowflakeUtil.genId());
-        supervisor.setStatus(1);
+        supervisor.setCityId(cityId);
         user.setId(SnowflakeUtil.genId());
         user.setUsername(supervisor.getTel());
         user.setStatus(1);
@@ -47,6 +58,14 @@ public class SupervisorController {
     public HttpResponseEntity modifySupervisor(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_modify();
         User user = requestCharacterEntity.getUser_modify();
+        City city = requestCharacterEntity.getCity();
+        Map<String, String> location = new HashMap<String, String>();
+        location.put("province", city.getProvince());
+        location.put("city", city.getName());
+        String cityId = cityService.getCityByLocation(location).getId();
+
+        user.setUsername(supervisor.getTel());
+        supervisor.setCityId(cityId);
 
         boolean supervisorSuccess = supervisorService.updateById(supervisor);
         boolean userSuccess = userService.updateById(user);

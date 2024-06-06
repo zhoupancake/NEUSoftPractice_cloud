@@ -4,7 +4,7 @@ import com.system.common.HttpResponseEntity;
 import com.system.dto.RequestReportEntity;
 import com.system.entity.data.AirData;
 import com.system.entity.data.Report;
-import com.system.service.AirDataServiceFallback;
+import com.system.service.AirDataService_remote;
 import com.system.service.ReportService;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ActionController {
     private final ReportService reportService;
     @Resource
-    private AirDataServiceFallback airDataServiceFallback;
+    private AirDataService_remote airDataService;
     @PostMapping("/report")
     public HttpResponseEntity report(@RequestBody RequestReportEntity requestReportEntity) {
         Report report = requestReportEntity.getReport_create();
         AirData airData = requestReportEntity.getAirData_create();
 
-        boolean airDataSuccess = airDataServiceFallback.addAirData(airData);
+        boolean airDataSuccess = airDataService.addAirData(airData);
         boolean reportSuccess =reportService.save(report);
 
         return HttpResponseEntity.response(airDataSuccess&&reportSuccess, "修改", null);

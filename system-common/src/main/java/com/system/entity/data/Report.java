@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 public class Report {
     @TableId
     private String id;
-    private String location;
     private Integer status;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdTime;

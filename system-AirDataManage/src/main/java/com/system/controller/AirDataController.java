@@ -1,10 +1,11 @@
 package com.system.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.system.api.AirDataAPI;
 import com.system.common.HttpResponseEntity;
 import com.system.entity.data.AirData;
 import com.system.service.AirDataService;
+import com.system.service.CityServiceFeignClient;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AirDataController {
     private final AirDataService airDataService;
+    @Resource
+    private final CityServiceFeignClient cityService;
     @PostMapping("/addAirData")
     public HttpResponseEntity addAirData(@RequestBody AirData airData) {
         boolean success = airDataService.save(airData);
@@ -29,6 +32,7 @@ public class AirDataController {
 
     @PostMapping("/modifyAirData")
     public HttpResponseEntity modifyAirData(@RequestBody AirData airData) {
+        airData.setCityId(airData.getCityId());
         boolean success = airDataService.updateById(airData);
         return HttpResponseEntity.response(success, "修改", null);
     }

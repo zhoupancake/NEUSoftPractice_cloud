@@ -1,8 +1,17 @@
 server:
   port: 7000
 spring:
+  profiles:
+    active: dev
   application:
     name: system-gateway
+  main:
+    web-application-type: reactive
+  datasource:
+    url: jdbc:mysql://localhost:3306/NEUSoftPractice_public?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
   cloud:
     nacos:
       discovery:
@@ -10,18 +19,30 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true # 让gateway可以发现nacos中的微服务
-      #      配置网关的路由规则
-      routes:
-        - id: service-order   # 路由id必须是全局唯一的 ， 一般可以采用微服务的名字
-          #uri: http://127.0.0.1:8091  # 请求要转发到的地址 ，也就是shop-product的微服务地址
-          uri: http://127.0.0.1:8091  # 请求要转发到的地址 ，也就是shop-product的微服务地址
-          order: 1 # 路由的优先级,数字越小级别越高
-          predicates: # 根据具体的访问路径决定请求是否要转发，及转发到具体的那个微服务
-            # http://localhost:7000/shop-order/order/add/neworder/2/1/2 --> http://localhost:8091/order/add/neworder/2/1/2
-            - Path=/service-order/**
-            # http://localhost:7000/myorder/order/add/neworder/2/1/2 --> http://localhost:8091/order/add/neworder/2/1/2
-            #- Path=/myorder/**
-          # 过滤器,请求在传递过程中可以通过过滤器对其进行一定的修改
-          filters: # 路由之后执行的过滤器
-            - StripPrefix=1 # 内置的去掉前缀的过滤器 转发之前去掉1层路径
+          enabled: true
+#      routes:
+#        - id: route_administrator
+#          uri: lb://system-TaskManage
+#          predicates:
+#            - Path=/api/task/**
+#        - id: route_gridDetector
+#          uri: lb://system-ReportManage
+#          predicates:
+#            - Path=/api/report/**
+#        - id : route_supervisor
+#          uri: lb://system-SubmissionManage
+#          predicates:
+#            - Path=/api/submission/**
+#        - id : route_task
+#          uri: lb://system-TaskManage
+#          predicates:
+#            - Path=/api/task/**
+  data:
+    redis:
+      database: 0
+      host: 127.0.0.1
+      port: 6379
+      password:
+      timeout: 5000ms
+  freemarker:
+    prefer-file-system-access:

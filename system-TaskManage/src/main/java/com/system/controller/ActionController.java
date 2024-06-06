@@ -1,6 +1,7 @@
 package com.system.controller;
 
 import com.system.common.HttpResponseEntity;
+import com.system.entity.data.Report;
 import com.system.entity.data.Task;
 import com.system.service.AirDataServiceFallback;
 import com.system.service.ReportServiceFallback;
@@ -25,9 +26,10 @@ public class ActionController {
     private AirDataServiceFallback airDataServiceFallback;
     @PostMapping("/appoint")
     public HttpResponseEntity appoint(@RequestBody Task task) {
-        if(null == reportServiceFallback.getReportById(task.getRelativeReportId()))
+        Report report = reportServiceFallback.getReportById(task.getRelativeReportId());
+        if(null == report)
             return HttpResponseEntity.error("该报告不存在");
-        if(null == airDataServiceFallback.getAirDataById(task.getRelativeAirDataId()))
+        if(null == airDataServiceFallback.getAirDataById(report.getRelativeAirDataId()))
             return HttpResponseEntity.error("该空气数据不存在");
         boolean success = taskService.save(task);
         return HttpResponseEntity.response(success, "修改", null);

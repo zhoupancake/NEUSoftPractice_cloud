@@ -22,5 +22,4 @@ public class Submission {
     private String relatedAirDataId;
     private String imageUrl;
     private LocalDateTime submittedTime;
-    private String location;
 }

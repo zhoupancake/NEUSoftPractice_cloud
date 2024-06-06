@@ -21,6 +21,7 @@ public class AirData implements Serializable {
     //identify attributes
     @TableId
     private String id;
+    private String cityId;
     private String location;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime date;
@@ -32,4 +33,5 @@ public class AirData implements Serializable {
     private Double no2;
     private Double co;
     private Double o3;
+    private Double aqi;
 }

@@ -13,10 +13,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,6 +34,7 @@ public class UserController {
                 .eq("password", user.getPassword())
                 .eq("status", '1')
                 .list();
+        System.out.println(user.getUsername()+" "+user.getPassword());
         if(administratorList.isEmpty())
             return HttpResponseEntity.response(false, "用户名或密码错误", null);
         else{

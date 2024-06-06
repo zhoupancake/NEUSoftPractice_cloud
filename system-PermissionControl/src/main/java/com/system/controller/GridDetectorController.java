@@ -5,6 +5,8 @@ import com.system.common.HttpResponseEntity;
 import com.system.dto.RequestCharacterEntity;
 import com.system.dto.User;
 import com.system.entity.character.GridDetector;
+import com.system.entity.data.City;
+import com.system.service.CityServiceFeignClient;
 import com.system.service.GridDetectorService;
 import com.system.service.UserService;
 import com.system.util.SnowflakeUtil;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,13 +26,20 @@ import java.util.Map;
 public class GridDetectorController {
     private final GridDetectorService gridDetectorService;
     private final UserService userService;
+    private final CityServiceFeignClient cityService;
 
     @PostMapping("/addGridDetector")
     public HttpResponseEntity addGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_create();
         User user = requestCharacterEntity.getUser_create();
+        City city = requestCharacterEntity.getCity();
+        Map<String, String> location = new HashMap<String, String>();
+        location.put("province", city.getProvince());
+        location.put("city", city.getName());
+        String cityId = cityService.getCityByLocation(location).getId();
 
         gridDetector.setId(SnowflakeUtil.genId());
+        gridDetector.setCityId(cityId);
         user.setId(gridDetector.getId());
         user.setUsername(gridDetector.getIdCard());
         user.setStatus(1);
@@ -45,8 +55,14 @@ public class GridDetectorController {
     public HttpResponseEntity modifyGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_modify();
         User user = requestCharacterEntity.getUser_modify();
+        City city = requestCharacterEntity.getCity();
+        Map<String, String> location = new HashMap<String, String>();
+        location.put("province", city.getProvince());
+        location.put("city", city.getName());
+        String cityId = cityService.getCityByLocation(location).getId();
 
         user.setUsername(gridDetector.getIdCard());
+        gridDetector.setCityId(cityId);
 
         boolean gridDetectorSuccess = gridDetectorService.updateById(gridDetector);
         boolean userSuccess = userService.updateById(user);

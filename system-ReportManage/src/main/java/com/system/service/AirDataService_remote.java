@@ -1,6 +1,5 @@
 package com.system.service;
 
-import com.system.common.HttpResponseEntity;
 import com.system.entity.data.AirData;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @FeignClient(name="system-AirDataManage", url="localhost:8085") //  远程服务的名称
-public interface AirDataServiceFallback {
+public interface AirDataService_remote {
     @PostMapping("/addAirData")
     public boolean addAirData(@RequestBody AirData airData);
 

@@ -23,7 +23,6 @@ public class RequestReportEntity {
 
     public Report getReport_create() {
         return Report.builder()
-                .location(location)
                 .description(description)
                 .imageUrl(imageUrl)
                 .build();
@@ -32,7 +31,6 @@ public class RequestReportEntity {
     public Report getReport_modify() {
         return Report.builder()
                 .id(reportId)
-                .location(location)
                 .status(status)
                 .createdTime(createdTime)
                 .description(description)

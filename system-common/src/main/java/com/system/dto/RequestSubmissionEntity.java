@@ -28,7 +28,6 @@ public class RequestSubmissionEntity {
                 .description(description)
                 .relatedAirDataId(relatedAirDataId)
                 .imageUrl(imageUrl)
-                .location(location)
                 .build();
     }
 
@@ -40,7 +39,6 @@ public class RequestSubmissionEntity {
                 .relatedAirDataId(relatedAirDataId)
                 .imageUrl(imageUrl)
                 .submittedTime(submittedTime)
-                .location(location)
                 .build();
     }
 
