@@ -5,11 +5,22 @@ import com.system.entity.character.Administrator;
 import com.system.entity.character.GridDetector;
 import com.system.entity.character.Supervisor;
 import com.system.entity.data.City;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestCharacterEntity {
     private String id;
     private String username;
     private String password;
+    private String newPassword;
     private Integer status;
     private String role;
     private String tel;
@@ -36,6 +47,14 @@ public class RequestCharacterEntity {
                 .status(status)
                 .role(role)
                 .build();
+    }
+
+    public Map<String,String> getUser_modifyPassword(){
+        return Map.of("id",id,"newPassword",newPassword, "password", password);
+    }
+
+    public Map<String,String> getLocation(){
+        return Map.of("province",province,"city",city);
     }
 
     public Administrator getAdministrator_create(){

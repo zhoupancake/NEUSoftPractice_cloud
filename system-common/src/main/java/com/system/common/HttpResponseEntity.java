@@ -36,10 +36,10 @@ public class HttpResponseEntity {
     // 根据条件创建响应对象，如果条件为真，表示成功，否则表示失败
     public static HttpResponseEntity response(boolean flag, String message, Object data) {
         if (flag) {
-            message = message + "成功";
+            message = message + "successfully";
             return success(message, data);
         } else {
-            message = message + "失败";
+            message = "fail to "+ message;
             return error(message);
         }
     }

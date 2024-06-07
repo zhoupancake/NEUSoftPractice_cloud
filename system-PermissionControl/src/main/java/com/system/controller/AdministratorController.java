@@ -37,22 +37,32 @@ public class AdministratorController {
         user.setStatus(1);
         user.setRole("Administrator");
 
+        System.out.println(administrator);
+        System.out.println(user);
+
         boolean administratorSuccess = administratorService.save(administrator);
         boolean userSuccess = userService.save(user);
 
-        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "创建", null);
+        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "add", administrator.getId());
     }
+
 
     @PostMapping("/modifyAdministrator")
     public HttpResponseEntity modifyAdministrator(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Administrator administrator = requestCharacterEntity.getAdministrator_modify();
         User user = requestCharacterEntity.getUser_modify();
 
+        Administrator orginalAdministrator = administratorService.getById(administrator.getId());
+        User orginalUser = userService.getById(user.getId());
+
+        if(null == orginalAdministrator || null == orginalUser)
+            return HttpResponseEntity.error("The modified administrator is not exist");
+
         user.setUsername(administrator.getIdCard());
 
         boolean administratorSuccess = administratorService.updateById(administrator);
         boolean userSuccess = userService.updateById(user);
-        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "修改", null);
+        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "modify", null);
     }
 
     @PostMapping("/deleteAdministrator")
@@ -62,7 +72,8 @@ public class AdministratorController {
 
         boolean administratorSuccess = administratorService.removeById(administrator);
         boolean userSuccess = userService.removeById(user);
-        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "删除", null);
+
+        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "delete", null);
     }
 
     @PostMapping("/queryAdministratorList")
@@ -70,10 +81,10 @@ public class AdministratorController {
         Integer pageNum = (Integer) map.get("pageNum");
         Integer pageSize = (Integer) map.get("pageSize");
         Page<Administrator> page = new Page<>(pageNum, pageSize);
-        administratorService.query().eq("status", "1")
+        administratorService.query()
                 .like("username", map.get("username")).page(page);
         List<Administrator> administratorList = page.getRecords();
         boolean success = !administratorList.isEmpty();
-        return HttpResponseEntity.response(success, "查询", administratorList);
+        return HttpResponseEntity.response(success, "query", administratorList);
     }
 }

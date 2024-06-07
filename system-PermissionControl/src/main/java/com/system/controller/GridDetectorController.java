@@ -5,6 +5,7 @@ import com.system.common.HttpResponseEntity;
 import com.system.dto.RequestCharacterEntity;
 import com.system.dto.User;
 import com.system.entity.character.GridDetector;
+import com.system.entity.character.GridDetector;
 import com.system.entity.data.City;
 import com.system.service.CityServiceFeignClient;
 import com.system.service.GridDetectorService;
@@ -32,42 +33,43 @@ public class GridDetectorController {
     public HttpResponseEntity addGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_create();
         User user = requestCharacterEntity.getUser_create();
-        City city = requestCharacterEntity.getCity();
-        Map<String, String> location = new HashMap<String, String>();
-        location.put("province", city.getProvince());
-        location.put("city", city.getName());
-        String cityId = cityService.getCityByLocation(location).getId();
 
         gridDetector.setId(SnowflakeUtil.genId());
+        String cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
+        if(cityId == null)
+            return HttpResponseEntity.error("the selected city is not exist");
         gridDetector.setCityId(cityId);
         user.setId(gridDetector.getId());
         user.setUsername(gridDetector.getIdCard());
         user.setStatus(1);
         user.setRole("GridDetector");
 
+        System.out.println(gridDetector);
+        System.out.println(user);
+
         boolean gridDetectorSuccess = gridDetectorService.save(gridDetector);
         boolean userSuccess = userService.save(user);
 
-        return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "创建", null);
+        return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "add", gridDetector.getId());
     }
+
 
     @PostMapping("/modifyGridDetector")
     public HttpResponseEntity modifyGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_modify();
         User user = requestCharacterEntity.getUser_modify();
-        City city = requestCharacterEntity.getCity();
-        Map<String, String> location = new HashMap<String, String>();
-        location.put("province", city.getProvince());
-        location.put("city", city.getName());
-        String cityId = cityService.getCityByLocation(location).getId();
+
+        GridDetector orginalGridDetector = gridDetectorService.getById(gridDetector.getId());
+        User orginalUser = userService.getById(user.getId());
+
+        if(null == orginalGridDetector || null == orginalUser)
+            return HttpResponseEntity.error("The modified gridDetector is not exist");
 
         user.setUsername(gridDetector.getIdCard());
-        gridDetector.setCityId(cityId);
 
         boolean gridDetectorSuccess = gridDetectorService.updateById(gridDetector);
         boolean userSuccess = userService.updateById(user);
-
-        return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "修改", null);
+        return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "modify", null);
     }
 
     @PostMapping("/deleteGridDetector")
@@ -78,7 +80,7 @@ public class GridDetectorController {
         boolean gridDetectorSuccess = gridDetectorService.removeById(gridDetector);
         boolean userSuccess = userService.removeById(user);
 
-        return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "删除", null);
+        return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "delete", null);
     }
 
     @PostMapping("/queryGridDetectorList")

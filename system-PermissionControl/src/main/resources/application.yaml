@@ -21,9 +21,14 @@ spring:
       location: /tmp/upload
   data:
     redis:
-      host: localhost
-      port: 6379
       database: 0
+redis:
+  host: localhost
+  port: 6379
+  maxIdle: 300
+  maxTotal: 600
+  maxWait: 1000
+  testOnBorrow: true
 
 mybatis-plus:
   configuration:
@@ -32,14 +37,3 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
-
-auth:
-  jwt:
-    enabled: true   # 是否开启JWT登录认证功能
-    secret: passjava  # JWT 私钥，用于校验JWT令牌的合法性
-    expiration: 3600000 # JWT 令牌的有效期，用于校验JWT令牌的合法性，一个小时
-    header: Authorization # HTTP 请求的 Header 名称，该 Header作为参数传递 JWT 令牌
-    userParamName: userId  # 用户登录认证用户名参数名称
-    pwdParamName: password  # 用户登录认证密码参数名称
-    useDefaultController: true # 是否使用默认的JwtAuthController
-    skipValidUrl: /auth/login
