@@ -6,3 +6,8 @@ feign:
     response:
       enabled: true
       mime-types: text/xml,application/xml,application/json
+    client:
+      config:
+        default:
+          connectTimeout: 60000
+          readTimeout: 60000

@@ -14,5 +14,4 @@ public interface CityServiceFeignClient {
 
     @PostMapping("/api/getCityByLocation")
     public City getCityByLocation(@RequestBody Map<String, String> location);
-
 }

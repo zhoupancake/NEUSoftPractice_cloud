@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @FeignClient(name="system-AirDataManage", url="localhost:8085") //  远程服务的名称
-public interface AirDataServiceFallback {
+public interface AirDataServiceFeignClient {
     @PostMapping("/addAirData")
     public boolean addAirData(@RequestBody AirData airData);
 

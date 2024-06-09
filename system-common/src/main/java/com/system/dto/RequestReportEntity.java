@@ -2,16 +2,28 @@ package com.system.dto;
 
 import com.system.entity.data.AirData;
 import com.system.entity.data.Report;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestReportEntity {
     private String reportId;
+    private String submitterId;
     private Integer status;
     private LocalDateTime createdTime;
     private String description;
     private String imageUrl;
     private String airDataId;
+    private String province;
+    private String city;
     private String location;
     private LocalDateTime date;
     private Double pm25;
@@ -21,8 +33,13 @@ public class RequestReportEntity {
     private Double co;
     private Double o3;
 
+    public Map<String,String> getLocation(){
+        return Map.of("province",province,"city",city);
+    }
+
     public Report getReport_create() {
         return Report.builder()
+                .submitterId(submitterId)
                 .description(description)
                 .imageUrl(imageUrl)
                 .build();
@@ -31,6 +48,7 @@ public class RequestReportEntity {
     public Report getReport_modify() {
         return Report.builder()
                 .id(reportId)
+                .submitterId(submitterId)
                 .status(status)
                 .createdTime(createdTime)
                 .description(description)

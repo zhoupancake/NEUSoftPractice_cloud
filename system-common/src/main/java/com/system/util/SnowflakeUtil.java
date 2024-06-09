@@ -40,7 +40,6 @@ public class SnowflakeUtil {
 
     private static Long getDatacenterId(){
         int[] ints = StringUtils.toCodePoints(SystemUtils.getHostName());
-        System.out.println(Arrays.toString(ints));
         int sums = 0;
         for (int i: ints) {
             sums += i;

@@ -21,7 +21,7 @@ public class Supervisor implements Serializable {
 
     private String tel;
     private String name;
-    private Integer age;
-    private String sex;
+    private Integer birthYear;
+    private Integer sex;
     private String cityId;
 }

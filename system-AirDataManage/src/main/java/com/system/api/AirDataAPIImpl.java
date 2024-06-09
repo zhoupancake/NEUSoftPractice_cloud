@@ -3,6 +3,7 @@ package com.system.api;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.entity.data.AirData;
 import com.system.service.AirDataService;
+import com.system.util.SnowflakeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.system.util.AQIUtil.getAQI;
+import static com.system.util.AQIUtil.getAQILevel;
 
 @RestController
 @RequestMapping("/api")
@@ -23,6 +27,10 @@ public class AirDataAPIImpl  implements AirDataAPI{
     @Override
     @PostMapping("/addAirData")
     public boolean addAirData(@RequestBody AirData airData) {
+        airData.setId(SnowflakeUtil.genId());
+        airData.setAqiLevel(getAQILevel(airData.getPm25(), airData.getSo2(), airData.getCo()));
+        airData.setAqi(getAQI(airData.getPm25(), airData.getSo2(), airData.getCo()));
+
         return airDataService.save(airData);
     }
 

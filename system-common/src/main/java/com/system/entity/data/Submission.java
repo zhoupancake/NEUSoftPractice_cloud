@@ -1,5 +1,7 @@
 package com.system.entity.data;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -18,8 +20,10 @@ public class Submission {
     @TableId
     private String id;
     private String taskId;
+    private String submitterId;
     private String description;
     private String relatedAirDataId;
     private String imageUrl;
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime submittedTime;
 }

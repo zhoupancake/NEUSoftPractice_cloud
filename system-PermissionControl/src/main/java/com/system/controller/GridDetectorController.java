@@ -5,18 +5,14 @@ import com.system.common.HttpResponseEntity;
 import com.system.dto.RequestCharacterEntity;
 import com.system.dto.User;
 import com.system.entity.character.GridDetector;
-import com.system.entity.character.GridDetector;
-import com.system.entity.data.City;
 import com.system.service.CityServiceFeignClient;
 import com.system.service.GridDetectorService;
 import com.system.service.UserService;
 import com.system.util.SnowflakeUtil;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +54,8 @@ public class GridDetectorController {
     public HttpResponseEntity modifyGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_modify();
         User user = requestCharacterEntity.getUser_modify();
-
+        if(!user.getRole().equals("GridDetector"))
+            return HttpResponseEntity.error("Access Deny");
         GridDetector orginalGridDetector = gridDetectorService.getById(gridDetector.getId());
         User orginalUser = userService.getById(user.getId());
 
@@ -76,6 +73,11 @@ public class GridDetectorController {
     public HttpResponseEntity deleteGridDetectorById(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_modify();
         User user = requestCharacterEntity.getUser_modify();
+        User dbUser = userService.getById(user.getId());
+        if(null == dbUser)
+            return HttpResponseEntity.response(false, "The deleted grid detector is not exist", null);
+        if(!dbUser.getPassword().equals(user.getPassword()))
+            return HttpResponseEntity.response(false, "The password is wrong", null);
 
         boolean gridDetectorSuccess = gridDetectorService.removeById(gridDetector);
         boolean userSuccess = userService.removeById(user);
@@ -93,10 +95,5 @@ public class GridDetectorController {
         List<GridDetector> gridDetectorList = page.getRecords();
         boolean success = !gridDetectorList.isEmpty();
         return HttpResponseEntity.response(success, "查询", gridDetectorList);
-    }
-
-    @PostMapping("/logout")
-    public HttpResponseEntity logout(HttpServletResponse response) {
-        return HttpResponseEntity.response(true, "登出", null);
     }
 }

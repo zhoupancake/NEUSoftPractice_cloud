@@ -1,5 +1,6 @@
 package com.system.api;
 
+import com.system.common.HttpResponseEntity;
 import com.system.entity.data.Task;
 import com.system.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,12 @@ public class TaskAPIImpl  implements TaskAPI{
     @PostMapping("/getReportById")
     public Task getTaskById(@RequestBody String id) {
         return taskService.getById(id);
+    }
+
+    @Override
+    @PostMapping("/api/updateTask")
+    public boolean updateTaskById(@RequestBody Task task){
+        return taskService.updateById(task);
     }
 
 }

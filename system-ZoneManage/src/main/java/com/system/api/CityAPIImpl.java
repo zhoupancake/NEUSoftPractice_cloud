@@ -32,12 +32,12 @@ public class CityAPIImpl  implements CityAPI{
                 .eq("province", location.get("province"))
                 .eq("name", location.get("city"))
                 .list();
-        if (administratorList.isEmpty()) {
+        System.out.println(administratorList);
+        if (administratorList.isEmpty())
             result = null;
-        } else {
+        else
             result = administratorList.get(0);
-        }
         return result;
     }
-    }
+}
 

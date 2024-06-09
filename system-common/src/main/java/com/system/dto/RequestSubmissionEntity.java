@@ -2,9 +2,18 @@ package com.system.dto;
 
 import com.system.entity.data.AirData;
 import com.system.entity.data.Submission;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestSubmissionEntity {
     private String id;
     private String taskId;
@@ -12,6 +21,8 @@ public class RequestSubmissionEntity {
     private String relatedAirDataId;
     private String imageUrl;
     private LocalDateTime submittedTime;
+    private String province;
+    private String city;
     private String location;
     private String airDataId;
     private LocalDateTime date;
@@ -21,6 +32,10 @@ public class RequestSubmissionEntity {
     private Double no2;
     private Double co;
     private Double o3;
+
+    public Map<String,String> getLocation(){
+        return Map.of("province",province,"city",city);
+    }
 
     public Submission getSubmission_create() {
         return Submission.builder()

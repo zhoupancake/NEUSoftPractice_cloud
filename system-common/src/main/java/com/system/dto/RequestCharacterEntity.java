@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Calendar;
 import java.util.Map;
 
 @Data
@@ -26,7 +27,7 @@ public class RequestCharacterEntity {
     private String tel;
     private String name;
     private Integer age;
-    private String sex;
+    private Integer sex;
     private String idCard;
     private String province;
     private String city;
@@ -76,7 +77,7 @@ public class RequestCharacterEntity {
         return Supervisor.builder()
                 .tel(tel)
                 .name(name)
-                .age(age)
+                .birthYear(Calendar.getInstance().get(Calendar.YEAR) - age)
                 .sex(sex)
                 .build();
     }
@@ -86,7 +87,7 @@ public class RequestCharacterEntity {
                 .id(id)
                 .tel(tel)
                 .name(name)
-                .age(age)
+                .birthYear(Calendar.getInstance().get(Calendar.YEAR) - age)
                 .sex(sex)
                 .build();
     }

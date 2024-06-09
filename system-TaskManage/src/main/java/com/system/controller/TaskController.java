@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.common.HttpResponseEntity;
 import com.system.entity.data.Task;
 import com.system.service.TaskService;
+import com.system.util.SnowflakeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +23,10 @@ public class TaskController {
     private final TaskService taskService;
     @PostMapping("/addTask")
     public HttpResponseEntity addTask(@RequestBody Task task) {
+        task.setId(SnowflakeUtil.genId());
+        task.setStatus(0);
         boolean success = taskService.save(task);
-        return HttpResponseEntity.response(success, "创建", null);
+        return HttpResponseEntity.response(success, "create task", null);
     }
 
     @PostMapping("/modifyTask")

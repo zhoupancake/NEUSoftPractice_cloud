@@ -6,6 +6,7 @@ import com.system.entity.data.Task;
 import com.system.service.AirDataServiceFallback;
 import com.system.service.ReportServiceFallback;
 import com.system.service.TaskService;
+import com.system.util.SnowflakeUtil;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +26,10 @@ public class ActionController {
     @Resource
     private AirDataServiceFallback airDataServiceFallback;
     @PostMapping("/appoint")
-    public HttpResponseEntity appoint(@RequestBody Task task) {
-        Report report = reportServiceFallback.getReportById(task.getRelativeReportId());
-        if(null == report)
-            return HttpResponseEntity.error("该报告不存在");
-        if(null == airDataServiceFallback.getAirDataById(report.getRelativeAirDataId()))
-            return HttpResponseEntity.error("该空气数据不存在");
+    public HttpResponseEntity addTask(@RequestBody Task task) {
+        task.setId(SnowflakeUtil.genId());
+        task.setStatus(0);
         boolean success = taskService.save(task);
-        return HttpResponseEntity.response(success, "修改", null);
+        return HttpResponseEntity.response(success, "create task", null);
     }
 }

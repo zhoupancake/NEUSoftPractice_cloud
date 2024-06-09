@@ -69,11 +69,16 @@ public class AdministratorController {
     public HttpResponseEntity deleteAdministratorById(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Administrator administrator = requestCharacterEntity.getAdministrator_modify();
         User user = requestCharacterEntity.getUser_modify();
+        User dbUser = userService.getById(user.getId());
+        if(null == dbUser)
+            return HttpResponseEntity.response(false, "The deleted administrator is not exist", null);
+        if(!dbUser.getPassword().equals(user.getPassword()))
+            return HttpResponseEntity.response(false, "The password is wrong", null);
 
         boolean administratorSuccess = administratorService.removeById(administrator);
         boolean userSuccess = userService.removeById(user);
 
-        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "delete", null);
+        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "delete administrator account", null);
     }
 
     @PostMapping("/queryAdministratorList")

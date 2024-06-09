@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("gridManager_info")
+@TableName("gridDetector_info")
 public class GridDetector implements Serializable {
     //Account Attributes
     @TableId

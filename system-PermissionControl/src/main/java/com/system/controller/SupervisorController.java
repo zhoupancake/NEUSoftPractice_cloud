@@ -4,6 +4,7 @@ import com.system.common.HttpResponseEntity;
 import com.system.dto.RequestCharacterEntity;
 import com.system.dto.User;
 import com.system.entity.character.Supervisor;
+import com.system.entity.character.Supervisor;
 import com.system.entity.data.City;
 import com.system.service.CityServiceFeignClient;
 import com.system.service.SupervisorService;
@@ -35,11 +36,7 @@ public class SupervisorController {
     public HttpResponseEntity addSupervisor(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_create();
         User user = requestCharacterEntity.getUser_create();
-        City city = requestCharacterEntity.getCity();
-        Map<String, String> location = new HashMap<String, String>();
-        location.put("province", city.getProvince());
-        location.put("city", city.getName());
-        String cityId = cityService.getCityByLocation(location).getId();
+        String cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
 
         supervisor.setId(SnowflakeUtil.genId());
         supervisor.setCityId(cityId);
@@ -51,18 +48,14 @@ public class SupervisorController {
         boolean supervisorSuccess = supervisorService.save(supervisor);
         boolean userSuccess = userService.save(user);
 
-        return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "创建", null);
+        return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "create supervisor", supervisor.getId());
     }
 
     @PostMapping("/modifySupervisor")
     public HttpResponseEntity modifySupervisor(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_modify();
         User user = requestCharacterEntity.getUser_modify();
-        City city = requestCharacterEntity.getCity();
-        Map<String, String> location = new HashMap<String, String>();
-        location.put("province", city.getProvince());
-        location.put("city", city.getName());
-        String cityId = cityService.getCityByLocation(location).getId();
+        String cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
 
         user.setUsername(supervisor.getTel());
         supervisor.setCityId(cityId);
@@ -70,20 +63,23 @@ public class SupervisorController {
         boolean supervisorSuccess = supervisorService.updateById(supervisor);
         boolean userSuccess = userService.updateById(user);
 
-        return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "修改", null);
+        return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "modify supervisor account", null);
     }
 
     @PostMapping("/deleteSupervisor")
     public HttpResponseEntity deleteSupervisorById(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_modify();
         User user = requestCharacterEntity.getUser_modify();
-
-        user.setUsername(supervisor.getTel());
+        User dbUser = userService.getById(user.getId());
+        if(null == dbUser)
+            return HttpResponseEntity.response(false, "delete supervisor for the deleted supervisor is not exist", null);
+        if(!dbUser.getPassword().equals(user.getPassword()))
+            return HttpResponseEntity.response(false, "delete supervisor for the password is wrong", null);
 
         boolean supervisorSuccess = supervisorService.removeById(supervisor);
         boolean userSuccess = userService.removeById(user);
 
-        return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "删除", null);
+        return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "delete supervisor account", null);
     }
 
     @PostMapping("/querySupervisorList")
