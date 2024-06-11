@@ -6,11 +6,9 @@ import com.system.dto.User;
 import com.system.entity.character.Administrator;
 import com.system.entity.character.GridDetector;
 import com.system.entity.character.Supervisor;
-import com.system.service.AdministratorService;
-import com.system.service.GridDetectorService;
-import com.system.service.SupervisorService;
-import com.system.service.UserService;
+import com.system.service.*;
 
+import com.system.util.SnowflakeUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +31,7 @@ public class UserController {
     private final AdministratorService administratorService;
     private final GridDetectorService gridManagerService;
     private final SupervisorService supervisorService;
+    private final CityServiceFeignClient cityService;
 
     @PostMapping("/login")
     public HttpResponseEntity login(@RequestBody User user, HttpServletResponse response) {
@@ -118,5 +117,24 @@ public class UserController {
             redisTemplate.opsForValue().increment(map.get("id"));
             return HttpResponseEntity.response(false, "The original password is wrong", null);
         }
+    }
+
+    @PostMapping("/register")
+    public HttpResponseEntity register(@RequestBody RequestCharacterEntity requestCharacterEntity) {
+        Supervisor supervisor = requestCharacterEntity.getSupervisor_create();
+        User user = requestCharacterEntity.getUser_create();
+        String cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
+
+        supervisor.setId(SnowflakeUtil.genId());
+        supervisor.setCityId(cityId);
+        user.setId(SnowflakeUtil.genId());
+        user.setUsername(supervisor.getTel());
+        user.setStatus(1);
+        user.setRole("Supervisor");
+
+        boolean supervisorSuccess = supervisorService.save(supervisor);
+        boolean userSuccess = userService.save(user);
+
+        return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "create supervisor", supervisor.getId());
     }
 }
