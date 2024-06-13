@@ -36,7 +36,7 @@ public class SupervisorController {
     public HttpResponseEntity addSupervisor(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_create();
         User user = requestCharacterEntity.getUser_create();
-        String cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
+        Integer cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
 
         supervisor.setId(SnowflakeUtil.genId());
         supervisor.setCityId(cityId);
@@ -55,7 +55,7 @@ public class SupervisorController {
     public HttpResponseEntity modifySupervisor(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_modify();
         User user = requestCharacterEntity.getUser_modify();
-        String cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
+        Integer cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
 
         user.setUsername(supervisor.getTel());
         supervisor.setCityId(cityId);

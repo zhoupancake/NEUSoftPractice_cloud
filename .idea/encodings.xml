@@ -7,6 +7,8 @@
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-AirDataManage/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-AirDataManage/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system-Authentication/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system-Authentication/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-HumanResource/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-HumanResource/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-JWTManage/src/main/java" charset="UTF-8" />
@@ -25,5 +27,9 @@
     <file url="file://$PROJECT_DIR$/system-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/system-gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system-oauthServer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/system-oauthServer/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/untitled/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/untitled/src/main/resources" charset="UTF-8" />
   </component>
 </project>

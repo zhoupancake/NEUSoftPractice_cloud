@@ -14,6 +14,7 @@
     <module>system-SubmissionManage</module>
     <module>system-AirDataManage</module>
     <module>system-ZoneManage</module>
+    <module>system-gateway</module>
   </modules>
 
   <properties>

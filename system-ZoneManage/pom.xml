@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <!-- 不使用Ribbon 进行客户端负载均衡 -->
+
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework.cloud</groupId>
@@ -50,7 +50,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--       添加内置的负载均衡器支持  -->
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>

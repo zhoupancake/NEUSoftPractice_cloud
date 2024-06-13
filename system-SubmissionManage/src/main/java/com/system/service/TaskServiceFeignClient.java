@@ -13,4 +13,7 @@ public interface TaskServiceFeignClient {
     @PostMapping("/api/updateTask")
     public boolean updateTaskById(@RequestBody Task task);
 
+    @PostMapping("/api/getTaskIdByAppointerId")
+    public String[] getTaskIdByAppointerId(@RequestBody String appointerId);
+
 }

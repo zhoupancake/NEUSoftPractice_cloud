@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestReportEntity {
+public class RequestReportEntity implements Serializable {
     private String reportId;
     private String submitterId;
     private Integer status;
@@ -26,12 +27,7 @@ public class RequestReportEntity {
     private String city;
     private String location;
     private LocalDateTime date;
-    private Double pm25;
-    private Double pm10;
-    private Double so2;
-    private Double no2;
-    private Double co;
-    private Double o3;
+    private Integer forecastAQILevel;
 
     public Map<String,String> getLocation(){
         return Map.of("province",province,"city",city);
@@ -39,9 +35,11 @@ public class RequestReportEntity {
 
     public Report getReport_create() {
         return Report.builder()
+                .location(location)
                 .submitterId(submitterId)
                 .description(description)
                 .imageUrl(imageUrl)
+                .forecastAqiLevel(forecastAQILevel)
                 .build();
     }
 
@@ -53,34 +51,7 @@ public class RequestReportEntity {
                 .createdTime(createdTime)
                 .description(description)
                 .imageUrl(imageUrl)
-                .relativeAirDataId(airDataId)
-                .build();
-    }
-    
-    public AirData getAirData_create() {
-        return AirData.builder()
-                .location(location)
-                .date(date)
-                .pm25(pm25)
-                .pm10(pm10)
-                .so2(so2)
-                .no2(no2)
-                .co(co)
-                .o3(o3)
-                .build();
-    }
-    
-    public AirData getAirData_modify() {
-        return AirData.builder()
-                .id(airDataId)
-                .location(location)
-                .date(date)
-                .pm25(pm25)
-                .pm10(pm10)
-                .so2(so2)
-                .no2(no2)
-                .co(co)
-                .o3(o3)
+                .forecastAqiLevel(forecastAQILevel)
                 .build();
     }
 }

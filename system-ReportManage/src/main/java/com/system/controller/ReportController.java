@@ -1,12 +1,13 @@
 package com.system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.common.HttpResponseEntity;
-import com.system.dto.RequestCharacterEntity;
 import com.system.dto.RequestReportEntity;
-import com.system.entity.data.AirData;
+import com.system.dto.ResponseReportEntity;
+import com.system.entity.data.City;
 import com.system.entity.data.Report;
-import com.system.service.AirDataServiceFeignClient;
+import com.system.service.CityServiceFeignClient;
 import com.system.service.ReportService;
 import com.system.util.SnowflakeUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,56 +17,72 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/hide/report")
 @Slf4j
 @RequiredArgsConstructor
 public class ReportController {
     private final ReportService reportService;
-    private final AirDataServiceFeignClient airDataService;
+    private final CityServiceFeignClient cityService;
     @PostMapping("/addReport")
     public HttpResponseEntity addReport(@RequestBody RequestReportEntity requestReportEntity) {
         Report report = requestReportEntity.getReport_create();
-        AirData airData = requestReportEntity.getAirData_create();
-
-        String airDataId = SnowflakeUtil.genId();
-        airData.setId(airDataId);
+        City city = cityService.getCityByLocation(requestReportEntity.getLocation());
+        report.setCityId(city.getId());
         report.setId(SnowflakeUtil.genId());
-        report.setRelativeAirDataId(airDataId);
         report.setStatus(0);
 
         boolean reportSuccess = reportService.save(report);
-        boolean airDataSuccess = airDataService.addAirData(airData);
-        return HttpResponseEntity.response(reportSuccess&&airDataSuccess, "create report ", null);
+        return HttpResponseEntity.response(reportSuccess, "create report ", report);
     }
 
     @PostMapping("/modifyReport")
     public HttpResponseEntity modifyReport(@RequestBody RequestReportEntity requestReportEntity) {
         Report report = requestReportEntity.getReport_modify();
-        System.out.println(report);
-
         boolean success = reportService.updateById(report);
-        return HttpResponseEntity.response(success, "modify report ", null);
+        return HttpResponseEntity.response(success, "modify report ", report);
     }
 
     @PostMapping("/deleteReport")
     public HttpResponseEntity deleteReportById(@RequestBody Report report) {
         boolean success = reportService.removeById(report);
-        return HttpResponseEntity.response(success, "delete report ", null);
+        return HttpResponseEntity.response(success, "delete report ", report);
     }
-
+    
     @PostMapping("/queryReportList")
-    public HttpResponseEntity queryReportList(@RequestBody Map<String, Object> map) {
-        Integer pageNum = (Integer) map.get("pageNum");
-        Integer pageSize = (Integer) map.get("pageSize");
-        Page<Report> page = new Page<>(pageNum, pageSize);
-        reportService.query().eq("status", "1")
-                .like("username", map.get("username")).page(page);
-        List<Report> reportList = page.getRecords();
+    public HttpResponseEntity queryReportListBySubmitterId(@RequestBody Map<String, Object> map) {
+        System.out.println(map);
+        List<Integer> cites = cityService.getCitiesIdByProvince(String.valueOf(map.get("province")));
+
+        QueryWrapper<Report> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("submitter_id", map.get("submitterId"));
+
+        for (Integer cityId : cites)
+            queryWrapper.or().like("city_id", cityId);
+        if (map.get("status") != null)
+            queryWrapper.like("status", map.get("status"));
+        if (map.get("description") != null)
+            queryWrapper.like("description", map.get("description"));
+        if(map.get("location") != null)
+            queryWrapper.like("location", map.get("location"));
+        if(map.get("forecastApiLevel") != null)
+            queryWrapper.eq("forecast_aqi_level", map.get("forecastApiLevel"));
+
+        Page<Report> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+        Page<Report> reportPage = reportService.page(page, queryWrapper);
+
+        List<Report> reportList = reportPage.getRecords();
+        List<ResponseReportEntity> result = new ArrayList<>();
         boolean success = !reportList.isEmpty();
-        return HttpResponseEntity.response(success, "查询", reportList);
+        if(success)
+            for(Report report: reportList) {
+                City city = cityService.getCityById(report.getCityId());
+                result.add(new ResponseReportEntity(report, city));
+            }
+        return HttpResponseEntity.response(success, "query", result);
     }
 }

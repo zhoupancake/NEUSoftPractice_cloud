@@ -31,7 +31,7 @@ public class GridDetectorController {
         User user = requestCharacterEntity.getUser_create();
 
         gridDetector.setId(SnowflakeUtil.genId());
-        String cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
+        Integer cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
         if(cityId == null)
             return HttpResponseEntity.error("the selected city is not exist");
         gridDetector.setCityId(cityId);

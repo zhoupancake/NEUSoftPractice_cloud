@@ -18,7 +18,7 @@ public class GridDetector implements Serializable {
     //Account Attributes
     @TableId
     private String id;
-    private String cityId;
+    private Integer cityId;
 
     //Personal Attributes
     private String idCard;

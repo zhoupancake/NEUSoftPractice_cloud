@@ -1,6 +1,5 @@
 package com.system.dto;
 
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.system.entity.character.Administrator;
 import com.system.entity.character.GridDetector;
 import com.system.entity.character.Supervisor;
@@ -10,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -17,7 +17,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestCharacterEntity {
+public class RequestCharacterEntity implements Serializable {
     private String id;
     private String username;
     private String password;

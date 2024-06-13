@@ -9,4 +9,7 @@ public interface TaskAPI {
     public Task getTaskById(@RequestBody String id);
     @PostMapping("/api/updateTask")
     public boolean updateTaskById(@RequestBody Task task);
+
+    @PostMapping("/api/getTaskIdByAppointerId")
+    public String[] getTaskIdByAppointerId(@RequestBody String appointerId);
 }

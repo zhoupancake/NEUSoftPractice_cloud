@@ -9,8 +9,15 @@ import java.util.Map;
 
 public interface CityAPI {
     @PostMapping("/getCityById")
-    public City getCityById(@RequestBody String id);
+    public City getCityById(@RequestBody Integer id);
 
     @PostMapping("/getCityByLocation")
     public City getCityByLocation(@RequestBody Map<String, String> location);
+
+    @PostMapping("/getCitiesByProvince")
+    public List<Integer> getCitiesIdByProvince(@RequestBody String province);
+
+    @PostMapping("/api/getCitiesSameProvince")
+    public List<Integer> getCitiesSameProvince(@RequestBody Integer cityId);
+
 }

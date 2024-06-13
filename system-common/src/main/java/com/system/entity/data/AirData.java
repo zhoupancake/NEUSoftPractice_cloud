@@ -22,7 +22,7 @@ public class AirData implements Serializable {
     //identify attributes
     @TableId
     private String id;
-    private String cityId;
+    private Integer cityId;
     private String location;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime date;

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/submission")
+@RequestMapping("/hide/submission")
 @Slf4j
 @RequiredArgsConstructor
 public class SubmissionController {

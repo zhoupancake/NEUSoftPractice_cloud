@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -20,7 +21,7 @@ public class CityAPIImpl  implements CityAPI{
     private final CityService cityService;
     @Override
     @PostMapping("/getCityById")
-    public City getCityById(String id) {
+    public City getCityById(Integer id) {
         return cityService.getById(id);
     }
 
@@ -38,6 +39,30 @@ public class CityAPIImpl  implements CityAPI{
         else
             result = administratorList.get(0);
         return result;
+    }
+
+    @Override
+    @PostMapping("/getCitiesByProvince")
+    public List<Integer> getCitiesIdByProvince(String province) {
+        return cityService.query()
+                .eq("province", province)
+                .list()
+                .stream()
+                .map(City::getId)
+                .toList();
+    }
+
+    @Override
+    @PostMapping("/api/getCitiesSameProvince")
+    public List<Integer> getCitiesSameProvince(Integer cityId) {
+        City city = cityService.getById(cityId);
+        return cityService.query()
+                .eq("province", city.getProvince())
+                .ne("city_id", cityId)
+                .list()
+                .stream()
+                .map(City::getId)
+                .collect(Collectors.toList());
     }
 }
 

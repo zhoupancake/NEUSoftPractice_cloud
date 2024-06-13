@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @TableName("city_info")
 public class City {
     @TableId(type = IdType.AUTO)
-    private String id;
+    private Integer id;
     private String name;
     private String province;
     private String level;
