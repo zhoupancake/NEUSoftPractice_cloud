@@ -55,7 +55,6 @@ public class ReportController {
     
     @PostMapping("/queryReportList")
     public HttpResponseEntity queryReportListBySubmitterId(@RequestBody Map<String, Object> map) {
-        System.out.println(map);
         List<Integer> cites = cityService.getCitiesIdByProvince(String.valueOf(map.get("province")));
 
         QueryWrapper<Report> queryWrapper = new QueryWrapper<>();

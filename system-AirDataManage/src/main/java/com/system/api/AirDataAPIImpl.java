@@ -27,6 +27,14 @@ public class AirDataAPIImpl  implements AirDataAPI{
     @Override
     @PostMapping("/addAirData")
     public boolean addAirData(@RequestBody AirData airData) {
+        if(airData.getPm25() < 0 || airData.getPm10() < 0 || airData.getSo2() < 0 || airData.getCo() < 0 || airData.getO3() < 0 || airData.getNo2() < 0)
+            return false;
+        if(airData.getPm25() > 500)
+            airData.setPm25(500.0);
+        if(airData.getSo2() > 2620)
+            airData.setSo2(2620.0);
+        if(airData.getCo() > 60)
+            airData.setCo(60.0);
         airData.setId(SnowflakeUtil.genId());
         airData.setAqiLevel(getAQILevel(airData.getPm25(), airData.getSo2(), airData.getCo()));
         airData.setAqi(getAQI(airData.getPm25(), airData.getSo2(), airData.getCo()));

@@ -24,9 +24,10 @@ public class ActionController {
     private final AirDataService airDataService;
     private final CityServiceFeignClient cityService;
 
-    @PostMapping("/selectAll")
+    @PostMapping("/selectAll/page")
     public HttpResponseEntity selectAll(@RequestBody Map<String, Object> map) {
-        System.out.println("fuck1");
+        if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
+            return HttpResponseEntity.error("pageNum and pageSize must be positive");
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
         Page<AirData> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
         Page<AirData> airDataPage = airDataService.page(page, queryWrapper);
@@ -44,10 +45,16 @@ public class ActionController {
 
     @GetMapping("/selectAll")
     public HttpResponseEntity selectAll() {
-        System.out.println("fuck2");
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
         List<AirData> airDataList = airDataService.list(queryWrapper);
-        return HttpResponseEntity.response(airDataList != null,"query successfully", airDataList);
+        List<ResponseAirDataEntity> result = new ArrayList<>();
+        boolean success = !airDataList.isEmpty();
+        if(success)
+            for(AirData airData: airDataList) {
+                City city = cityService.getCityById(airData.getCityId());
+                result.add(new ResponseAirDataEntity(airData, city));
+            }
+        return HttpResponseEntity.response(success,"query successfully", result);
     }
 
     @PostMapping("/selectByProvince")
