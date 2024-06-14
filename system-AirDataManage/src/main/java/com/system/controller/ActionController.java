@@ -10,10 +10,7 @@ import com.system.service.AirDataService;
 import com.system.service.CityServiceFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +24,9 @@ public class ActionController {
     private final AirDataService airDataService;
     private final CityServiceFeignClient cityService;
 
-    @PostMapping("selectAll")
+    @PostMapping("/selectAll")
     public HttpResponseEntity selectAll(@RequestBody Map<String, Object> map) {
+        System.out.println("fuck1");
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
         Page<AirData> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
         Page<AirData> airDataPage = airDataService.page(page, queryWrapper);
@@ -44,7 +42,15 @@ public class ActionController {
         return HttpResponseEntity.success("query successfully", result);
     }
 
-    @PostMapping("selectByProvince")
+    @GetMapping("/selectAll")
+    public HttpResponseEntity selectAll() {
+        System.out.println("fuck2");
+        QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
+        List<AirData> airDataList = airDataService.list(queryWrapper);
+        return HttpResponseEntity.response(airDataList != null,"query successfully", airDataList);
+    }
+
+    @PostMapping("/selectByProvince")
     public HttpResponseEntity selectByProvince(@RequestBody Map<String, Object> map) {
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
         List<Integer> cityIdList = cityService.getCitiesIdByProvince((String)map.get("province"));

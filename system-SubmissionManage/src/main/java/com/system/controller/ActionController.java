@@ -49,7 +49,10 @@ public class ActionController {
         String airDataId = SnowflakeUtil.genId();
 
         airData.setId(airDataId);
-        airData.setCityId(cityService.getCityByLocation(requestSubmissionEntity.getLocation()).getId());
+        Integer cityId = cityService.getCityByLocation(requestSubmissionEntity.getLocation()).getId();
+        if(cityId == 0)
+            return HttpResponseEntity.error("city not found");
+        airData.setCityId(cityId);
         task.setStatus(1);
         submission.setRelatedAirDataId(airDataId);
 

@@ -31,7 +31,7 @@ public class RequestCharacterEntity implements Serializable {
     private String idCard;
     private String province;
     private String city;
-    private String cityId;
+    private Integer cityId;
 
     public User getUser_create(){
         return User.builder()

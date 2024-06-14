@@ -34,32 +34,32 @@ public class AirDataAPIImpl  implements AirDataAPI{
         return airDataService.save(airData);
     }
 
-    @Override
-    @PostMapping("/modifyAirData")
-    public boolean modifyAirData(@RequestBody AirData airData) {
-        return airDataService.updateById(airData);
-    }
-
-    @Override
-    @PostMapping("/deleteAirData")
-    public boolean deleteAirDataById(@RequestBody AirData airData) {
-        return airDataService.removeById(airData);
-    }
-
-    @Override
-    @PostMapping("/getAirDataById")
-    public AirData getAirDataById(String id) {
-        return airDataService.getById(id);
-    }
-
-    @Override
-    @PostMapping("/queryAirDataList")
-    public List<AirData> queryAirDataList(@RequestBody Map<String, Object> map) {
-        Integer pageNum = (Integer) map.get("pageNum");
-        Integer pageSize = (Integer) map.get("pageSize");
-        Page<AirData> page = new Page<>(pageNum, pageSize);
-        airDataService.query().eq("status", "1")
-                .like("username", map.get("username")).page(page);
-        return page.getRecords();
-    }
+//    @Override
+//    @PostMapping("/modifyAirData")
+//    public boolean modifyAirData(@RequestBody AirData airData) {
+//        return airDataService.updateById(airData);
+//    }
+//
+//    @Override
+//    @PostMapping("/deleteAirData")
+//    public boolean deleteAirDataById(@RequestBody AirData airData) {
+//        return airDataService.removeById(airData);
+//    }
+//
+//    @Override
+//    @PostMapping("/getAirDataById")
+//    public AirData getAirDataById(String id) {
+//        return airDataService.getById(id);
+//    }
+//
+//    @Override
+//    @PostMapping("/queryAirDataList")
+//    public List<AirData> queryAirDataList(@RequestBody Map<String, Object> map) {
+//        Integer pageNum = (Integer) map.get("pageNum");
+//        Integer pageSize = (Integer) map.get("pageSize");
+//        Page<AirData> page = new Page<>(pageNum, pageSize);
+//        airDataService.query().eq("status", "1")
+//                .like("username", map.get("username")).page(page);
+//        return page.getRecords();
+//    }
 }

@@ -1,5 +1,6 @@
 package com.system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.common.HttpResponseEntity;
 import com.system.entity.data.City;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/city")
+@RequestMapping("/hide/city")
 @Slf4j
 @RequiredArgsConstructor
 public class CityController {
@@ -61,13 +62,21 @@ public class CityController {
 
     @PostMapping("/queryCityList")
     public HttpResponseEntity queryCityList(@RequestBody Map<String, Object> map) {
-        Integer pageNum = (Integer) map.get("pageNum");
-        Integer pageSize = (Integer) map.get("pageSize");
-        Page<City> page = new Page<>(pageNum, pageSize);
-        cityService.query().eq("status", "1")
-                .like("username", map.get("username")).page(page);
-        List<City> cityList = page.getRecords();
-        boolean success = !cityList.isEmpty();
-        return HttpResponseEntity.response(success, "查询", cityList);
+        if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
+            return HttpResponseEntity.error("pageNum or pageSize is invalid");
+        QueryWrapper<City> queryWrapper = new QueryWrapper<>();
+        if (map.containsKey("cityId") && map.get("cityId") == null)
+            queryWrapper.eq("id", map.get("cityId"));
+        if (map.containsKey("name") && map.get("name") != null)
+            queryWrapper.like("name", map.get("name"));
+        if (map.containsKey("province") && map.get("province") != null)
+            queryWrapper.eq("province", map.get("province"));
+        if (map.containsKey("level") && map.get("level") != null)
+            queryWrapper.eq("level", map.get("level"));
+
+        Page<City> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+        Page<City> cityPage = cityService.page(page, queryWrapper);
+        List<City> cityList = cityPage.getRecords();
+        return HttpResponseEntity.response(!cityList.isEmpty(),"query city", cityList);
     }
 }

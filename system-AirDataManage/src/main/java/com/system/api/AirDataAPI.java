@@ -13,15 +13,15 @@ public interface AirDataAPI {
     @PostMapping("/addAirData")
     public boolean addAirData(@RequestBody AirData airData);
 
-    @PostMapping("/modifyAirData")
-    public boolean modifyAirData(@RequestBody AirData airData);
-
-    @PostMapping("/deleteAirData")
-    public boolean deleteAirDataById(@RequestBody AirData airData);
-
-    @PostMapping("/getAirDataById")
-    public AirData getAirDataById(@RequestBody String id);
-
-    @PostMapping("/queryAirDataList")
-    public List<AirData> queryAirDataList(@RequestBody Map<String, Object> map);
+//    @PostMapping("/modifyAirData")
+//    public boolean modifyAirData(@RequestBody AirData airData);
+//
+//    @PostMapping("/deleteAirData")
+//    public boolean deleteAirDataById(@RequestBody AirData airData);
+//
+//    @PostMapping("/getAirDataById")
+//    public AirData getAirDataById(@RequestBody String id);
+//
+//    @PostMapping("/queryAirDataList")
+//    public List<AirData> queryAirDataList(@RequestBody Map<String, Object> map);
 }

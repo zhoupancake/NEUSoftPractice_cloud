@@ -4,8 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -34,8 +32,8 @@ public class JWTUtil {
     /**
      * 验证token
      */
-    public static DecodedJWT verify(String token) {
-        return JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
+    public static void verify(String token) {
+        JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
     }
 
     /**

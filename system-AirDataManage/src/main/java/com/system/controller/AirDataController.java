@@ -34,18 +34,18 @@ public class AirDataController {
         return HttpResponseEntity.response(success, "create airData ", null);
     }
 
-    @PostMapping("/modifyAirData")
-    public HttpResponseEntity modifyAirData(@RequestBody AirData airData) {
-        airData.setCityId(airData.getCityId());
-        boolean success = airDataService.updateById(airData);
-        return HttpResponseEntity.response(success, "modify airData", null);
-    }
-
-    @PostMapping("/deleteAirData")
-    public HttpResponseEntity deleteAirDataById(@RequestBody AirData airData) {
-        boolean success = airDataService.removeById(airData);
-        return HttpResponseEntity.response(success, "delete airData ", null);
-    }
+//    @PostMapping("/modifyAirData")
+//    public HttpResponseEntity modifyAirData(@RequestBody AirData airData) {
+//        airData.setCityId(airData.getCityId());
+//        boolean success = airDataService.updateById(airData);
+//        return HttpResponseEntity.response(success, "modify airData", null);
+//    }
+//
+//    @PostMapping("/deleteAirData")
+//    public HttpResponseEntity deleteAirDataById(@RequestBody AirData airData) {
+//        boolean success = airDataService.removeById(airData);
+//        return HttpResponseEntity.response(success, "delete airData ", null);
+//    }
 
     @PostMapping("/queryAirDataList")
     public HttpResponseEntity queryAirDataList(@RequestBody Map<String, Object> map) {
