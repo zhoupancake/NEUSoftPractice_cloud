@@ -1,10 +1,14 @@
 package com.system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.common.HttpResponseEntity;
 import com.system.dto.RequestCharacterEntity;
+import com.system.dto.ResponseReportEntity;
 import com.system.dto.User;
 import com.system.entity.character.Administrator;
+import com.system.entity.data.City;
+import com.system.entity.data.Report;
 import com.system.service.AdministratorService;
 import com.system.service.UserService;
 import com.system.util.SnowflakeUtil;
@@ -15,11 +19,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
-@RequestMapping("/administrator")
+@RequestMapping("/hide/administrator")
 @Slf4j
 @RequiredArgsConstructor
 public class AdministratorController {
@@ -31,19 +40,22 @@ public class AdministratorController {
         Administrator administrator = requestCharacterEntity.getAdministrator_create();
         User user = requestCharacterEntity.getUser_create();
 
+        if(!administratorService.query().eq("id_card", administrator.getIdCard()).list().isEmpty())
+            return HttpResponseEntity.error("this person is already exist in the system");
+        Pattern pattern = Pattern.compile("^(20[1-9][0-9])([0-9]{6})$");
+        Matcher matcher = pattern.matcher(administrator.getIdCard());
+        if(!matcher.matches())
+            return HttpResponseEntity.error("idCard is not correct");
         administrator.setId(SnowflakeUtil.genId());
         user.setId(administrator.getId());
         user.setUsername(administrator.getIdCard());
         user.setStatus(1);
         user.setRole("Administrator");
 
-        System.out.println(administrator);
-        System.out.println(user);
-
         boolean administratorSuccess = administratorService.save(administrator);
         boolean userSuccess = userService.save(user);
 
-        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "add", administrator.getId());
+        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "add administrator ", administrator.getId());
     }
 
 
@@ -54,15 +66,19 @@ public class AdministratorController {
 
         Administrator orginalAdministrator = administratorService.getById(administrator.getId());
         User orginalUser = userService.getById(user.getId());
-
         if(null == orginalAdministrator || null == orginalUser)
             return HttpResponseEntity.error("The modified administrator is not exist");
-
+        if(!orginalUser.getPassword().equals(user.getPassword()))
+            return HttpResponseEntity.error("The modification of password is forbidden");
+        Pattern pattern = Pattern.compile("^(20[1-9][0-9])([0-9]{6})$");
+        Matcher matcher = pattern.matcher(administrator.getIdCard());
+        if(!matcher.matches())
+            return HttpResponseEntity.error("idCard is not correct");
         user.setUsername(administrator.getIdCard());
 
         boolean administratorSuccess = administratorService.updateById(administrator);
         boolean userSuccess = userService.updateById(user);
-        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "modify", null);
+        return HttpResponseEntity.response(administratorSuccess&&userSuccess, "modify administrator ", null);
     }
 
     @PostMapping("/deleteAdministrator")
@@ -71,9 +87,9 @@ public class AdministratorController {
         User user = requestCharacterEntity.getUser_modify();
         User dbUser = userService.getById(user.getId());
         if(null == dbUser)
-            return HttpResponseEntity.response(false, "The deleted administrator is not exist", null);
+            return HttpResponseEntity.error("The deleted administrator is not exist");
         if(!dbUser.getPassword().equals(user.getPassword()))
-            return HttpResponseEntity.response(false, "The password is wrong", null);
+            return HttpResponseEntity.error("The password is wrong");
 
         boolean administratorSuccess = administratorService.removeById(administrator);
         boolean userSuccess = userService.removeById(user);
@@ -83,13 +99,21 @@ public class AdministratorController {
 
     @PostMapping("/queryAdministratorList")
     public HttpResponseEntity queryAdministratorList(@RequestBody Map<String, Object> map) {
-        Integer pageNum = (Integer) map.get("pageNum");
-        Integer pageSize = (Integer) map.get("pageSize");
-        Page<Administrator> page = new Page<>(pageNum, pageSize);
-        administratorService.query()
-                .like("username", map.get("username")).page(page);
-        List<Administrator> administratorList = page.getRecords();
+        if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
+            return HttpResponseEntity.error("pageNum and pageSize must be greater than 0");
+        QueryWrapper<Administrator> queryWrapper = new QueryWrapper<>();
+        if(map.containsKey("id") && map.get("id") != null)
+            queryWrapper.like("id", map.get("id"));
+        if (map.containsKey("idCard") && map.get("idCard") != null)
+            queryWrapper.like("id_card", map.get("idCard"));
+        if (map.containsKey("name") && map.get("name") != null)
+            queryWrapper.like("name", map.get("name"));
+
+        Page<Administrator> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+        Page<Administrator> administratorPage = administratorService.page(page, queryWrapper);
+
+        List<Administrator> administratorList = administratorPage.getRecords();
         boolean success = !administratorList.isEmpty();
-        return HttpResponseEntity.response(success, "query", administratorList);
+        return HttpResponseEntity.response(success, "query grid detector", administratorList);
     }
 }

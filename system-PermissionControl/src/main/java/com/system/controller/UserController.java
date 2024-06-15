@@ -17,9 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/user")
@@ -97,7 +101,7 @@ public class UserController {
         }
         else {
             countRedisTemplate.opsForValue().increment(loginUser.getId());
-            return HttpResponseEntity.response(false, "login, reason Error username or password", null);
+            return HttpResponseEntity.response(false, "login, for Error username or password", null);
         }
     }
 
@@ -106,22 +110,23 @@ public class UserController {
         Map<String, String> map = requestCharacterEntity.getUser_modifyPassword();
         User requestUser = userService.getById(map.get("id"));
         if (requestUser == null)
-            return HttpResponseEntity.response(false, "The modify user is not exist", null);
+            return HttpResponseEntity.response(false, "change password because the modify user is not exist", null);
+        if (requestUser.getStatus() == 0)
+            return HttpResponseEntity.response(false, "change password because the account is banned", null);
         if(Boolean.TRUE.equals(countRedisTemplate.hasKey(map.get("id"))))
             if((Integer)countRedisTemplate.opsForValue().get(map.get("id")) >= MAX_LOGIN_ATTEMPTS) {
                 countRedisTemplate.expire(map.get("id"), LOCK_DURATION_MINUTES, TimeUnit.SECONDS);
-                return HttpResponseEntity.response(false, "The account is locked with 15 minutes", null);
+                return HttpResponseEntity.response(false, "change password because the account is locked with 15 minutes", null);
             }
         if (requestUser.getPassword().equals(map.get("password"))) {
             countRedisTemplate.opsForValue().set(map.get("id"), 0);
             requestUser.setPassword(map.get("newPassword"));
             userService.updateById(requestUser);
-            System.out.println(userService.getById(requestUser.getId()));
-            return HttpResponseEntity.response(true, "modify successfully", null);
+            return HttpResponseEntity.response(true, "modify ", null);
         }
         else {
             countRedisTemplate.opsForValue().increment(map.get("id"));
-            return HttpResponseEntity.response(false, "The original password is wrong", null);
+            return HttpResponseEntity.response(false, "change password because the original password is wrong", null);
         }
     }
 
@@ -129,8 +134,19 @@ public class UserController {
     public HttpResponseEntity register(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_create();
         User user = requestCharacterEntity.getUser_create();
-        String cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
 
+        String telRegex = "^(?:(?:(?:\\+|00)86)?\\s*)?1(?:(?:3[\\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\\d])|(?:9[189]))\\d{8}$";
+        Pattern telPattern = Pattern.compile(telRegex);
+        Matcher telMatcher = telPattern.matcher(supervisor.getTel());
+        if(!telMatcher.matches())
+            return HttpResponseEntity.response(false, "register because the tel is not valid", null);
+        if(Calendar.getInstance().get(Calendar.YEAR) - supervisor.getBirthYear() > 150 ||
+                Calendar.getInstance().get(Calendar.YEAR) - supervisor.getBirthYear() < 14)
+            return HttpResponseEntity.response(false, "register because the age is not valid", null);
+        Integer cityId = cityService.getCityByLocation(requestCharacterEntity.getLocation()).getId();
+
+        if(!userService.query().eq("username", supervisor.getTel()).list().isEmpty())
+            return HttpResponseEntity.response(false, "register because the username is exist", null);
         supervisor.setId(SnowflakeUtil.genId());
         supervisor.setCityId(cityId);
         user.setId(SnowflakeUtil.genId());

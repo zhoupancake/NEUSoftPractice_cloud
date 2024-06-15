@@ -34,7 +34,6 @@ public class ActionController {
     @PostMapping("/report")
     public HttpResponseEntity addReport(@RequestBody RequestReportEntity requestReportEntity) {
         Report report = requestReportEntity.getReport_create();
-        System.out.println(report);
         City city = cityService.getCityByLocation(requestReportEntity.getLocation());
         report.setCityId(city.getId());
         report.setId(SnowflakeUtil.genId());

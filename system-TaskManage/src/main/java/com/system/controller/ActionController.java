@@ -42,8 +42,9 @@ public class ActionController {
 
     @PostMapping("/getAppointee/local")
     public List<GridDetector> getAppointee_local(@RequestBody Map<String, Object> map) {
-        return gridDetectorService.getDetectorSameCity((Integer) map.get("cityId"),
-                (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+        Map<String, Integer> paraMap = Map.of("cityId", (Integer) map.get("cityId"),
+                "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
+        return gridDetectorService.getDetectorSameCity(paraMap);
     }
 
     @PostMapping("/getAppointee/province")

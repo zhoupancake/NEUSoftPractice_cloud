@@ -11,12 +11,15 @@ import java.util.Map;
 @FeignClient(name="system-ZoneManage", url="localhost:8086") //  远程服务的名称
 public interface CityServiceFeignClient {
     @PostMapping("/api/getCityById")
-    public City getCityById(@RequestBody String id);
+    public City getCityById(@RequestBody Integer id);
 
     @PostMapping("/api/getCityByLocation")
     public City getCityByLocation(@RequestBody Map<String, String> location);
 
     @PostMapping("/api/getCitiesSameProvince")
     public List<Integer> getCitiesSameProvince(@RequestBody Integer cityId);
+
+    @PostMapping("/api/getCitiesByProvince")
+    public List<Integer> getCitiesIdByProvince(@RequestBody String province);
 
 }

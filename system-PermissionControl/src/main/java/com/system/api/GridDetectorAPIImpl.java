@@ -7,10 +7,12 @@ import com.system.service.GridDetectorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -20,10 +22,10 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
     private final GridDetectorService gridDetectorService;
     @Override
     @PostMapping("/getDetectorSameCity")
-    public List<GridDetector> getDetectorSameCity(Integer id, int pageNum, int pageSize) {
-        Page<GridDetector> page = new Page<>(pageNum,pageSize);
+    public List<GridDetector> getDetectorSameCity(@RequestBody Map<String, Integer> map) {
+        Page<GridDetector> page = new Page<>(map.get("pageNum"), map.get("pageSize"));
         QueryWrapper<GridDetector> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("city_id", id);
+        queryWrapper.eq("city_id", map.get("id"));
         queryWrapper.eq("status", 1);
         return gridDetectorService.page(page,queryWrapper).getRecords();
     }

@@ -27,7 +27,7 @@ public class RequestCharacterEntity implements Serializable {
     private String tel;
     private String name;
     private Integer age;
-    private Integer sex;
+    private String sex;
     private String idCard;
     private String province;
     private String city;
@@ -74,21 +74,32 @@ public class RequestCharacterEntity implements Serializable {
     }
 
     public Supervisor getSupervisor_create(){
+        int digitalSex = 0;
+        if(sex.equals("male"))
+            digitalSex = 1;
+        else if(sex.equals("female"))
+            digitalSex = 0;
         return Supervisor.builder()
                 .tel(tel)
                 .name(name)
                 .birthYear(Calendar.getInstance().get(Calendar.YEAR) - age)
-                .sex(sex)
+                .sex(digitalSex)
                 .build();
     }
 
     public Supervisor getSupervisor_modify(){
+        int digitalSex = 0;
+        if(sex.equals("male"))
+            digitalSex = 1;
+        else if(sex.equals("female")) {
+            digitalSex = 0;
+        }
         return Supervisor.builder()
                 .id(id)
                 .tel(tel)
                 .name(name)
                 .birthYear(Calendar.getInstance().get(Calendar.YEAR) - age)
-                .sex(sex)
+                .sex(digitalSex)
                 .build();
     }
 
