@@ -6,27 +6,30 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestReportEntity implements Serializable {
-    private String reportId;
+    private String id;
     private String submitterId;
     private Integer status;
-    private LocalDateTime createdTime;
+    private String createdTime;
     private String description;
     private String imageUrl;
-    private String airDataId;
     private String province;
     private String city;
     private String location;
-    private LocalDateTime date;
     private Integer forecastAQILevel;
 
     public Map<String,String> getLocation(){
@@ -44,14 +47,36 @@ public class RequestReportEntity implements Serializable {
     }
 
     public Report getReport_modify() {
+        LocalDateTime localDateTime = null;
+        if(createdTime != null && !createdTime.isEmpty()) {
+            Pattern pattern1 = Pattern.compile("^\\d{4}-\\d{2}-\\d{2}$");
+            Pattern pattern2 = Pattern.compile("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$");
+            Matcher matcher1 = pattern1.matcher(createdTime);
+            Matcher matcher2 = pattern2.matcher(createdTime);
+            if (matcher1.matches()) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDate = LocalDate.parse(createdTime, formatter);
+                localDateTime = localDate.atStartOfDay();
+            }
+            else if (matcher2.matches()) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                localDateTime = LocalDateTime.parse(createdTime, formatter);
+            }
+            else {
+                throw new RuntimeException("error time format");
+            }
+        }
         return Report.builder()
-                .id(reportId)
+                .id(id)
                 .submitterId(submitterId)
                 .status(status)
-                .createdTime(createdTime)
+                .createdTime(localDateTime)
                 .description(description)
                 .imageUrl(imageUrl)
+                .location(location)
                 .forecastAqiLevel(forecastAQILevel)
                 .build();
     }
+
+
 }
