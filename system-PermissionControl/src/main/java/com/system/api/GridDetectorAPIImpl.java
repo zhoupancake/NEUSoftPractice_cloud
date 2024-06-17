@@ -2,6 +2,7 @@ package com.system.api;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.system.common.HttpResponseEntity;
 import com.system.dto.User;
 import com.system.entity.character.GridDetector;
 import com.system.service.GridDetectorService;
@@ -29,7 +30,7 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
 //        queryWrapper.eq("city_id", map.get("id"));
 //        queryWrapper.eq("status", 1);
 //        return gridDetectorService.page(page,queryWrapper).getRecords();
-        List<GridDetector> gridDetectorList = gridDetectorService.query().eq("city_id", map.get("id")).list();
+        List<GridDetector> gridDetectorList = gridDetectorService.query().eq("city_id", map.get("cityId")).list();
         List<GridDetector> result = new ArrayList<GridDetector>();
         gridDetectorList.removeIf(gridDetector -> userService.getById(gridDetector.getId()).getStatus() == 0);
         int count = (Integer) map.get("pageNum") * (Integer) map.get("pageSize");
@@ -68,6 +69,7 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
     public List<GridDetector> getDetectorOtherProvince(@RequestBody List<Integer> ids,
                                                        @RequestParam("pageNum") int pageNum,
                                                        @RequestParam("pageSize") int pageSize) {
+        System.out.println(ids);
 //        Page<GridDetector> page = new Page<>(pageNum,pageSize);
 //        QueryWrapper<GridDetector> queryWrapper = new QueryWrapper<>();
 //        queryWrapper.notIn("city_id", ids);

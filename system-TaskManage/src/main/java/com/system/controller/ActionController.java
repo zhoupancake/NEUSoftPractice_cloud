@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,29 +38,66 @@ public class ActionController {
     private final CityServiceFeignClient cityService;
     private final CharacterServiceFeignClient characterService;
 
-    @PostMapping("/getAppointee/local")
-    public List<GridDetector> getAppointee_local(@RequestBody Map<String, Object> map) {
-        Map<String, Integer> paraMap = Map.of("cityId", (Integer) map.get("cityId"),
+    @PostMapping("/administrator/getAppointee/local")
+    public HttpResponseEntity getAppointee_local(@RequestBody Map<String, Object> map) {
+        if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
+            return HttpResponseEntity.error("The page size and the page number should be positive");
+        Map<String, String> location = Map.of("province", String.valueOf(map.get("province")),
+                "city", String.valueOf(map.get("city")));
+        City city = cityService.getCityByLocation((location));
+        if(city == null)
+            return HttpResponseEntity.error("request city is not supported");
+        Map<String, Integer> paraMap = Map.of("cityId", city.getId(),
                 "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
-        return characterService.getDetectorSameCity(paraMap);
+        List<GridDetector> gridDetectors = characterService.getDetectorSameCity(paraMap);
+        return HttpResponseEntity.response(!gridDetectors.isEmpty(), "get appointee", gridDetectors);
     }
 
-    @PostMapping("/getAppointee/province")
-    public List<GridDetector> getAppointee_province(@RequestBody Map<String, Object> map) {
-        List<Integer> cities = cityService.getCitiesSameProvince((Integer) map.get("cityId"));
-        return characterService.getDetectorSameProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+    @PostMapping("/administrator/getAppointee/province")
+    public HttpResponseEntity getAppointee_province(@RequestBody Map<String, Object> map) {
+        if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
+            return HttpResponseEntity.error("The page size and the page number should be positive");
+        Map<String, String> location = Map.of("province", String.valueOf(map.get("province")),
+                "city", String.valueOf(map.get("city")));
+        City city = cityService.getCityByLocation((location));
+        if(city == null)
+            return HttpResponseEntity.error("request city is not supported");
+        List<Integer> cities = cityService.getCitiesSameProvince((city.getId()));
+        if(cities == null || cities.isEmpty())
+            return HttpResponseEntity.error("request province has no other supported city");
+        List<GridDetector> result = characterService.getDetectorSameProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+        return HttpResponseEntity.response(!result.isEmpty(), "get appointee ", result);
     }
 
-    @PostMapping("/getAppoint/other")
-    public List<GridDetector> getAppointee_other(@RequestBody Map<String, Object> map) {
-        List<Integer> cities = cityService.getCitiesSameProvince((Integer) map.get("cityId"));
-        return characterService.getDetectorOtherProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+    @PostMapping("/administrator/getAppointee/other")
+    public HttpResponseEntity getAppointee_other(@RequestBody Map<String, Object> map) {
+        if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
+            return HttpResponseEntity.error("The page size and the page number should be positive");
+        Map<String, String> location = Map.of("province", String.valueOf(map.get("province")),
+                "city", String.valueOf(map.get("city")));
+        City city = cityService.getCityByLocation((location));
+        if(city == null)
+            return HttpResponseEntity.error("request city is not supported");
+        List<Integer> cities = cityService.getCitiesSameProvince((city.getId()));
+        cities.add(city.getId());
+        List<GridDetector> result = characterService.getDetectorOtherProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+        return HttpResponseEntity.response(!result.isEmpty(), "get appointee ", result);
     }
 
     @PostMapping("/appoint")
     public HttpResponseEntity addTask(@RequestBody Task task) {
         task.setId(SnowflakeUtil.genId());
         task.setStatus(0);
+
+        if(null == reportService.getReportById(task.getRelativeReportId()))
+            return HttpResponseEntity.error("report not found");
+        if(reportService.getReportById(task.getRelativeReportId()).getStatus() == 1)
+            return HttpResponseEntity.error("report has been appointed");
+        if(null == characterService.getAdministratorById(task.getAppointerId()))
+            return HttpResponseEntity.error("administrator not found");
+        if(null == characterService.getDetectorById(task.getAppointeeId()))
+            return HttpResponseEntity.error("grid detector not found");
+
         boolean success = taskService.save(task);
         return HttpResponseEntity.response(success, "create task", null);
     }
@@ -111,17 +149,17 @@ public class ActionController {
 
         if (map.get("status") != null)
             queryWrapper.like("status", map.get("status"));
-        if(map.get("startTime") != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("startTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().ge(Task::getCreatedTime,startMillis);
+            Timestamp startTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().ge(Task::getCreatedTime,startTime);
         }
-        if(map.get("endTime") != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("endTime") && map.get("endTime") != null && !map.get("endTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("endTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().le(Task::getCreatedTime,startMillis);
+            Timestamp endTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().le(Task::getCreatedTime,endTime);
         }
         if (map.get("description") != null)
             queryWrapper.like("description", map.get("description"));

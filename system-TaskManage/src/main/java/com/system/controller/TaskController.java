@@ -6,6 +6,7 @@ import com.system.common.HttpResponseEntity;
 import com.system.dto.ResponseTaskEntity;
 import com.system.entity.data.City;
 import com.system.entity.data.Report;
+import com.system.entity.data.Submission;
 import com.system.entity.data.Task;
 import com.system.service.CharacterServiceFeignClient;
 import com.system.service.CityServiceFeignClient;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -89,16 +91,16 @@ public class TaskController {
         if(map.containsKey("appointeeId") && map.get("appointeeId") != null)
             queryWrapper.like("appointee_id", map.get("appointeeId"));
         if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("startTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().ge(Task::getCreatedTime,startMillis);
+            Timestamp startTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().ge(Task::getCreatedTime,startTime);
         }
         if(map.containsKey("endTime") && map.get("endTime") != null && !map.get("endTime").equals("")) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("endTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().le(Task::getCreatedTime,startMillis);
+            Timestamp endTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().le(Task::getCreatedTime,endTime);
         }
         if (map.containsKey("status") && map.get("status") != null)
             queryWrapper.like("status", map.get("status"));

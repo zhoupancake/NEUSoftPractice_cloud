@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Timestamp;
 import java.sql.Wrapper;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -82,17 +83,17 @@ public class ActionController {
             queryWrapper.eq("submitter_id", map.get("submitterId"));
         if (map.get("description") != null)
             queryWrapper.like("description", map.get("description"));
-        if(map.get("startTime") != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("startTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().ge(Submission::getSubmittedTime,startMillis);
+            Timestamp startTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().ge(Submission::getSubmittedTime,startTime);
         }
-        if(map.get("endTime") != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("endTime") && map.get("endTime") != null && !map.get("endTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("endTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().le(Submission::getSubmittedTime,startMillis);
+            Timestamp endTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().le(Submission::getSubmittedTime,endTime);
         }
 
         Page<Submission> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));

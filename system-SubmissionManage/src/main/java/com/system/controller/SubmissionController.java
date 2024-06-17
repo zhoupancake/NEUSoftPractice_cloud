@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class SubmissionController {
     @PostMapping("/modifySubmission")
     public HttpResponseEntity modifySubmission(@RequestBody Submission submission) {
         if(null == submissionService.getById(submission.getId()))
-            return HttpResponseEntity.error("modifyed submission not exist");
+            return HttpResponseEntity.error("modified submission not exist");
         boolean success = submissionService.updateById(submission);
         return HttpResponseEntity.response(success, "modify ", null);
     }
@@ -95,16 +96,16 @@ public class SubmissionController {
         if(map.containsKey("relatedAirDataId") && map.get("relatedAirDataId") != null)
             queryWrapper.like("related_air_data_id", map.get("relatedAirDataId"));
         if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("startTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().ge(Submission::getSubmittedTime,startMillis);
+            Timestamp startTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().ge(Submission::getSubmittedTime,startTime);
         }
         if(map.containsKey("endTime") && map.get("endTime") != null && !map.get("endTime").equals("")) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("endTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().le(Submission::getSubmittedTime,startMillis);
+            Timestamp endTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().le(Submission::getSubmittedTime,endTime);
         }
         Page<Submission> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
         Page<Submission> taskPage = submissionService.page(page, queryWrapper);

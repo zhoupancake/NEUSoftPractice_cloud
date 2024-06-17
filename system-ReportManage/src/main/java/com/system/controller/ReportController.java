@@ -7,6 +7,7 @@ import com.system.dto.RequestReportEntity;
 import com.system.dto.ResponseReportEntity;
 import com.system.entity.data.City;
 import com.system.entity.data.Report;
+import com.system.entity.data.Submission;
 import com.system.service.CityServiceFeignClient;
 import com.system.service.ReportService;
 import com.system.service.SupervisorServiceFeignClient;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -104,17 +106,17 @@ public class ReportController {
             queryWrapper.like("location", map.get("location"));
         if (map.containsKey("forecastApiLevel") && map.get("forecastApiLevel") != null && !map.get("forecastApiLevel").equals(""))
             queryWrapper.eq("forecast_aqi_level", map.get("forecastApiLevel"));
-        if (map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("startTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().ge(Report::getCreatedTime, startMillis);
+            Timestamp startTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().ge(Report::getCreatedTime,startTime);
         }
-        if (map.containsKey("endTime") && map.get("endTime") != null && !map.get("endTime").equals("")) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
-            Date endDate = dateFormat.parse(String.valueOf(map.get("endTime")));
-            long endMillis = endDate.getTime();
-            queryWrapper.lambda().le(Report::getCreatedTime, endMillis);
+        if(map.containsKey("endTime") && map.get("endTime") != null && !map.get("endTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date startDate = dateFormat.parse(String.valueOf(map.get("endTime")));
+            Timestamp endTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().le(Report::getCreatedTime,endTime);
         }
 
         Page<Report> page = new Page<>((Integer) map.get("pageNum"), (Integer) map.get("pageSize"));
