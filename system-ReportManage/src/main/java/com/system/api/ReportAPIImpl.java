@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/report")
 @Slf4j
 @RequiredArgsConstructor
 public class ReportAPIImpl  implements ReportAPI{
@@ -44,6 +44,11 @@ public class ReportAPIImpl  implements ReportAPI{
         return reportService.getById(id);
     }
 
+    @Override
+    @PostMapping("/updateReportById")
+    public boolean updateReportById(@RequestBody Report report) {
+        return reportService.updateById(report);
+    }
 //    @Override
 //    @PostMapping("/queryReportList")
 //    public List<Report> queryReportList(@RequestBody Map<String, Object> map) {

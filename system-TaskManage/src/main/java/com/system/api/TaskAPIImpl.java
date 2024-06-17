@@ -15,19 +15,19 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/task")
 @Slf4j
 @RequiredArgsConstructor
 public class TaskAPIImpl  implements TaskAPI{
     private final TaskService taskService;
     @Override
-    @PostMapping("/getReportById")
+    @PostMapping("/getTaskById")
     public Task getTaskById(@RequestBody String id) {
         return taskService.getById(id);
     }
 
     @Override
-    @PostMapping("/api/updateTask")
+    @PostMapping("/updateTaskById")
     public boolean updateTaskById(@RequestBody Task task){
         return taskService.updateById(task);
     }

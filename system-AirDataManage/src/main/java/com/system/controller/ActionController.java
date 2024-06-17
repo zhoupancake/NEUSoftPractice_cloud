@@ -54,7 +54,7 @@ public class ActionController {
                 City city = cityService.getCityById(airData.getCityId());
                 result.add(new ResponseAirDataEntity(airData, city));
             }
-        return HttpResponseEntity.response(success,"query successfully", result);
+        return HttpResponseEntity.response(success,"query ", result);
     }
 
     @PostMapping("/selectByProvince")
@@ -74,7 +74,7 @@ public class ActionController {
                 City city = cityService.getCityById(airData.getCityId());
                 result.add(new ResponseAirDataEntity(airData, city));
             }
-        return HttpResponseEntity.success("query successfully", result);
+        return HttpResponseEntity.success("query ", result);
     }
 
 }

@@ -18,7 +18,7 @@ import static com.system.util.AQIUtil.getAQI;
 import static com.system.util.AQIUtil.getAQILevel;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/airData")
 @Slf4j
 @RequiredArgsConstructor
 public class AirDataAPIImpl  implements AirDataAPI{

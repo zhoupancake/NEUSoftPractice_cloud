@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static java.util.List.of;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/city")
 @Slf4j
 @RequiredArgsConstructor
 public class CityAPIImpl  implements CityAPI{

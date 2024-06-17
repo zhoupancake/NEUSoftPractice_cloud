@@ -19,6 +19,7 @@ public class RequestSubmissionEntity implements Serializable {
     private String id;
     private String taskId;
     private String description;
+    private String submitterId;
     private String relatedAirDataId;
     private String imageUrl;
     private LocalDateTime submittedTime;
@@ -41,8 +42,8 @@ public class RequestSubmissionEntity implements Serializable {
     public Submission getSubmission_create() {
         return Submission.builder()
                 .taskId(taskId)
+                .submitterId(submitterId)
                 .description(description)
-                .relatedAirDataId(relatedAirDataId)
                 .imageUrl(imageUrl)
                 .build();
     }

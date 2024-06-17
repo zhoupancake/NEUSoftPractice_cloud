@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface AirDataAPI {
-    @PostMapping("/addAirData")
+    @PostMapping("/api/airData/addAirData")
     public boolean addAirData(@RequestBody AirData airData);
 
 //    @PostMapping("/modifyAirData")

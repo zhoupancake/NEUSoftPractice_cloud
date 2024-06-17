@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name="system-TaskManage", url="localhost:8084") //  远程服务的名称
 public interface TaskServiceFeignClient {
-    @PostMapping("/api/getTaskById")
+    @PostMapping("/api/task/getTaskById")
     public Task getTaskById(@RequestBody String id);
 
-    @PostMapping("/api/updateTask")
+    @PostMapping("/api/task/updateTaskById")
     public boolean updateTaskById(@RequestBody Task task);
 
-    @PostMapping("/api/getTaskIdByAppointerId")
+    @PostMapping("/api/task/getTaskIdByAppointerId")
     public String[] getTaskIdByAppointerId(@RequestBody String appointerId);
 
 }

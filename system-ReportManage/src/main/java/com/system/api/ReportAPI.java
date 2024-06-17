@@ -17,8 +17,11 @@ public interface ReportAPI {
 //    @PostMapping("/deleteReport")
 //    public boolean deleteReportById(@RequestBody Report report);
 
-    @PostMapping("/getReportById")
+    @PostMapping("/report/getReportById")
     public Report getReportById(@RequestBody String id);
+
+    @PostMapping("/report/updateReportById")
+    public boolean updateReportById(@RequestBody Report report);
 
 //    @PostMapping("/queryReportList")
 //    public List<Report> queryReportList(@RequestBody Map<String, Object> map);

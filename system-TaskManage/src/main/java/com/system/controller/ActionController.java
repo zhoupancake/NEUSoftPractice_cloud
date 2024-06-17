@@ -33,30 +33,27 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ActionController {
     private final TaskService taskService;
-    @Resource
     private ReportServiceFeignClient reportService;
-    @Resource
     private final CityServiceFeignClient cityService;
-    @Resource
-    private final GridDetectorServiceFeignClient gridDetectorService;
+    private final CharacterServiceFeignClient characterService;
 
     @PostMapping("/getAppointee/local")
     public List<GridDetector> getAppointee_local(@RequestBody Map<String, Object> map) {
         Map<String, Integer> paraMap = Map.of("cityId", (Integer) map.get("cityId"),
                 "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
-        return gridDetectorService.getDetectorSameCity(paraMap);
+        return characterService.getDetectorSameCity(paraMap);
     }
 
     @PostMapping("/getAppointee/province")
     public List<GridDetector> getAppointee_province(@RequestBody Map<String, Object> map) {
         List<Integer> cities = cityService.getCitiesSameProvince((Integer) map.get("cityId"));
-        return gridDetectorService.getDetectorSameProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+        return characterService.getDetectorSameProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
     }
 
     @PostMapping("/getAppoint/other")
     public List<GridDetector> getAppointee_other(@RequestBody Map<String, Object> map) {
         List<Integer> cities = cityService.getCitiesSameProvince((Integer) map.get("cityId"));
-        return gridDetectorService.getDetectorOtherProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
+        return characterService.getDetectorOtherProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
     }
 
     @PostMapping("/appoint")
@@ -67,8 +64,8 @@ public class ActionController {
         return HttpResponseEntity.response(success, "create task", null);
     }
 
-    @PostMapping("/queryTaskList/gridDetector")
-    public HttpResponseEntity queryReportListBySubmitterId_gridDetector(@RequestBody Map<String, Object> map) throws ParseException {
+    @PostMapping("/queryTaskList/character")
+    public HttpResponseEntity queryReportListBySubmitterId_character(@RequestBody Map<String, Object> map) throws ParseException {
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("appointee_id", map.get("appointeeId"));
 
