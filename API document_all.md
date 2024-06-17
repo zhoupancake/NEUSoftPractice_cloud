@@ -126,7 +126,7 @@ The create operations of air data in the system is attached with other operation
 
 - Request method: GET
 
-- Request method: http://localhost:8085/airData/selectAll
+- Request method: http://localhost:8085/airData/adminstrator/selectAll
 
 - Test cases
 
@@ -180,7 +180,7 @@ The create operations of air data in the system is attached with other operation
 
 - Request method: POST
 
-- Request method: http://localhost:8085/airData/selectAll/page
+- Request method: http://localhost:8085/administrator/airData/selectAll/page
 
 - Test cases
 
@@ -308,7 +308,7 @@ The create operations of air data in the system is attached with other operation
 
 - Request method: POST
 
-- Request path: http://localhost:8085/airData/selectByProvince
+- Request path: http://localhost:8085/administrator/airData/selectByProvince
 
 - Test case
 
@@ -2523,7 +2523,7 @@ The create operations of air data in the system is attached with other operation
 
 - Request method: POST
 
-- Request path: http://localhost:8082/report/report
+- Request path: http://localhost:8082/report/supervisor/report
 
 - Test cases
 
@@ -2960,6 +2960,62 @@ The create operations of air data in the system is attached with other operation
         "code": "0",
         "data": null,
         "message": "the selected city is not exist"
+    }
+    ```
+
+#### Get report by id
+
+- Request character: grid detector
+
+- Request method: POST
+
+- Request path: http://localhost:8082/report/gridDetector/getReportById
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    1115675276176519168
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": {
+            "id": "1115675276176519168",
+            "submitterId": "1115615978398412800",
+            "status": 1,
+            "createdTime": "2024-03-14 14:28:06",
+            "description": "test description",
+            "imageUrl": "",
+            "cityId": 1,
+            "location": "test location",
+            "forecastAqiLevel": 1
+        },
+        "message": "get reportsuccessfully"
+    }
+    ```
+
+  - Error test case
+
+    Request body
+
+    ```json
+    1
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "report is not exist"
     }
     ```
 
@@ -3585,7 +3641,7 @@ The create operations of air data in the system is attached with other operation
 
 - Request method: POST
 
-- Request path: http://localhost:8083/submission/submit
+- Request path: http://localhost:8083/submission/gridDetector/submit
 
 - Test cases
 
@@ -3774,6 +3830,211 @@ The create operations of air data in the system is attached with other operation
         "message": "fail to create submission "
     }
     ```
+
+#### Query submission list(grid detector)
+
+- Request character: grid detector
+
+- Request method: POST
+
+- Request path: http://localhost:8083/submission/gridDetector/querySubmissionList
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626886",
+        "taskId" : "1115676903893626880",
+        "description" : "test",
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-03-18",
+        "submitterId" : "1115613655483805696",
+        "administratorId" : "1115604128331984896",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115676903893626886",
+                "taskId": "1115676903893626880",
+                "submitterId": "1115613655483805696",
+                "description": "test descrption",
+                "relatedAirDataId": "1115664407392677898",
+                "imageUrl": null,
+                "submittedTime": "2024-03-16 11:24:28"
+            }
+        ],
+        "message": "query submissionsuccessfully"
+    }
+    ```
+
+  - Error test case: invalid date input
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626886",
+        "taskId" : "1115676903893626880",
+        "description" : "test",
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-18",
+        "submitterId" : "1115613655483805696",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "Unparseable date: \"2024-18\""
+    }
+    ```
+
+  - Error test case: invalid page number or page size input
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626886",
+        "taskId" : "1115676903893626880",
+        "description" : "test",
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-03-18",
+        "submitterId" : "1115613655483805696",
+        "pageNum" : 1,
+        "pageSize" : 0
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "pageNum or pageSize is invalid"
+    }
+    ```
+
+#### Query submission list(administrator)
+
+- Request character: administrator
+
+- Request method: POST
+
+- Request path: http://localhost:8083/submission/administrator/querySubmissionList
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626886",
+        "taskId" : "1115676903893626880",
+        "description" : "test",
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-03-17",
+        "submitterId" : "1115613655483805696",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115676903893626886",
+                "taskId": "1115676903893626880",
+                "submitterId": "1115613655483805696",
+                "description": "test descrption",
+                "relatedAirDataId": "1115664407392677898",
+                "imageUrl": null,
+                "submittedTime": "2024-03-16 11:24:28"
+            }
+        ],
+        "message": "query submissionsuccessfully"
+    }
+    ```
+
+  - Error test case: invalid date input
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626886",
+        "taskId" : "1115676903893626880",
+        "description" : "test",
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-18",
+        "submitterId" : "1115613655483805696",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "Unparseable date: \"2024-18\""
+    }
+    ```
+
+  - Error test case: invalid page number or page size input
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626886",
+        "taskId" : "1115676903893626880",
+        "description" : "test",
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-03-18",
+        "submitterId" : "1115613655483805696",
+        "pageNum" : 1,
+        "pageSize" : 0
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "pageNum or pageSize is invalid"
+    }
+    ```
+
+### Submission
 
 ### Submission Controller
 
@@ -4206,10 +4467,937 @@ The create operations of air data in the system is attached with other operation
 #### Update task by id
 
 - Request character: inner micro-service module
+
 - Request method: POST
-- Request path: http://localhost:8084/task
+
+- Request path: http://localhost:8084/api/task/updateTaskById
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626883",
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582080",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    true
+    ```
+
+  - Error test case: modify a non-existed task
+
+    Request body
+
+    ```json
+    {
+        "id" : "11156769038936263",
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582080",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    false
+    ```
+
+  - Error test case: using a non-existed administrator
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "111560474379578",
+        "appointeeId" : "1115614529362849792",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    false
+    ```
+
+  - Error test case: appointing a non-existed grid detector
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    false
+    ```
+
+  - Error test case: appoint a non-existed report
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582",
+        "relativeReportId" : "11156752761765"
+    }
+    ```
+
+    Response body
+
+    ```json
+    false
+    ```
+
+  - Error test case: appoint an appointer report
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614529362849792",
+        "relativeReportId" : "1115675276176519168"
+    }
+    ```
+
+    Response body
+
+    ```json
+    false
+    ```
+
+#### Get task id by appointer id
+
+- Request character: inner micro-service module
+
+- Request method: POST
+
+- Request path: http://localhost:8084/api/task/getTaskIdByAppointerId
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    1115604511875919872
+    ```
+
+    Response body
+
+    ```json
+    [
+        "1115676903893626881"
+    ]
+    ```
+
+  - Error test case
+
+    Request body
+
+    ```json
+    1115604511875919
+    ```
+
+    Response body
+
+    ```json
+    null
+    ```
 
 ### Action Controller
+
+#### Get the local grid detector
+
+- Request character: administrator
+
+- Request method: POST
+
+- Request path: http://localhost:8084/task/administrator/getAppointee/local
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "pageNum" : 1,
+        "pageSize" :5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115613655483805696",
+                "cityId": 2,
+                "idCard": "2021345678",
+                "name": "grid_test2"
+            },
+            {
+                "id": "1116415903470080000",
+                "cityId": 2,
+                "idCard": "2012567890",
+                "name": "testDetector"
+            },
+            {
+                "id": "1116545704042319872",
+                "cityId": 2,
+                "idCard": "2012567890",
+                "name": "testDetector"
+            },
+            {
+                "id": "1119159800105529344",
+                "cityId": 2,
+                "idCard": "2015567890",
+                "name": "testDetector"
+            }
+        ],
+        "message": "get appointeesuccessfully"
+    }
+    ```
+
+  - Error test case: require the grid detector of non supported city
+
+    Request body
+
+    ```json
+    {
+        "province" : "Beijing",
+        "city" : "Beiing",
+        "pageNum" : 1,
+        "pageSize" :5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "request city is not supported"
+    }
+    ```
+
+  - Error test case: invalid page number or page size input
+
+    Request body
+
+    ```json
+    {
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "pageNum" : 1,
+        "pageSize" : 0
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "The page size and the page number should be positive"
+    }
+    ```
+
+#### Get the appointee in the same province
+
+- Request character: administrator
+
+- Request method: POST
+
+- Request path: http://localhost:8084/administrator/getAppointee/province
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "province" : "Guangdong",
+        "city" : "Shenzhen",
+        "pageSize" : 5,
+        "pageNum" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115614345065132032",
+                "cityId": 5,
+                "idCard": "2019432109",
+                "name": "grid_test5"
+            },
+            {
+                "id": "1115614529362849792",
+                "cityId": 9,
+                "idCard": "2017890123",
+                "name": "grid_test8"
+            }
+        ],
+        "message": "get appointee successfully"
+    }
+    ```
+
+  - Error test case: the request province has no other supported city
+
+    Request body
+
+    ```json
+    {
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "pageSize" : 5,
+        "pageNum" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "request province has no other supported city"
+    }
+    ```
+
+  - Error test case: use invalid page size or page number
+
+    Request body
+
+    ```json
+    {
+        "province" : "Guangdong",
+        "city" : "Shenzhen",
+        "pageSize" : 5,
+        "pageNum" : 0
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "The page size and the page number should be positive"
+    }
+    ```
+
+  - Error test case: request a non-existed city
+
+    Request body
+
+    ```json
+    {
+        "province" : "Guangdong",
+        "city" : "Shenzhe",
+        "pageSize" : 5,
+        "pageNum" : 1
+    }
+    ```
+
+    Response body
+
+    ````json
+    {
+        "code": "0",
+        "data": null,
+        "message": "request city is not supported"
+    }
+    ````
+
+#### Get  the appointee in the same province
+
+- Request character: administrator
+
+- Request method: POST
+
+- Request path: http://localhost:8084/administrator/getAppointee/province
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ````json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115613612534132736",
+                "cityId": 1,
+                "idCard": "2015876543",
+                "name": "grid_test1"
+            },
+            {
+                "id": "1115614307672911872",
+                "cityId": 4,
+                "idCard": "2012567890",
+                "name": "grid_test4"
+            },
+            {
+                "id": "1115614345065132032",
+                "cityId": 5,
+                "idCard": "2019432109",
+                "name": "grid_test5"
+            },
+            {
+                "id": "1115614529362849792",
+                "cityId": 9,
+                "idCard": "2017890123",
+                "name": "grid_test8"
+            },
+            {
+                "id": "1115614627866079232",
+                "cityId": 7,
+                "idCard": "2022098765",
+                "name": "grid_test10"
+            }
+        ],
+        "message": "get appointee successfully"
+    }
+    ````
+
+  - Error test case: invalid page size and page number
+
+    Request body
+
+    ```json
+    {
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "pageNum" : 1,
+        "pageSize" : 0
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "The page size and the page number should be positive"
+    }
+    ```
+
+  - Error test case: use not supported city
+
+    Request body
+
+    ```json
+    {
+        "province" : "Beijing",
+        "city" : "Beiing",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "request city is not supported"
+    }
+    ```
+
+#### Appoint
+
+- Request character: administrator
+
+- Request method: POST
+
+- Request path: http://localhost:8084/task/administrator/appoint
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582080",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": null,
+        "message": "create task successfully"
+    }
+    ```
+
+  - Error test case: using a non-existed administrator
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "111560474379578",
+        "appointeeId" : "1115614529362849792",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "administrator not found"
+    }
+    ```
+
+  - Error test case: appointing a non-existed grid detector
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "grid detector not found"
+    }
+    ```
+
+  - Error test case: appoint a non-existed report
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582",
+        "relativeReportId" : "11156752761765"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "report not found"
+    }
+    ```
+
+  - Error test case: appoint an appointer report
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614529362849792",
+        "relativeReportId" : "1115675276176519168"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "report has been appointed"
+    }
+    ```
+
+#### Query task list(grid detector)
+
+-  Request character: grid detector
+- Request method: POST
+- Request path: http://localhost:8084/task/gridDetector/queryTaskList
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "",
+        "endTime" : "",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115676903893626880",
+                "appointerId": "1115604128331984896",
+                "appointee": "1115615978398412800",
+                "createdTime": "2024-03-15T11:28:06",
+                "status": 1,
+                "province": "Shanghai",
+                "city": "Shanghai",
+                "location": "test location",
+                "reportForecastAqiLevel": 1
+            }
+        ],
+        "message": "query successfully"
+    }
+    ```
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-03-16",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115676903893626880",
+                "appointerId": "1115604128331984896",
+                "appointee": "1115615978398412800",
+                "createdTime": "2024-03-15T11:28:06",
+                "status": 1,
+                "province": "Shanghai",
+                "city": "Shanghai",
+                "location": "test location",
+                "reportForecastAqiLevel": 1
+            }
+        ],
+        "message": "querysuccessfully"
+    }
+    ```
+
+  - Error test case: query the data without grid detector id
+
+    Request body
+
+    ```json
+    {
+        "status" : 1,
+        "startTime" : "",
+        "endTime" : "",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "appointeeId is required"
+    }
+    ```
+
+  - Error test case: use invalid page number or page size
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "",
+        "endTime" : "",
+        "pageNum" : 1,
+        "pageSize" : 0
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "The page size and the page number should be positive"
+    }
+    ```
+
+  - Error test case: pass into invalid date
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "2024-0301",
+        "endTime" : "2024-03-16",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "Unparseable date: \"2024-0301\""
+    }
+    ```
+
+#### Query task list(administrator)
+
+- Request character: administrator
+- Request method: POST
+- Request path: http://localhost:8084/task/administrator/queryTaskList
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "",
+        "endTime" : "",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115676903893626880",
+                "appointerId": "1115604128331984896",
+                "appointee": "1115615978398412800",
+                "createdTime": "2024-03-15T11:28:06",
+                "status": 1,
+                "province": "Shanghai",
+                "city": "Shanghai",
+                "location": "test location",
+                "reportForecastAqiLevel": 1
+            }
+        ],
+        "message": "query successfully"
+    }
+    ```
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-03-16",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115676903893626880",
+                "appointerId": "1115604128331984896",
+                "appointee": "1115615978398412800",
+                "createdTime": "2024-03-15T11:28:06",
+                "status": 1,
+                "province": "Shanghai",
+                "city": "Shanghai",
+                "location": "test location",
+                "reportForecastAqiLevel": 1
+            }
+        ],
+        "message": "querysuccessfully"
+    }
+    ```
+
+  - Error test case: query the data without administrator id
+
+    Request body
+
+    ```json
+    {
+        "status" : 1,
+        "startTime" : "",
+        "endTime" : "",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "appointerId is required"
+    }
+    ```
+
+  - Error test case: use invalid page number or page size
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "",
+        "endTime" : "",
+        "pageNum" : 1,
+        "pageSize" : 0
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "The page size and the page number should be positive"
+    }
+    ```
+
+  - Error test case: pass into invalid date
+
+    Request body
+
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "2024-0301",
+        "endTime" : "2024-03-16",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "Unparseable date: \"2024-0301\""
+    }
+    ```
 
 ### Task Controller
 
@@ -4543,14 +5731,14 @@ The create operations of air data in the system is attached with other operation
 
     ```json
     {
-        "id" : "1115676903893626881",
-        "appointerId" : "1115604511875919872",
-        "appointeeId" : "1115614265843118080",
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
         "status" : 1,
         "startTime" : "",
         "endTime" : "",
-        "pageSize" : 1,
-        "pageNum" : 5
+        "pageNum" : 1,
+        "pageSize" : 5
     }
     ```
 
@@ -4561,18 +5749,133 @@ The create operations of air data in the system is attached with other operation
         "code": "200",
         "data": [
             {
-                "id": "1115676903893626881",
-                "appointerId": "1115604511875919872",
-                "appointee": "1115614265843118080",
-                "createdTime": "2024-03-15T15:40:43",
+                "id": "1115676903893626880",
+                "appointerId": "1115604128331984896",
+                "appointee": "1115615978398412800",
+                "createdTime": "2024-03-15T11:28:06",
                 "status": 1,
-                "province": "Beijing",
-                "city": "Beijing",
-                "location": "",
-                "reportForecastAqiLevel": 2
+                "province": "Shanghai",
+                "city": "Shanghai",
+                "location": "test location",
+                "reportForecastAqiLevel": 1
+            }
+        ],
+        "message": "query successfully"
+    }
+    ```
+    
+    Request body
+    
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "2024-03-01",
+        "endTime" : "2024-03-16",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+    
+    Response body
+    
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115676903893626880",
+                "appointerId": "1115604128331984896",
+                "appointee": "1115615978398412800",
+                "createdTime": "2024-03-15T11:28:06",
+                "status": 1,
+                "province": "Shanghai",
+                "city": "Shanghai",
+                "location": "test location",
+                "reportForecastAqiLevel": 1
             }
         ],
         "message": "querysuccessfully"
+    }
+    ```
+  
+  - Error test case: query the data without grid detector id
+  
+    Request body
+  
+    ```json
+    {
+        "status" : 1,
+        "startTime" : "",
+        "endTime" : "",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "appointeeId is required"
+    }
+    ```
+  
+  - Error test case: use invalid page number or page size
+  
+    Request body
+  
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "",
+        "endTime" : "",
+        "pageNum" : 1,
+        "pageSize" : 0
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "The page size and the page number should be positive"
+    }
+    ```
+  
+  - Error test case: pass into invalid date
+  
+    Request body
+  
+    ```json
+    {
+        "id" : "1115676903893626880",
+        "appointerId" : "1115604128331984896",
+        "appointeeId" : "1115615978398412800",
+        "status" : 1,
+        "startTime" : "2024-0301",
+        "endTime" : "2024-03-16",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "Unparseable date: \"2024-0301\""
     }
     ```
 
@@ -4773,7 +6076,7 @@ The create operations of air data in the system is attached with other operation
 
 #### Select all city
 
-- Request character: supervisor
+- Request character: all
 
 - Request method: GET
 
@@ -4809,7 +6112,7 @@ The create operations of air data in the system is attached with other operation
 
 #### Select by province
 
-- Request character: supervisor
+- Request character: all
 
 - Request method: POST
 
@@ -5105,8 +6408,3 @@ The create operations of air data in the system is attached with other operation
 
 
 ## Gateway Module
-
-
-
-
-

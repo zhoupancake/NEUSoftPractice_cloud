@@ -15,13 +15,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ActionController {
     private final CityService cityService;
-    @GetMapping("selectAll")
+    @GetMapping("/selectAll")
     public HttpResponseEntity selectAll(){
         List<City> cities = cityService.query().list();
         return HttpResponseEntity.success("query ",cities);
     }
 
-    @PostMapping("selectByProvince")
+    @PostMapping("/selectByProvince")
     public HttpResponseEntity selectByProvince(@RequestBody String province){
         List<City> cities = cityService.query().eq("province",province).list();
         return HttpResponseEntity.response(!cities.isEmpty(), "query ",cities);

@@ -37,7 +37,7 @@ public class ActionController {
     private final AirDataServiceFeignClient airDataService;
     private final CityServiceFeignClient cityService;
     private final CharacterServiceFeignClient characterService;
-    @PostMapping("/submit")
+    @PostMapping("/gridDetector/submit")
     public HttpResponseEntity submit(@RequestBody RequestSubmissionEntity requestSubmissionEntity) {
         Submission submission = requestSubmissionEntity.getSubmission_create();
         AirData airData = requestSubmissionEntity.getAirData_create();
@@ -78,10 +78,18 @@ public class ActionController {
 
     @PostMapping("/gridDetector/querySubmissionList")
     public HttpResponseEntity querySubmissionList_gridDetector(@RequestBody Map<String, Object> map) throws ParseException {
+        if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
+            return HttpResponseEntity.error("pageNum or pageSize is invalid");
         QueryWrapper<Submission> queryWrapper = new QueryWrapper<>();
-        if (map.get("gridDetectorId") == null)
+        if (map.containsKey("submitterId") && map.get("submitterId") != null)
             queryWrapper.eq("submitter_id", map.get("submitterId"));
-        if (map.get("description") != null)
+        else
+            return HttpResponseEntity.error("submitter id is required");
+        if(map.containsKey("id") && map.get("id") != null)
+            queryWrapper.like("id", map.get("id"));
+        if(map.containsKey("taskId") && map.get("taskId") != null)
+            queryWrapper.like("task_id", map.get("taskId"));
+        if (map.containsKey("description") && map.get("description") != null)
             queryWrapper.like("description", map.get("description"));
         if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -100,34 +108,41 @@ public class ActionController {
         Page<Submission> submissionPage = submissionService.page(page, queryWrapper);
 
         List<Submission> submissionList = submissionPage.getRecords();
-        return HttpResponseEntity.success("select all submission", submissionList);
+        return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", submissionList);
     }
 
     @PostMapping("/administrator/querySubmissionList")
     public HttpResponseEntity querySubmissionList_administrator(@RequestBody Map<String, Object> map) throws ParseException {
+        if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
+            return HttpResponseEntity.error("pageNum or pageSize is invalid");
         QueryWrapper<Submission> queryWrapper = new QueryWrapper<>();
-        String[] taskIds = taskService.getTaskIdByAppointerId(String.valueOf(map.get("administratorId")));
-        for(String str: taskIds)
-            queryWrapper.or().eq("task_id", str);
-        if (map.get("description") != null)
+        if (map.containsKey("submitterId") && map.get("submitterId") != null)
+            queryWrapper.eq("submitter_id", map.get("submitterId"));
+        if(map.containsKey("id") && map.get("id") != null)
+            queryWrapper.like("id", map.get("id"));
+        if(map.containsKey("taskId") && map.get("taskId") != null)
+            queryWrapper.like("task_id", map.get("taskId"));
+        if (map.containsKey("description") && map.get("description") != null)
             queryWrapper.like("description", map.get("description"));
-        if(map.get("startTime") != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("startTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().ge(Submission::getSubmittedTime,startMillis);
+            Timestamp startTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().ge(Submission::getSubmittedTime,startTime);
         }
-        if(map.get("endTime") != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("endTime") && map.get("endTime") != null && !map.get("endTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("endTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().le(Submission::getSubmittedTime,startMillis);
+            Timestamp endTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().le(Submission::getSubmittedTime,endTime);
         }
 
         Page<Submission> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
         Page<Submission> submissionPage = submissionService.page(page, queryWrapper);
 
         List<Submission> submissionList = submissionPage.getRecords();
-        return HttpResponseEntity.success("select all submission", submissionList);
+        if(map.containsKey("administratorId") && map.get("administratorId") != null)
+            submissionList.removeIf(submission -> !taskService.getTaskById(submission.getTaskId()).getAppointerId().equals(map.get("administratorId")));
+        return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", submissionList);
     }
 }

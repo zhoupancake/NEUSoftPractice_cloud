@@ -31,12 +31,10 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ActionController {
     private final ReportService reportService;
-    @Resource
     private final CityServiceFeignClient cityService;
-    @Resource
     private final SupervisorServiceFeignClient supervisorService;
 
-    @PostMapping("/report")
+    @PostMapping("/supervisor/report")
     public HttpResponseEntity addReport(@RequestBody RequestReportEntity requestReportEntity) {
         Report report = requestReportEntity.getReport_create();
         if (null == supervisorService.getSupervisorById(report.getSubmitterId()))
@@ -57,7 +55,6 @@ public class ActionController {
     @PostMapping("/gridDetector/getReportById")
     public HttpResponseEntity getReportById(@RequestBody String id) {
         Report report = reportService.getById(id);
-        System.out.println(report);
         if (report == null)
             return HttpResponseEntity.error("report is not exist");
         return HttpResponseEntity.response(true, "get report", report);

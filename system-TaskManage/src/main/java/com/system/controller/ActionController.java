@@ -1,18 +1,16 @@
 package com.system.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.common.HttpResponseEntity;
-import com.system.dto.ResponseReportEntity;
 import com.system.dto.ResponseTaskEntity;
 import com.system.entity.character.GridDetector;
-import com.system.entity.character.Supervisor;
 import com.system.entity.data.City;
 import com.system.entity.data.Report;
 import com.system.entity.data.Task;
 import com.system.service.*;
 import com.system.util.SnowflakeUtil;
-import jakarta.annotation.Resource;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +32,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ActionController {
     private final TaskService taskService;
-    private ReportServiceFeignClient reportService;
+    private final ReportServiceFeignClient reportService;
     private final CityServiceFeignClient cityService;
     private final CharacterServiceFeignClient characterService;
 
@@ -84,7 +82,7 @@ public class ActionController {
         return HttpResponseEntity.response(!result.isEmpty(), "get appointee ", result);
     }
 
-    @PostMapping("/appoint")
+    @PostMapping("/administrator/appoint")
     public HttpResponseEntity addTask(@RequestBody Task task) {
         task.setId(SnowflakeUtil.genId());
         task.setStatus(0);
@@ -99,34 +97,39 @@ public class ActionController {
             return HttpResponseEntity.error("grid detector not found");
 
         boolean success = taskService.save(task);
-        return HttpResponseEntity.response(success, "create task", null);
+        return HttpResponseEntity.response(success, "create task ", null);
     }
 
-    @PostMapping("/queryTaskList/character")
+    @PostMapping("/gridDetector/queryTaskList")
     public HttpResponseEntity queryReportListBySubmitterId_character(@RequestBody Map<String, Object> map) throws ParseException {
+        if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
+            return HttpResponseEntity.error("The page size and the page number should be positive");
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("appointee_id", map.get("appointeeId"));
+        if(map.containsKey("appointeeId") && map.get("appointeeId") != null)
+            queryWrapper.eq("appointee_id", map.get("appointeeId"));
+        else
+            return HttpResponseEntity.error("appointeeId is required");
 
-        if (map.get("status") != null)
+        if(map.containsKey("id") && map.get("id") != null)
+            queryWrapper.like("id", map.get("id"));
+        if(map.containsKey("appointerId") && map.get("appointerId") != null)
+            queryWrapper.like("appointer_id", map.get("appointerId"));
+        if(map.containsKey("appointeeId") && map.get("appointeeId") != null)
+            queryWrapper.like("appointee_id", map.get("appointeeId"));
+        if (map.containsKey("status") && map.get("status") != null)
             queryWrapper.like("status", map.get("status"));
-        if(map.get("startTime") != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("startTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().ge(Task::getCreatedTime,startMillis);
+            Timestamp startTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().ge(Task::getCreatedTime,startTime);
         }
-        if(map.get("endTime") != null) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd");
+        if(map.containsKey("endTime") && map.get("endTime") != null && !map.get("endTime").equals("")) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("endTime")));
-            long startMillis = startDate.getTime();
-            queryWrapper.lambda().le(Task::getCreatedTime,startMillis);
+            Timestamp endTime = new Timestamp(startDate.getTime());
+            queryWrapper.lambda().le(Task::getCreatedTime,endTime);
         }
-        if (map.get("description") != null)
-            queryWrapper.like("description", map.get("description"));
-        if(map.get("location") != null)
-            queryWrapper.like("location", map.get("location"));
-        if(map.get("forecastApiLevel") != null)
-            queryWrapper.eq("forecast_aqi_level", map.get("forecastApiLevel"));
         Page<Task> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
         Page<Task> taskPage = taskService.page(page, queryWrapper);
 
@@ -142,12 +145,23 @@ public class ActionController {
         return HttpResponseEntity.response(success, "query", result);
     }
 
-    @PostMapping("/queryTaskList/administrator")
+    @PostMapping("/administrator/queryTaskList")
     public HttpResponseEntity queryReportListBySubmitterId_administrator(@RequestBody Map<String, Object> map) throws ParseException {
+        if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
+            return HttpResponseEntity.error("The page size and the page number should be positive");
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("appointer_id", map.get("appointerId"));
+        if(map.containsKey("appointerId") && map.get("appointerId") != null)
+            queryWrapper.eq("appointer_id", map.get("appointerId"));
+        else
+            return HttpResponseEntity.error("appointerId is required");
 
-        if (map.get("status") != null)
+        if(map.containsKey("id") && map.get("id") != null)
+            queryWrapper.like("id", map.get("id"));
+        if(map.containsKey("appointeeId") && map.get("appointeeId") != null)
+            queryWrapper.like("appointee_id", map.get("appointeeId"));
+        if(map.containsKey("appointeeId") && map.get("appointeeId") != null)
+            queryWrapper.like("appointee_id", map.get("appointeeId"));
+        if (map.containsKey("status") && map.get("status") != null)
             queryWrapper.like("status", map.get("status"));
         if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -161,12 +175,6 @@ public class ActionController {
             Timestamp endTime = new Timestamp(startDate.getTime());
             queryWrapper.lambda().le(Task::getCreatedTime,endTime);
         }
-        if (map.get("description") != null)
-            queryWrapper.like("description", map.get("description"));
-        if(map.get("location") != null)
-            queryWrapper.like("location", map.get("location"));
-        if(map.get("forecastApiLevel") != null)
-            queryWrapper.eq("forecast_aqi_level", map.get("forecastApiLevel"));
         Page<Task> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
         Page<Task> taskPage = taskService.page(page, queryWrapper);
 
@@ -177,7 +185,7 @@ public class ActionController {
             for(Task task: taskList) {
                 Report report = reportService.getReportById(task.getRelativeReportId());
                 City city = cityService.getCityById(report.getCityId());
-                result.add(new ResponseTaskEntity(task, report, city));
+                result.add(new ResponseTaskEntity(task,report, city));
             }
         return HttpResponseEntity.response(success, "query", result);
     }
