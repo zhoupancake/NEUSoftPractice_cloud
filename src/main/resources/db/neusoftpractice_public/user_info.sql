@@ -63,7 +63,5 @@ INSERT INTO `user_info` VALUES ('1115616085944561664', '15099999999', 'super7', 
 INSERT INTO `user_info` VALUES ('1115616117519282176', '14512345678', 'super8', 1, 'Supervisor');
 INSERT INTO `user_info` VALUES ('1115616172422721536', '17088888888', 'super9', 0, 'Supervisor');
 INSERT INTO `user_info` VALUES ('1115616213161996288', '17676543210', 'super10', 1, 'Supervisor');
-INSERT INTO `user_info` VALUES ('1115957247922401280', 'idCard', 'password', 1, 'Adminstrator');
-INSERT INTO `user_info` VALUES ('1115957421319122944', 'idCard', 'password', 1, 'Administrator');
 
 SET FOREIGN_KEY_CHECKS = 1;
