@@ -102,6 +102,7 @@ public class ActionController {
 
     @PostMapping("/gridDetector/queryTaskList")
     public HttpResponseEntity queryReportListBySubmitterId_character(@RequestBody Map<String, Object> map) throws ParseException {
+        System.out.println(map);
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
             return HttpResponseEntity.error("The page size and the page number should be positive");
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();

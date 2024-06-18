@@ -76,7 +76,8 @@ public class UserController {
                     cookie.setSecure(true);
                     cookie.setHttpOnly(true);
                     response.addCookie(cookie);
-                    return HttpResponseEntity.response(true, "Login successfully", token);
+                    Map<String, String> result = Map.of("id", administrator.getId(), "token", token);
+                    return HttpResponseEntity.response(true, "Login successfully", result);
                 }
                 case "GridDetector" -> {
                     GridDetector gridDetector = gridManagerService.getById(loginUser.getId());
@@ -84,7 +85,8 @@ public class UserController {
                     cookie.setSecure(true);
                     cookie.setHttpOnly(true);
                     response.addCookie(cookie);
-                    return HttpResponseEntity.response(true, "Login successfully", token);
+                    Map<String, String> result = Map.of("id", gridDetector.getId(), "token", token);
+                    return HttpResponseEntity.response(true, "Login successfully", result);
                 }
                 case "Supervisor" -> {
                     Supervisor supervisor = supervisorService.getById(loginUser.getId());
@@ -92,7 +94,8 @@ public class UserController {
                     cookie.setSecure(true);
                     cookie.setHttpOnly(true);
                     response.addCookie(cookie);
-                    return HttpResponseEntity.response(true, "Login successfully", token);
+                    Map<String, String> result = Map.of("id", supervisor.getId(), "token", token);
+                    return HttpResponseEntity.response(true, "Login successfully", result);
                 }
                 default -> {
                     return HttpResponseEntity.response(false, "Access Deny", null);

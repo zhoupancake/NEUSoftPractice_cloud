@@ -45,8 +45,11 @@ public class AuthGatewayFilterFactory implements GlobalFilter{
         PathMatcher pathMatcher = new AntPathMatcher();
         switch (role) {
             case "Administrator" -> {
-                if (pathMatcher.match("/administrator/**", path)||
-                    pathMatcher.match("/gridDetector/**", path)||
+                if (pathMatcher.match("/airData/administrator/**", path)||
+                    pathMatcher.match("/report/administrator/**", path)||
+                    pathMatcher.match("/task/administrator/**", path) ||
+                    pathMatcher.match("/submission/administrator/**", path) ||
+                    pathMatcher.match("/city/**", path) ||
                     pathMatcher.match("/user/**", path))
                     return chain.filter(exchange);
                 else {
@@ -55,11 +58,12 @@ public class AuthGatewayFilterFactory implements GlobalFilter{
                 }
             }
             case "Supervisor" -> {
-                if (pathMatcher.match("/user/**", path)||
-                    pathMatcher.match("/supervisor/modifySupervisor", path)||
-                    pathMatcher.match("/supervisor/deleteSupervisor", path)||
-                    pathMatcher.match("/report/report", path)||
-                    pathMatcher.match("/report/queryReportList", path))
+                if (pathMatcher.match("/airData/supervisor/**", path)||
+                        pathMatcher.match("/report/supervisor/**", path)||
+                        pathMatcher.match("/task/supervisor/**", path) ||
+                        pathMatcher.match("/submission/supervisor/**", path) ||
+                        pathMatcher.match("/city/**", path) ||
+                        pathMatcher.match("/user/**", path))
                     return chain.filter(exchange);
                 else {
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
@@ -67,11 +71,12 @@ public class AuthGatewayFilterFactory implements GlobalFilter{
                 }
             }
             case "GridDetector" -> {
-                if (pathMatcher.match("/user/**", path)||
-                    pathMatcher.match("/gridDetector/modifyGridDetector", path)||
-                    pathMatcher.match("/gridDetector/deleteGridDetector", path)||
-                    pathMatcher.match("task/queryTaskList", path)||
-                    pathMatcher.match("submission/**", path))
+                if (pathMatcher.match("/airData/gridDetector/**", path)||
+                    pathMatcher.match("/report/gridDetector/**", path)||
+                    pathMatcher.match("/task/gridDetector/**", path) ||
+                    pathMatcher.match("/submission/gridDetector/**", path) ||
+                    pathMatcher.match("/city/**", path) ||
+                    pathMatcher.match("/user/**", path))
                     return chain.filter(exchange);
                 else {
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
