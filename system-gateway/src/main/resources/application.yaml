@@ -17,53 +17,84 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true # 让gateway可以发现nacos中的微服务
-      #      配置网关的路由规则
+          enabled: true
+      filters:
+        global:
+         - com.neusoft.springcloud.gateway.filter.AuthGatewayFilterFactory
       routes:
         - id: system-AirDataManage
           uri: lb://system-AirDataManage
           order: 1
           predicates:
             - Path=/airData/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
 
-        - id: system-PermissionControl
+        - id: system-PermissionControl_user
+          uri: lb://system-PermissionControl
+          order: 1
+          predicates:
+            - Path=/user/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
+
+        - id: system-PermissionControl_administrator
           uri: lb://system-PermissionControl
           order: 1
           predicates:
             - Path=/administrator/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
+
+        - id: system-PermissionControl_gridDetector
+          uri: lb://system-PermissionControl
+          order: 1
+          predicates:
             - Path=/gridDetector/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
+
+        - id: system-PermissionControl_supervisor
+          uri: lb://system-PermissionControl
+          order: 1
+          predicates:
             - Path=/supervisor/**
-            - Path=/user/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
 
         - id: system-ReportManage
           uri: lb://system-ReportManage
           order: 1
           predicates:
             - Path=/report/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
 
         - id: system-SubmissionManage
           uri: lb://system-SubmissionManage
           order: 1
           predicates:
             - Path=/submission/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
 
         - id: system-TaskManage
           uri: lb:system-TaskManage
           order: 1
           predicates:
             - Path=/task/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
 
         - id: system-ZoneManage
           uri: lb:system-ZoneManage
           order: 1
           predicates:
             - Path=/zone/**
+#          filters:
+#            - name: AuthGatewayFilterFactory
   data:
     redis:
       database: 0
       host: localhost
       port: 6379
-redis:
-
-
-

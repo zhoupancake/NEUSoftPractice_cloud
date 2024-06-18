@@ -3,10 +3,11 @@ package com.system.filter;
 import com.alibaba.nacos.common.utils.StringUtils;
 import com.auth0.jwt.interfaces.Claim;
 import com.system.util.JWTUtil;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -20,8 +21,7 @@ import java.util.Objects;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class AuthGatewayFilterFactory implements GlobalFilter{
+public class AuthGatewayFilterFactory implements GlobalFilter  {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 //        String token=exchange.getRequest().getQueryParams().getFirst("token");
@@ -30,14 +30,14 @@ public class AuthGatewayFilterFactory implements GlobalFilter{
         //Access Deny for no token
         if(StringUtils.isEmpty(token)){
             //响应HTTP状态码（401：没有访问权限）
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
             //请求结束
             return exchange.getResponse().setComplete();
         }
 
         //Verify Token
         JWTUtil.verify(token);
-
+        System.out.println(token);
         //Get Role
         Map<String, Claim> claims = JWTUtil.getPayloadFromToken(token);
         String role = claims.get("role").asString();
@@ -59,11 +59,11 @@ public class AuthGatewayFilterFactory implements GlobalFilter{
             }
             case "Supervisor" -> {
                 if (pathMatcher.match("/airData/supervisor/**", path)||
-                        pathMatcher.match("/report/supervisor/**", path)||
-                        pathMatcher.match("/task/supervisor/**", path) ||
-                        pathMatcher.match("/submission/supervisor/**", path) ||
-                        pathMatcher.match("/city/**", path) ||
-                        pathMatcher.match("/user/**", path))
+                    pathMatcher.match("/report/supervisor/**", path)||
+                    pathMatcher.match("/task/supervisor/**", path) ||
+                    pathMatcher.match("/submission/supervisor/**", path) ||
+                    pathMatcher.match("/city/**", path) ||
+                    pathMatcher.match("/user/**", path))
                     return chain.filter(exchange);
                 else {
                     exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);

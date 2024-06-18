@@ -180,7 +180,7 @@ The create operations of air data in the system is attached with other operation
 
 - Request method: POST
 
-- Request method: http://localhost:8085/administrator/airData/selectAll/page
+- Request method: http://localhost:8085/airData/administrator/selectAll/page
 
 - Test cases
 
@@ -308,7 +308,7 @@ The create operations of air data in the system is attached with other operation
 
 - Request method: POST
 
-- Request path: http://localhost:8085/administrator/airData/selectByProvince
+- Request path: http://localhost:8085/airData/administrator/selectByProvince
 
 - Test case
 
@@ -922,24 +922,27 @@ The create operations of air data in the system is attached with other operation
     ```json
     {
         "code": "200",
-        "data": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6ImFkbWluMiIsInJvbGUiOiJBZG1pbmlzdHJhdG9yIiwibmFtZSI6IjIwMTM1Njc4OTAiLCJpZCI6IjExMTU2MDQ1MTE4NzU5MTk4NzIiLCJleHAiOjE3MTgzNzA1NzN9.dBi_WIjxwaBFA2-JVhp_iorEqJUHmnoqQ6z2bT8zkRA",
+        "data": {
+            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6ImFkbWluMiIsInJvbGUiOiJBZG1pbmlzdHJhdG9yIiwibmFtZSI6IjIwMTM1Njc4OTAiLCJpZCI6IjExMTU2MDQ1MTE4NzU5MTk4NzIiLCJleHAiOjE3MTg2ODYwNzh9.dzkFIxWKZF3JLlF5jAYAN0ap695YjCfxx02IeJi0om8",
+            "id": "1115604511875919872"
+        },
         "message": "Login successfully"
     }
     ```
-
+  
   - Error test case: pass into error username or password
-
+  
     Request body
-
+  
     ``` json
     {  
         "username": "323232",
         "password": "grid5"
     }
     ```
-
+  
     Response body
-
+  
     ```json
     {
         "code": "0",
@@ -947,20 +950,20 @@ The create operations of air data in the system is attached with other operation
         "message": "fail to login for error username or password"
     }
     ```
-
+  
   - Error test case: request to login a deactivated account
-
+  
     Request body
-
+  
     ```json
     {  
         "username": "2016456789",
         "password": "admin3"
     }
     ```
-
+  
     Response body
-
+  
     ```json
     {
         "code": "0",
@@ -968,20 +971,20 @@ The create operations of air data in the system is attached with other operation
         "message": "fail to login, The account is banned"
     }
     ```
-
+  
   - Error test case: use error password over 5 times
-
+  
     Request body
-
+  
     ```json
     {  
         "username": "2015328754",
         "password": "admin"
     }
     ```
-
+  
     Response body
-
+  
     ```json
     {
         "code": "0",
@@ -6408,3 +6411,8 @@ The create operations of air data in the system is attached with other operation
 
 
 ## Gateway Module
+
+The spring gateway module is designed to intercept and filter the requests from front-end to implement the authentication based on the users' role and token decoding. It accepts all the requests to this back-end system and  decode the token user pass into. Based on the information contained in the token and the path users request, the gateway will redirect the route to the specific path or reject the illegal operations. Moreover, it mask the real port numbers that micro-service module executing on and  forbid the request to them. This part of test will test whether requests can be redirected to the corresponding micro-service modules correctly and intercept the illegal port numbers or paths.
+
+### Gateway port redirection
+

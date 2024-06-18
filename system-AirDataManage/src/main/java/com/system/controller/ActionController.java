@@ -6,6 +6,7 @@ import com.system.common.HttpResponseEntity;
 import com.system.dto.ResponseAirDataEntity;
 import com.system.entity.data.AirData;
 import com.system.entity.data.City;
+import com.system.mapper.AirDataMapper;
 import com.system.service.AirDataService;
 import com.system.service.CityServiceFeignClient;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class ActionController {
     private final AirDataService airDataService;
     private final CityServiceFeignClient cityService;
+    private final AirDataMapper mapper;
 
     @PostMapping("/administrator/selectAll/page")
     public HttpResponseEntity selectAll(@RequestBody Map<String, Object> map) {
