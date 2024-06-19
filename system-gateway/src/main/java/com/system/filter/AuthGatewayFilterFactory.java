@@ -6,6 +6,7 @@ import com.system.util.JWTUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -22,8 +23,24 @@ import java.util.Objects;
 public class AuthGatewayFilterFactory implements GlobalFilter  {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-//        String token=exchange.getRequest().getQueryParams().getFirst("token");
+        int port = Objects.requireNonNull(exchange.getRequest().getLocalAddress()).getPort();
+        System.out.println(port);
+        if(port != 8080) {
+            exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+            return exchange.getResponse().setComplete();
+        }
+        String path = exchange.getRequest().getPath().toString();
+        PathMatcher pathMatcher = new AntPathMatcher();
+        if(pathMatcher.match("/user/login", path))
+            return chain.filter(exchange);
+
         String token = Objects.requireNonNull(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION)).replace("Bearer ", "");;
+        //Verify Token
+        JWTUtil.verify(token);
+        System.out.println(token);
+        //Get Role
+        Map<String, Claim> claims = JWTUtil.getPayloadFromToken(token);
+        String role = claims.get("role").asString();
 
         //Access Deny for no token
         if(StringUtils.isEmpty(token)){
@@ -32,15 +49,6 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
             //请求结束
             return exchange.getResponse().setComplete();
         }
-
-        //Verify Token
-        JWTUtil.verify(token);
-        System.out.println(token);
-        //Get Role
-        Map<String, Claim> claims = JWTUtil.getPayloadFromToken(token);
-        String role = claims.get("role").asString();
-        String path = exchange.getRequest().getPath().toString();
-        PathMatcher pathMatcher = new AntPathMatcher();
         switch (role) {
             case "Administrator" -> {
                 if (pathMatcher.match("/airData/administrator/**", path)||

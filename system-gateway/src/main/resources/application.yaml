@@ -1,5 +1,6 @@
 server:
   port: 8080
+  additionalPorts: 8081, 8082, 8083, 8084, 8085, 8086
 spring:
   main:
     web-application-type: reactive
