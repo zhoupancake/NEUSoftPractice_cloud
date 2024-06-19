@@ -25,6 +25,7 @@ public class ResponseTaskEntity implements Serializable {
     private String province;
     private String city;
     private String location;
+    private String description;
     private Integer reportForecastAqiLevel;
 
     public ResponseTaskEntity(Task task, Report report, City city) {
@@ -37,6 +38,7 @@ public class ResponseTaskEntity implements Serializable {
         this.city = city.getName();
         this.location = report.getLocation();
         this.reportForecastAqiLevel = report.getForecastAqiLevel();
+        this.description = report.getDescription();
     }
 
 
