@@ -53,8 +53,8 @@ public class ActionController {
     }
 
     @PostMapping("/gridDetector/getReportById")
-    public HttpResponseEntity getReportById(@RequestBody String id) {
-        Report report = reportService.getById(id);
+    public HttpResponseEntity getReportById(@RequestBody Map<String,String> map) {
+        Report report = reportService.getById(String.valueOf(map.get("id")));
         if (report == null)
             return HttpResponseEntity.error("report is not exist");
         return HttpResponseEntity.response(true, "get report", report);

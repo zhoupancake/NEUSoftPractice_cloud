@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.common.HttpResponseEntity;
 import com.system.dto.ResponseTaskEntity;
+import com.system.entity.character.Supervisor;
 import com.system.entity.data.City;
 import com.system.entity.data.Report;
 import com.system.entity.data.Submission;
@@ -113,8 +114,9 @@ public class TaskController {
         if(success)
             for(Task task: taskList) {
                 Report report = reportService.getReportById(task.getRelativeReportId());
+                Supervisor supervisor = characterService.getSupervisorById(report.getSubmitterId());
                 City city = cityService.getCityById(report.getCityId());
-                result.add(new ResponseTaskEntity(task, report, city));
+                result.add(new ResponseTaskEntity(task, report, city, supervisor));
             }
         return HttpResponseEntity.response(success, "query", result);
     }
