@@ -6412,7 +6412,664 @@ The create operations of air data in the system is attached with other operation
 
 ## Gateway Module
 
-The spring gateway module is designed to intercept and filter the requests from front-end to implement the authentication based on the users' role and token decoding. It accepts all the requests to this back-end system and  decode the token user pass into. Based on the information contained in the token and the path users request, the gateway will redirect the route to the specific path or reject the illegal operations. Moreover, it mask the real port numbers that micro-service module executing on and  forbid the request to them. This part of test will test whether requests can be redirected to the corresponding micro-service modules correctly and intercept the illegal port numbers or paths.
+The spring gateway module is designed to intercept and filter the requests from front-end to implement the authentication based on the users' role and token decoding. It accepts all the requests to this back-end system and  decode the token user pass into. Based on the information contained in the token and the path users request, the gateway will redirect the route to the specific path or reject the illegal operations. Moreover, it masks the real port numbers that micro-service module executing on and  forbid the request to them. This part of test will test whether requests can be redirected to the corresponding micro-service modules correctly and intercept the illegal port numbers or paths.
+
+Moreover, as the previous tests prove that the micro-service modules can execute correctly, this part only test the route redirection, port visitation  prohibit and the  port number mask functions with some of the paths and functions.
+
+**When executing the test concerning the gateway, please add the token as a key-value pair in request header with key "Authorization".**
 
 ### Gateway port redirection
 
+#### Login
+
+The gateway should allow the login request without the token attach.
+
+- executing path: http://localhost:8081/user/login
+
+- visit path: http://localhost:8080/user/login
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {  
+        "username": "2013567890",
+        "password": "admin2"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": {
+            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwYXNzd29yZCI6ImFkbWluMiIsInJvbGUiOiJBZG1pbmlzdHJhdG9yIiwibmFtZSI6IjIwMTM1Njc4OTAiLCJpZCI6IjExMTU2MDQ1MTE4NzU5MTk4NzIiLCJleHAiOjE3MTg2ODYwNzh9.dzkFIxWKZF3JLlF5jAYAN0ap695YjCfxx02IeJi0om8",
+            "id": "1115604511875919872"
+        },
+        "message": "Login successfully"
+    }
+    ```
+
+  - Error test case: pass into error username or password
+
+    Request body
+
+    ``` json
+    {  
+        "username": "323232",
+        "password": "grid5"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "fail to login for error username or password"
+    }
+    ```
+
+  - Error test case: request to login a deactivated account
+
+    Request body
+
+    ```json
+    {  
+        "username": "2016456789",
+        "password": "admin3"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "fail to login, The account is banned"
+    }
+    ```
+
+  - Error test case: use error password over 5 times
+
+    Request body
+
+    ```json
+    {  
+        "username": "2015328754",
+        "password": "admin"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "fail to The account is locked with 15 minutes"
+    }
+    ```
+
+  
+  Request login using 8081 port is allow but not recommended.
+
+#### Report
+
+The report operation is only provided to the supervisor visits. If visiting this operation using other role or using other ports is forbidden. Before testing, there is needed to acquire a supervisor's token.
+
+- executing path: http://localhost:8082/report/supervisor/report
+
+- visit path: http://localhost:8080/report/supervisor/report
+
+- Test cases
+
+  - Correct test case: using token to visit 8080 port
+
+    Request body
+
+    ```json
+    {
+        "submitterId" : "1115615827189559296",
+        "description" : "test Dscription",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location",
+        "forecastAQILevel": 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": null,
+        "message": "create report successfully"
+    }
+    ```
+
+  - Error test case: visit the port 8082
+
+    Request body
+
+    ```json
+    {
+        "submitterId" : "1115615827189559296",
+        "description" : "test Dscription",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location",
+        "forecastAQILevel": 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    Access deny
+    ```
+
+  - Error test case: visit 8080 port without token
+
+    ```json
+    {
+        "submitterId" : "1115615827189559296",
+        "description" : "test Dscription",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location",
+        "forecastAQILevel": 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": null
+    }
+    ```
+
+  - Error test case: using the token of other character to visit report operation
+
+    Request body
+
+    ```json
+    {
+        "submitterId" : "1115615827189559296",
+        "description" : "test Dscription",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location",
+        "forecastAQILevel": 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    ```
+
+#### Appoint
+
+The appoint operation is only provided to the administrator visits. If visiting this operation using other role or using other ports is forbidden. Before testing, there is needed to acquire an administrator's token.
+
+- executing path:  http://localhost:8084/task/administrator/appoint
+
+- path:  http://localhost:8080/task/administrator/appoint
+
+- Test cases
+
+  - Correct test case: using token to visit 8080 port
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582080",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": null,
+        "message": "create task successfully"
+    }
+    ```
+
+  - Error test case: visit the port 8084
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582080",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    Access deny
+    ```
+
+  - Error test case: visit 8080 port without token
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582080",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": null
+    }
+    ```
+
+  - Error test case: using the token of other character to visit report operation
+
+    Request body
+
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582080",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+
+    Response body
+
+    ```json
+    
+    ```
+  
+  - Error test case: using a non-existed administrator
+  
+    Request body
+  
+    ```json
+    {
+        "appointerId" : "111560474379578",
+        "appointeeId" : "1115614529362849792",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "administrator not found"
+    }
+    ```
+  
+  - Error test case: appointing a non-existed grid detector
+  
+    Request body
+  
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582",
+        "relativeReportId" : "1115675276176519176"
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "grid detector not found"
+    }
+    ```
+  
+  - Error test case: appoint a non-existed report
+  
+    Request body
+  
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614568881582",
+        "relativeReportId" : "11156752761765"
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "report not found"
+    }
+    ```
+  
+  - Error test case: appoint an appointer report
+  
+    Request body
+  
+    ```json
+    {
+        "appointerId" : "1115604743795765248",
+        "appointeeId" : "1115614529362849792",
+        "relativeReportId" : "1115675276176519168"
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "report has been appointed"
+    }
+    ```
+
+#### Submit
+
+The appoint operation is only provided to the administrator visits. If visiting this operation using other role or using other ports is forbidden. Before testing, there is needed to acquire an administrator's token.
+
+- executing path:  http://localhost:8083/submission/gridDetector/submit
+
+- path:  http://localhost:8080/submission/gridDetector/submit
+
+- Test cases
+
+  - Correct test case: using token to visit 8080 port
+
+    Request body
+
+    ```json
+    {
+        "taskId" : "1115676903893626884",
+        "submitterId" : "1116545704042319872",
+        "description" : "test description",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : 90,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": null,
+        "message": "create report successfully"
+    }
+    ```
+
+  - Error test case: visit the port 8083
+
+    Request body
+
+    ```json
+    {
+        "taskId" : "1115676903893626884",
+        "submitterId" : "1116545704042319872",
+        "description" : "test description",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : 90,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+
+    Response body
+
+    ```json
+    Access deny
+    ```
+
+  - Error test case: visit 8080 port without token
+
+    ```json
+    {
+        "taskId" : "1115676903893626884",
+        "submitterId" : "1116545704042319872",
+        "description" : "test description",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : 90,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": null
+    }
+    ```
+
+  - Error test case: using the token of other character to visit report operation
+
+    Request body
+
+    ```json
+    {
+        "taskId" : "1115676903893626884",
+        "submitterId" : "1116545704042319872",
+        "description" : "test description",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : 90,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+
+    Response body
+
+    ```json
+    
+    ```
+  
+  - Error test case: submit to a non-existed task
+  
+    Request body
+  
+    ```json
+    {
+        "taskId" : "1",
+        "submitterId" : "1116545704042319872",
+        "description" : "test description",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : 90,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "task not exist"
+    }
+    ```
+  
+  - Error test case: submit to a finished task
+  
+    Request body
+  
+    ```json
+    {
+        "taskId" : "1115676903893626882",
+        "submitterId" : "1116545704042319872",
+        "description" : "test description",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : 90,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "task is finished"
+    }
+    ```
+  
+  - Error test case: use a non-existed grid detector account to submit
+  
+    Request body
+  
+    ```json
+    {
+        "taskId" : "1115676903893626884",
+        "submitterId" : "111654570404231",
+        "description" : "test description",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : 90,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "submitter not exist"
+    }
+    ```
+  
+  - Error test case: submit with a non-supported city
+  
+    Request body
+  
+    ```json
+    {
+        "taskId" : "1115676903893626884",
+        "submitterId" : "1116545704042319872",
+        "description" : "test description",
+        "province" : "Beiijng",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : 90,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "city not exist"
+    }
+    ```
+  
+  - Error test case: invalid air condition information input
+  
+    Request body
+  
+    ```json
+    {
+        "taskId" : "1115676903893626883",
+        "submitterId" : "1116545704042319872",
+        "description" : "test description",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "test location", 
+        "pm25" : 149,
+        "pm10" : -1,
+        "so2" : 2,
+        "no2" : 18,
+        "co" : 6,
+        "o3" : 39
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "fail to create submission "
+    }
+    ```

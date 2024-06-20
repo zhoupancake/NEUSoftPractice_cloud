@@ -1,6 +1,6 @@
 server:
   port: 8080
-  additionalPorts: 8081, 8082, 8083, 8084, 8085, 8086
+  additionalPorts: 8081,8082,8083,8084,8085,8086
 spring:
   main:
     web-application-type: reactive
@@ -80,7 +80,7 @@ spring:
 #            - name: AuthGatewayFilterFactory
 
         - id: system-TaskManage
-          uri: lb:system-TaskManage
+          uri: lb://system-TaskManage
           order: 1
           predicates:
             - Path=/task/**
@@ -88,7 +88,7 @@ spring:
 #            - name: AuthGatewayFilterFactory
 
         - id: system-ZoneManage
-          uri: lb:system-ZoneManage
+          uri: lb://system-ZoneManage
           order: 1
           predicates:
             - Path=/zone/**

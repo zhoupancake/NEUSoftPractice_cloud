@@ -10,6 +10,7 @@
       <option name="customHeaders">
         <set>
           <option value="${auth.jwt.header}" />
+          <option value="token" />
         </set>
       </option>
     </inspection_tool>

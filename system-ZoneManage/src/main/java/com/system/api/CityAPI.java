@@ -20,4 +20,7 @@ public interface CityAPI {
     @PostMapping("/api/getCitiesSameProvince")
     public List<Integer> getCitiesSameProvince(@RequestBody Integer cityId);
 
+    @PostMapping("/getCitiesByLikeName")
+    public List<Integer> getCitiesByLikeName(@RequestBody String name);
+
 }

@@ -68,5 +68,16 @@ public class CityAPIImpl  implements CityAPI{
                 .map(City::getId)
                 .toList();
     }
+
+    @Override
+    @PostMapping("/getCitiesByLikeName")
+    public List<Integer> getCitiesByLikeName(@RequestBody String name) {
+        return cityService.query()
+                .like("name", name)
+                .list()
+                .stream()
+                .map(City::getId)
+                .toList();
+    }
 }
 

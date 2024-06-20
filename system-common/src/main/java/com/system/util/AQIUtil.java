@@ -68,4 +68,16 @@ public class AQIUtil {
         }
         return maxAQI;
     }
+
+    public static int AQILevel2value_pm25(int AQILevel){
+        return AQI_range.get("pm25")[AQILevel];
+    }
+
+    public static int AQILevel2value_so2(int AQILevel){
+        return AQI_range.get("so2")[AQILevel];
+    }
+
+    public static int AQILevel2value_co(int AQILevel){
+        return AQI_range.get("co")[AQILevel];
+    }
 }

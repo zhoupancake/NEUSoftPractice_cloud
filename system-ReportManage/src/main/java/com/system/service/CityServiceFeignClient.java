@@ -18,4 +18,7 @@ public interface CityServiceFeignClient {
 
     @PostMapping("/api/city/getCitiesByProvince")
     public List<Integer> getCitiesIdByProvince(@RequestBody String province);
+
+    @PostMapping("/getCitiesByLikeName")
+    public List<Integer> getCitiesByLikeName(@RequestBody String name);
 }
