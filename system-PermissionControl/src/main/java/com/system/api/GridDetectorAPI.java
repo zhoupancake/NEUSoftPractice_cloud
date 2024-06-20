@@ -23,4 +23,7 @@ public interface GridDetectorAPI {
 
     @PostMapping("/getDetectorById")
     public GridDetector getDetectorById(@RequestBody String id);
+
+    @PostMapping("/getDetectorCities")
+    public List<Integer> getDetectorCities();
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.common.HttpResponseEntity;
 import com.system.dto.User;
 import com.system.entity.character.GridDetector;
+import com.system.entity.data.City;
 import com.system.service.GridDetectorService;
 import com.system.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -91,5 +92,12 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
     @PostMapping("/getGridDetectorById")
     public GridDetector getDetectorById(@RequestBody String id) {
         return gridDetectorService.getById(id);
+    }
+
+    @Override
+    @PostMapping("/getDetectorCities")
+    public List<Integer> getDetectorCities(){
+        List<Integer> cities = gridDetectorService.query().list().stream().map(GridDetector::getCityId).toList();
+        return cities.stream().distinct().toList();
     }
 }
