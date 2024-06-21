@@ -95,7 +95,7 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
     }
 
     @Override
-    @PostMapping("/getDetectorCities")
+    @GetMapping("/getDetectorCities")
     public List<Integer> getDetectorCities(){
         List<Integer> cities = gridDetectorService.query().list().stream().map(GridDetector::getCityId).toList();
         return cities.stream().distinct().toList();

@@ -19,7 +19,6 @@ import java.util.TreeSet;
 @RequiredArgsConstructor
 public class ActionController {
     private final CityService cityService;
-    @Resource
     private final GridDetectorServiceFeignClient gridDetectorService;
     @GetMapping("/selectAll")
     public HttpResponseEntity selectAll(){
