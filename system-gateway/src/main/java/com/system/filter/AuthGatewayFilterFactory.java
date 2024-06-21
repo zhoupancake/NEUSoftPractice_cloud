@@ -49,8 +49,6 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
         //Get Role
         Map<String, Claim> claims = JWTUtil.getPayloadFromToken(token);
         String role = claims.get("role").asString();
-
-
         //Access Deny for no token
         if(StringUtils.isEmpty(token)){
             //响应HTTP状态码（401：没有访问权限）

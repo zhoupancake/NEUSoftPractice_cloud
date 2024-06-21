@@ -91,7 +91,7 @@ spring:
           uri: lb://system-ZoneManage
           order: 1
           predicates:
-            - Path=/zone/**
+            - Path=/city/**
 #          filters:
 #            - name: AuthGatewayFilterFactory
   data:
