@@ -80,6 +80,8 @@ public class ActionController {
             }
             else{
                 List<Integer> citiesList = cityService.getCitiesByLikeName((String) map.get("city"));
+                if(citiesList == null || citiesList.isEmpty())
+                    return HttpResponseEntity.error("the selected city is not exist in the list");
                 for (Integer cityId : citiesList)
                     queryWrapper.or().eq("city_id", cityId);
             }
@@ -98,7 +100,7 @@ public class ActionController {
                 return HttpResponseEntity.error("submitter id is not exist");
         }
         else
-            return HttpResponseEntity.error("submitter id is not exist");
+            return HttpResponseEntity.error("submitter id is required");
         if (map.containsKey("id") && map.get("id") != null && !map.get("id").equals(""))
             queryWrapper.like("id", map.get("id"));
         if (map.containsKey("status") && map.get("status") != null && !map.get("status").equals(""))
@@ -140,33 +142,6 @@ public class ActionController {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
             return HttpResponseEntity.error("pageNum or pageSize is not valid");
         QueryWrapper<Report> queryWrapper = new QueryWrapper<>();
-//        if (map.containsKey("province") && map.get("province") != null && !map.get("province").equals("")) {
-//            if (map.containsKey("city") && map.get("city") != null && !map.get("city").equals("")) {
-//                City city = cityService.getCityByLocation(Map.of("province", (String) map.get("province"),
-//                        "city", (String) map.get("city")));
-//                if (city == null)
-//                    return HttpResponseEntity.error("the selected city is not exist");
-//                queryWrapper.eq("city_id", city.getId());
-//            } else {
-//                List<Integer> citiesList = cityService.getCitiesIdByProvince((String) map.get("province"));
-//                for (Integer cityId : citiesList)
-//                    queryWrapper.or().eq("city_id", cityId);
-//            }
-//        }
-//        if(map.containsKey("province") && map.get("province") != null && !map.get("province").equals("")){
-//            if(map.containsKey("city") && map.get("city") != null && !map.get("city").equals("")){
-//                City city = cityService.getCityByLocation(Map.of("province", (String) map.get("province"),
-//                        "city", (String) map.get("city")));
-//                if(city == null)
-//                    return HttpResponseEntity.error("the selected city is not exist");
-//                queryWrapper.eq("city_id", city.getId());
-//            }
-//            else {
-//                List<Integer> citiesList = cityService.getCitiesIdByProvince((String) map.get("province"));
-//                for (Integer cityId : citiesList)
-//                    queryWrapper.or().eq("city_id", cityId);
-//            }
-//        }
         if(map.containsKey("city") && map.get("city") != null && !map.get("city").equals("")){
             if(map.containsKey("province") && map.get("province") != null && !map.get("province").equals("")){
                 City city = cityService.getCityByLocation(Map.of("province", (String) map.get("province"),
@@ -177,6 +152,8 @@ public class ActionController {
             }
             else{
                 List<Integer> citiesList = cityService.getCitiesByLikeName((String) map.get("city"));
+                if(citiesList == null || citiesList.isEmpty())
+                    return HttpResponseEntity.error("the selected city is not exist in the list");
                 for (Integer cityId : citiesList)
                     queryWrapper.or().eq("city_id", cityId);
             }
@@ -199,7 +176,7 @@ public class ActionController {
         if (map.containsKey("forecastApiLevel") && map.get("forecastApiLevel") != null && !map.get("forecastApiLevel").equals(""))
             queryWrapper.eq("forecast_aqi_level", map.get("forecastApiLevel"));
         if(map.containsKey("submitterId") && map.get("submitterId") != null && !map.get("submitterId").equals(""))
-            queryWrapper.eq("submitter_id", map.get("submitterId"));
+            queryWrapper.like("submitter_id", map.get("submitterId"));
         if(map.containsKey("startTime") && map.get("startTime") != null && !map.get("startTime").equals("")) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startDate = dateFormat.parse(String.valueOf(map.get("startTime")));

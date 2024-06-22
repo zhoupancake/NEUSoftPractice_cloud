@@ -8,19 +8,19 @@ import java.util.List;
 import java.util.Map;
 
 public interface CityAPI {
-    @PostMapping("/getCityById")
+    @PostMapping("/api/city/getCityById")
     public City getCityById(@RequestBody Integer id);
 
-    @PostMapping("/getCityByLocation")
+    @PostMapping("/api/city/getCityByLocation")
     public City getCityByLocation(@RequestBody Map<String, String> location);
 
-    @PostMapping("/getCitiesByProvince")
+    @PostMapping("/api/city/getCitiesByProvince")
     public List<Integer> getCitiesIdByProvince(@RequestBody String province);
 
-    @PostMapping("/api/getCitiesSameProvince")
+    @PostMapping("/api/city/getCitiesSameProvince")
     public List<Integer> getCitiesSameProvince(@RequestBody Integer cityId);
 
-    @PostMapping("/getCitiesByLikeName")
+    @PostMapping("/api/city/getCitiesByLikeName")
     public List<Integer> getCitiesByLikeName(@RequestBody String name);
 
 }

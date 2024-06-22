@@ -70,14 +70,14 @@ public class AQIUtil {
     }
 
     public static int AQILevel2value_pm25(int AQILevel){
-        return AQI_range.get("pm25")[AQILevel];
+        return AQI_range.get("pm25")[AQILevel-1];
     }
 
     public static int AQILevel2value_so2(int AQILevel){
-        return AQI_range.get("so2")[AQILevel];
+        return AQI_range.get("so2")[AQILevel-1];
     }
 
     public static int AQILevel2value_co(int AQILevel){
-        return AQI_range.get("co")[AQILevel];
+        return AQI_range.get("co")[AQILevel-1];
     }
 }

@@ -72,12 +72,15 @@ public class CityAPIImpl  implements CityAPI{
     @Override
     @PostMapping("/getCitiesByLikeName")
     public List<Integer> getCitiesByLikeName(@RequestBody String name) {
-        return cityService.query()
+        System.out.println(name);
+        List<Integer> temp = cityService.query()
                 .like("name", name)
                 .list()
                 .stream()
                 .map(City::getId)
                 .toList();
+        System.out.println(temp);
+        return temp;
     }
 }
 
