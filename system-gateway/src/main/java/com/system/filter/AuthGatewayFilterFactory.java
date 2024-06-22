@@ -30,7 +30,7 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().toString();
         PathMatcher pathMatcher = new AntPathMatcher();
-        if(pathMatcher.match("/user/login", path))
+        if(pathMatcher.match("/user/login", path) || pathMatcher.match("/user/register", path))
             return chain.filter(exchange);
         if(pathMatcher.match("/api/**", path)){
             String remote_ip = IPUtil.getIpAddress(exchange.getRequest());
