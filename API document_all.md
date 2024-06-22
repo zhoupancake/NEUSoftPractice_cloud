@@ -365,6 +365,299 @@ The create operations of air data in the system is attached with other operation
     }
     ```
 
+#### Query air data list
+
+- Request character: administrator
+
+- Request method: POST
+
+- Request path: http://localhost:8085/airData/administrator/queryAIrDataList
+
+- Test cases
+
+  - Correct test case
+
+    Request body
+
+    ```json
+    {
+        "pageNum" : 1,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "startTime" : "2024-03-10",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 1,
+        "pm25Level" : 1,
+        "so2Level" : 1,
+        "coLevel" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "200",
+        "data": [
+            {
+                "id": "1115664407388483584",
+                "province": "Beijing",
+                "city": "Beijing",
+                "location": "No. 23, Jianguo Road, Chaoyang District",
+                "date": "2024-03-22T13:33:07",
+                "pm25": 28.0,
+                "pm10": 61.0,
+                "so2": 5.0,
+                "no2": 49.0,
+                "co": 0.73,
+                "o3": 10.0,
+                "aqiLevel": 1,
+                "aqi": 55
+            }
+        ],
+        "message": "query air data successfully"
+    }
+    ```
+
+  - Error test case: invalid page number or page size input
+
+    Request body
+
+    ``` json
+    {
+        "pageNum" : 0,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "startTime" : "2024-03-10",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 1,
+        "pm25Level" : 1,
+        "so2Level" : 1,
+        "coLevel" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "pageNum and pageSize must be positive"
+    }
+    ```
+
+  - Error test case: use invalid city or province name
+
+    Request body
+
+    ``` json
+    {
+        "pageNum" : 1,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "province" : "Beiijng",
+        "city" : "Beijing",
+        "startTime" : "2024-03-10",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 1,
+        "pm25Level" : 1,
+        "so2Level" : 1,
+        "coLevel" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "the selected city is not exist"
+    }
+    ```
+
+    Request body
+
+    ```json
+    {
+        "pageNum" : 1,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "city" : "333",
+        "location" : "Chaoyang",
+        "startTime" : "2024-03-10",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 1,
+        "pm25Level" : 1,
+        "so2Level" : 1,
+        "coLevel" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "the selected city is not exist in the air data list"
+    }
+    ```
+
+  - Error test case: use invalid date format
+
+    Request body
+
+    ```json
+    {
+        "pageNum" : 1,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "Chaoyang",
+        "startTime" : "2024-03-54",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 1,
+        "pm25Level" : 1,
+        "so2Level" : 1,
+        "coLevel" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "fail to query air data "
+    }
+    ```
+
+  - Error test case: user invalid air data AQI level
+
+    Request body
+
+    ```json
+    {
+        "pageNum" : 1,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "Chaoyang",
+        "startTime" : "2024-03-54",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 0,
+        "pm25Level" : 1,
+        "so2Level" : 1,
+        "coLevel" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "aqiLevel must be positive"
+    }
+    ```
+
+    Request body
+
+    ```json
+    {
+        "pageNum" : 1,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "Chaoyang",
+        "startTime" : "2024-03-54",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 1,
+        "pm25Level" : 0,
+        "so2Level" : 1,
+        "coLevel" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "aqiLevel must be positive"
+    }
+    ```
+
+    Request body
+
+    ```json
+    {
+        "pageNum" : 1,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "Chaoyang",
+        "startTime" : "2024-03-54",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 1,
+        "pm25Level" : 1,
+        "so2Level" : 0,
+        "coLevel" : 1
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "aqiLevel must be positive"
+    }
+    ```
+
+    Request body
+
+    ```json
+    {
+        "pageNum" : 1,
+        "pageSize" : 5,
+        "id" : "1115664407388483584",
+        "province" : "Beijing",
+        "city" : "Beijing",
+        "location" : "Chaoyang",
+        "startTime" : "2024-03-54",
+        "endTime" : "2024-03-30",
+        "aqiLevel" : 1,
+        "pm25Level" : 1,
+        "so2Level" : 1,
+        "coLevel" : 0
+    }
+    ```
+
+    Response body
+
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "aqiLevel must be positive"
+    }
+    ```
+
 ### Air data Controller
 
 #### add air data
@@ -789,7 +1082,7 @@ The create operations of air data in the system is attached with other operation
     ]
     ```
     
-    Request bosy
+    Request body
     
     ```json
     [11]
@@ -845,7 +1138,24 @@ The create operations of air data in the system is attached with other operation
     []
     ```
     
-    
+
+#### Get cities with grid detector
+
+- Request character: inner micro-service module
+
+- Request method: GET
+
+- Request path: http://localhost:8081/api/gridDetector/getDetectorCities
+
+- Test case
+
+  - Correct test case
+
+    Response body
+
+    ```json
+    [1, 2, 4, 5, 6, 9, 7]
+    ```
 
 ### Supervisor API
 
@@ -2661,7 +2971,7 @@ The create operations of air data in the system is attached with other operation
 
 #### Query report list
 
-- Request character: administrator
+- Request character: administrator, supervisor
 
 - Request method: POST
 
@@ -2820,10 +3130,30 @@ The create operations of air data in the system is attached with other operation
     }
     ```
 
-  - Error test case: pass into invalid page number or page size
-
     Request body
 
+    ```json
+    {
+        "city" : "333",
+        "pageNum" : 1,
+        "pageSize" : 5
+    }
+    ```
+  
+    Response body
+  
+    ```json
+    {
+        "code": "0",
+        "data": null,
+        "message": "the selected city is not exist in the list"
+    }
+    ```
+
+  - Error test case: pass into invalid page number or page size
+  
+    Request body
+  
     ```json
     {
         "submitterId" : "1115615978398412800",
@@ -2837,9 +3167,9 @@ The create operations of air data in the system is attached with other operation
         "pageSize" : 5
     }
     ```
-
+  
     Response body
-
+  
     ```json
     {
         "code": "0",
@@ -2968,7 +3298,7 @@ The create operations of air data in the system is attached with other operation
 
 #### Get report by id
 
-- Request character: grid detector
+- Request character: grid detector, administrator
 
 - Request method: POST
 
