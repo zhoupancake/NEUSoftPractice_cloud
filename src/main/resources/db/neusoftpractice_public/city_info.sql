@@ -11,7 +11,7 @@
  Target Server Version : 80035 (8.0.35)
  File Encoding         : 65001
 
- Date: 20/06/2024 23:35:31
+ Date: 24/06/2024 14:48:48
 */
 
 SET NAMES utf8mb4;
@@ -55,17 +55,17 @@ INSERT INTO `city_info` VALUES (20, 'Kunming', 'Yunnan', 'bigCity');
 INSERT INTO `city_info` VALUES (21, 'Dalian', 'Liaoning', 'bigCity');
 INSERT INTO `city_info` VALUES (22, 'Nanning', 'Guangxi', 'Type I Large City');
 INSERT INTO `city_info` VALUES (23, 'Shijiazhuang', 'Hebei', 'Type I Large City');
-INSERT INTO `city_info` VALUES (24, 'Xiamen', 'Fujian ', 'Type I Large City');
-INSERT INTO `city_info` VALUES (25, 'Taiyuan', 'Shanxi ', 'Type I Large City');
-INSERT INTO `city_info` VALUES (26, 'Suzhou', 'Jiangsu ', 'Type I Large City');
-INSERT INTO `city_info` VALUES (27, 'Guiyang', 'Guizhou  ', 'Type I Large City');
-INSERT INTO `city_info` VALUES (28, 'Hefei', 'Anhui  ', 'Type I Large City');
-INSERT INTO `city_info` VALUES (29, 'Urumqi', 'Xinjiang ', 'Type I Large City');
-INSERT INTO `city_info` VALUES (30, 'Ningbo', 'Zhejiang  ', 'Type I Large City');
+INSERT INTO `city_info` VALUES (24, 'Xiamen', 'Fujian', 'Type I Large City');
+INSERT INTO `city_info` VALUES (25, 'Taiyuan', 'Shanxi', 'Type I Large City');
+INSERT INTO `city_info` VALUES (26, 'Suzhou', 'Jiangsu', 'Type I Large City');
+INSERT INTO `city_info` VALUES (27, 'Guiyang', 'Guizhou', 'Type I Large City');
+INSERT INTO `city_info` VALUES (28, 'Hefei', 'Anhui', 'Type I Large City');
+INSERT INTO `city_info` VALUES (29, 'Urumqi', 'Xinjiang', 'Type I Large City');
+INSERT INTO `city_info` VALUES (30, 'Ningbo', 'Zhejiang', 'Type I Large City');
 INSERT INTO `city_info` VALUES (31, 'Wuxi', 'Jiangsu', 'Type I Large City');
-INSERT INTO `city_info` VALUES (32, 'Fuzhou', 'Fujian  ', 'Type I Large City');
+INSERT INTO `city_info` VALUES (32, 'Fuzhou', 'Fujian', 'Type I Large City');
 INSERT INTO `city_info` VALUES (33, 'Changchun', 'Jilin', 'Type I Large City');
-INSERT INTO `city_info` VALUES (34, 'Nanchang', 'Jiangxi  ', 'Type I Large City');
+INSERT INTO `city_info` VALUES (34, 'Nanchang', 'Jiangxi', 'Type I Large City');
 INSERT INTO `city_info` VALUES (35, 'Changzhou', 'Jiangsu', 'Type I Large City');
 INSERT INTO `city_info` VALUES (36, 'Lanzhou', 'Gansu', 'Type II Large City');
 INSERT INTO `city_info` VALUES (37, 'Zhongshan', 'Guangdong', 'Type II Large City');
