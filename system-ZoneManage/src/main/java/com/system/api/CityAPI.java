@@ -1,6 +1,7 @@
 package com.system.api;
 
 import com.system.entity.data.City;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -22,5 +23,8 @@ public interface CityAPI {
 
     @PostMapping("/api/city/getCitiesByLikeName")
     public List<Integer> getCitiesByLikeName(@RequestBody String name);
+
+    @GetMapping("/api/city/getProvinceList")
+    public List<String> getProvinceList();
 
 }

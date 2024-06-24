@@ -19,10 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/airData")
@@ -160,5 +158,52 @@ public class ActionController {
                 result.add(new ResponseAirDataEntity(airData, city));
             }
         return HttpResponseEntity.response(!airDataList.isEmpty(), "query air data ", result);
+    }
+
+    @PostMapping("/administrator/getProvinceCount")
+    public HttpResponseEntity getProvinceCount(@RequestBody Map<String, Object> map) {
+        if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
+            return HttpResponseEntity.error("pageNum and pageSize must be positive");
+        int level = 3;
+        if(map.containsKey("level") && map.get("level") != null && !map.get("level").equals("")) {
+            level = (Integer) map.get("level");
+            if(level < 1 || level > 7)
+                return HttpResponseEntity.error("level must be between 1 and 7");
+        }
+        Map<String, Map<String, Integer>> result  = new HashMap<>();
+        List<String> provinces = cityService.getProvinceList();
+        for(String province : provinces) {
+            Map<String, Integer> count = new HashMap<>();
+            List<Integer> citiesList = cityService.getCitiesIdByProvince(province);
+            QueryWrapper<AirData> AQIQueryWrapper = new QueryWrapper<>();
+            AQIQueryWrapper.in("city_id", citiesList).ge("aqi_level", level);
+            count.put("aqi", airDataService.list(AQIQueryWrapper).size());
+            QueryWrapper<AirData> Pm25QueryWrapper = new QueryWrapper<>();
+            Pm25QueryWrapper.in("city_id", citiesList).ge("pm25", AQIUtil.AQILevel2value_pm25(level));
+            count.put("pm25", airDataService.list(Pm25QueryWrapper).size());
+            QueryWrapper<AirData> So2QueryWrapper = new QueryWrapper<>();
+            So2QueryWrapper.in("city_id", citiesList).ge("so2", AQIUtil.AQILevel2value_so2(level));
+            count.put("so2", airDataService.list(So2QueryWrapper).size());
+            QueryWrapper<AirData> CoQueryWrapper = new QueryWrapper<>();
+            CoQueryWrapper.in("city_id", citiesList).ge("co", AQIUtil.AQILevel2value_co(level));
+            count.put("co", airDataService.list(CoQueryWrapper).size());
+            result.put(province, count);
+        }
+        List<String> keys = result.keySet().stream().sorted().toList();
+        int start = ((Integer) map.get("pageNum") - 1) * (Integer) map.get("pageSize");
+        Map<String, Map<String, Integer>> resultList = new HashMap<>();
+        for(int i = start; i < start + (Integer) map.get("pageSize") && i < keys.size(); i++)
+            resultList.put(keys.get(i), result.get(keys.get(i)));
+        return HttpResponseEntity.success("get province count", resultList);
+    }
+
+    @PostMapping("/digitalScreen/queryAirDataByLevel")
+    public HttpResponseEntity queryAirDataByLevel(@RequestBody Map<String, Object> map) throws ParseException {
+        int[] count = new int[6];
+        for(int i = 1; i <= 6; i++)
+            count[i-1] = (int)airDataService.count(new QueryWrapper<AirData>().ge("aqi_level", i));
+        Map<String, Integer> result = Map.of("one", count[0],"two", count[1], "three", count[2],
+                                            "four", count[3], "five", count[4], "six", count[5]);
+        return HttpResponseEntity.success("query air data by level", result);
     }
 }
