@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -12,6 +13,7 @@
       <set>
         <option value="$PROJECT_DIR$/oauth-server/pom.xml" />
         <option value="$PROJECT_DIR$/system-Authentication/pom.xml" />
+        <option value="$PROJECT_DIR$/system-DigitalScreenAPI/pom.xml" />
         <option value="$PROJECT_DIR$/system-HumanResource/pom.xml" />
         <option value="$PROJECT_DIR$/system-JWTManage/pom.xml" />
         <option value="$PROJECT_DIR$/system-oauthServer/pom.xml" />

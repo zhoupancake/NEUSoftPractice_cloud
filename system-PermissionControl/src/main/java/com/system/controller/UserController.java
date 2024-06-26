@@ -41,6 +41,7 @@ public class UserController {
 
     @PostMapping("/login")
     public HttpResponseEntity login(@RequestBody User user, HttpServletResponse response) {
+        System.out.println(user);
         // check whether the account exist and in usable status
         List<User> users = userService.query().eq("username", user.getUsername()).list();
         if (users.isEmpty())
@@ -72,28 +73,28 @@ public class UserController {
             switch (loginUser.getRole()) {
                 case "Administrator" -> {
                     Administrator administrator = administratorService.getById(loginUser.getId());
-                    Cookie cookie = new Cookie("administratorId", administrator.getId());
-                    cookie.setSecure(true);
-                    cookie.setHttpOnly(true);
-                    response.addCookie(cookie);
+//                    Cookie cookie = new Cookie("administratorId", administrator.getId());
+//                    cookie.setSecure(true);
+//                    cookie.setHttpOnly(true);
+//                    response.addCookie(cookie);
                     Map<String, String> result = Map.of("id", administrator.getId(), "token", token);
                     return HttpResponseEntity.response(true, "Login successfully", result);
                 }
                 case "GridDetector" -> {
                     GridDetector gridDetector = gridManagerService.getById(loginUser.getId());
-                    Cookie cookie = new Cookie("gridDetectorId", gridDetector.getId());
-                    cookie.setSecure(true);
-                    cookie.setHttpOnly(true);
-                    response.addCookie(cookie);
+//                    Cookie cookie = new Cookie("gridDetectorId", gridDetector.getId());
+//                    cookie.setSecure(true);
+//                    cookie.setHttpOnly(true);
+//                    response.addCookie(cookie);
                     Map<String, String> result = Map.of("id", gridDetector.getId(), "token", token);
                     return HttpResponseEntity.response(true, "Login successfully", result);
                 }
                 case "Supervisor" -> {
                     Supervisor supervisor = supervisorService.getById(loginUser.getId());
-                    Cookie cookie = new Cookie("supervisorId", supervisor.getId());
-                    cookie.setSecure(true);
-                    cookie.setHttpOnly(true);
-                    response.addCookie(cookie);
+//                    Cookie cookie = new Cookie("supervisorId", supervisor.getId());
+//                    cookie.setSecure(true);
+//                    cookie.setHttpOnly(true);
+//                    response.addCookie(cookie);
                     Map<String, String> result = Map.of("id", supervisor.getId(), "token", token);
                     return HttpResponseEntity.response(true, "Login successfully", result);
                 }

@@ -13,10 +13,7 @@ import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.sql.Wrapper;
@@ -33,6 +30,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ActionController {
     private final SubmissionService submissionService;
+    private final ReportServiceFeignClient reportService;
     private final TaskServiceFeignClient taskService;
     private final AirDataServiceFeignClient airDataService;
     private final CityServiceFeignClient cityService;
@@ -191,4 +189,15 @@ public class ActionController {
             submissionList.removeIf(submission -> !taskService.getTaskById(submission.getTaskId()).getAppointerId().equals(map.get("administratorId")));
         return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", submissionList);
     }
+
+    @GetMapping("/digitalScreen/getProcession")
+    public HttpResponseEntity getProcession() {
+        System.out.println("fuck");
+        Map<String,Integer> result = Map.of("report", reportService.getReportCount(),
+                                            "task", taskService.getTaskCount(),
+                                            "submission", submissionService.query().list().size());
+        System.out.println(result);
+        return HttpResponseEntity.response(true, "get procession", result);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.system.api;
 
 import com.system.entity.data.Report;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -25,4 +26,7 @@ public interface ReportAPI {
 
 //    @PostMapping("/queryReportList")
 //    public List<Report> queryReportList(@RequestBody Map<String, Object> map);
+
+    @GetMapping("/api/report/getReportCount")
+    public int getReportCount();
 }

@@ -26,5 +26,4 @@ public interface CityAPI {
 
     @GetMapping("/api/city/getProvinceList")
     public List<String> getProvinceList();
-
 }

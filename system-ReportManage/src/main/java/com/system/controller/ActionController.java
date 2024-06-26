@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.common.HttpResponseEntity;
 import com.system.dto.RequestReportEntity;
 import com.system.dto.ResponseReportEntity;
+import com.system.entity.data.AirData;
 import com.system.entity.data.City;
 import com.system.entity.data.Report;
 import com.system.entity.data.Submission;
@@ -201,5 +202,17 @@ public class ActionController {
                 result.add(new ResponseReportEntity(report, city));
             }
         return HttpResponseEntity.response(success, "query", result);
+    }
+
+    @GetMapping("/digitalScreen/selectOrderList")
+    public HttpResponseEntity selectOrderList_digitalScreen(@RequestParam("limitNum") Integer limitNum) {
+        QueryWrapper<Report> queryWrapper = new QueryWrapper<>();
+        List<Report> reportList = reportService.list(queryWrapper.orderByDesc("created_time"));
+        List<ResponseReportEntity> result = new ArrayList<>();
+        for(int i = 0; i < limitNum && i < reportList.size(); i++){
+            City city = cityService.getCityById(reportList.get(i).getCityId());
+            result.add(new ResponseReportEntity(reportList.get(i), city));
+        }
+        return HttpResponseEntity.success("query ", result);
     }
 }

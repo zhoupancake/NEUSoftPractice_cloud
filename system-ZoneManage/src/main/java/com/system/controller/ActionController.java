@@ -52,4 +52,21 @@ public class ActionController {
         Map<String, Object> result = Map.of("cities", cityList, "rate", (cityList.size() / (double)cityService.count()));
         return HttpResponseEntity.response(!cityList.isEmpty(), "query ",result);
     }
+
+    @GetMapping("/digitalScreen/getCoverage")
+    public HttpResponseEntity getCoverage(){
+        List<Integer> cities1 = gridDetectorService.getDetectorCities();
+        TreeSet<String> provinceSet = new TreeSet<>();
+        for (Integer cityId : cities1) {
+            City city = cityService.getById(cityId);
+            provinceSet.add(city.getProvince());
+        }
+        List<String> provinceList = provinceSet.stream().toList();
+
+        List<Integer> cities2 = gridDetectorService.getDetectorCities();
+        List<String> cityList = cities2.stream().map(cityId -> cityService.getById(cityId).getName()).toList();
+        Map<String, String> result = Map.of("provinces", String.format("%.2f", (double)provinceList.size() / 34.0 * 100),
+                "cities", String.format("%.2f", (double)cityList.size() / cityService.count() * 100));
+        return HttpResponseEntity.response(!cityList.isEmpty(), "query ",result);
+    }
 }

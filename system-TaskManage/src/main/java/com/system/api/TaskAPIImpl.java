@@ -8,10 +8,7 @@ import com.system.service.ReportServiceFeignClient;
 import com.system.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -51,5 +48,11 @@ public class TaskAPIImpl  implements TaskAPI{
             return null;
         List<Task> list = taskService.query().eq("appointer_id", appointerId).list();
         return list.stream().map(Task::getId).toArray(String[]::new);
+    }
+
+    @Override
+    @GetMapping("/getTaskCount")
+    public int getTaskCount(){
+        return taskService.query().list().size();
     }
 }
