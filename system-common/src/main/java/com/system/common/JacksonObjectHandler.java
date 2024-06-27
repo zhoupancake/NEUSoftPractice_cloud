@@ -11,15 +11,17 @@ import java.time.format.DateTimeFormatter;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 
-//序列化配置
+/**
+ *  Global serializer
+ */
 public class JacksonObjectHandler extends ObjectMapper {
     public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public JacksonObjectHandler() {
         super();
-        //收到未知属性时不报异常
+        //Cancel the exception of the unknown property
         this.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
-        //反序列化时，属性不存在的兼容处理
+        //Process the exception of the unknown property
         this.getDeserializationConfig().withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
 
@@ -27,12 +29,12 @@ public class JacksonObjectHandler extends ObjectMapper {
                 .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer())
                 .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT)));
 
-        //注册功能模块 例如，可以添加自定义序列化器和反序列化器
+        //register this module
         this.registerModule(simpleModule);
     }
 
     /**
-     * 反序列化
+     * Deserialize the local date time
      */
 
     public static class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {

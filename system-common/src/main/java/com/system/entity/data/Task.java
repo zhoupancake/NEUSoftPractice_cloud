@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data object created by administrator to assign a report to a grid detector
+ */
 @Data
 @Builder
 @NoArgsConstructor

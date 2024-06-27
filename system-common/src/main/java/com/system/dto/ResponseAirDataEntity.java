@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Entity to construct the response air data
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -30,6 +33,11 @@ public class ResponseAirDataEntity implements Serializable{
     private Integer aqiLevel;
     private Integer aqi;
 
+    /**
+     * Construct the return air data with air data and city entity
+     * @param airData air data entity
+     * @param city city entity
+     */
     public ResponseAirDataEntity(AirData airData, City city){
         this.id = airData.getId();
         this.province = city.getProvince();

@@ -23,6 +23,11 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * The global filter to check the token and ip
+ * It will redirect to the login page if the token is invalid
+ * It will route the request to the corresponding service if the token is valid
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -110,13 +115,19 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
 //                }
 //            }
             default -> {
-                // 其他角色不授权
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
         }
     }
 
+    /**
+     * Verify the path
+     * @param character the character of the role
+     * @param pathMatcher the path matcher
+     * @param path the path of the request
+     * @return true if the path is allowed
+     */
     private boolean passVerify(String character, PathMatcher pathMatcher, String path){
          return pathMatcher.match("/airData/"+character+"/**", path)||
                 pathMatcher.match("/report/"+character+"/**", path)||
@@ -126,12 +137,23 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
                 pathMatcher.match("/user/**", path);
     }
 
+    /**
+     * Pass the token to the next filter
+     * @param path the path of the request
+     * @param exchange the exchange
+     * @return the exchange
+     */
     private ServerWebExchange pass(String path, ServerWebExchange exchange){
         String encrypt = encrypt(path);
         ServerHttpRequest host = exchange.getRequest().mutate().header("token", encrypt).build();
         return exchange.mutate().request(host).build();
     }
 
+    /**
+     * Encrypt the token
+     * @param input the input
+     * @return the encrypted token
+     */
     private String encrypt(String input){
         String encryptedKeys = "6be629bc3fc86d8d";
         return SHA256Util.encrypt(input+encryptedKeys);

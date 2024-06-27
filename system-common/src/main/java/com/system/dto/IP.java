@@ -7,6 +7,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * ip object to operate database to check whether the ip is in the database.
+ * Used by digital screen ip check
+ */
 @Data
 @Builder
 @NoArgsConstructor

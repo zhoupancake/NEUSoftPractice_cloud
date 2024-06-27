@@ -20,12 +20,22 @@ import java.util.Map;
 import static com.system.util.AQIUtil.getAQI;
 import static com.system.util.AQIUtil.getAQILevel;
 
+/**
+ * airData controller for testing the CRUD operations
+ * can be called using super admin account to call
+ */
 @RestController
 @RequestMapping("/hide/airData")
 @Slf4j
 @RequiredArgsConstructor
 public class AirDataController {
     private final AirDataService airDataService;
+
+    /**
+     * add airData
+     * @param airData need to be added
+     * @return response contains the boolean result of the operation
+     */
     @PostMapping("/addAirData")
     public HttpResponseEntity addAirData(@RequestBody AirData airData) {
         if(airData.getPm25() < 0 || airData.getPm10() < 0 || airData.getSo2() < 0 || airData.getCo() < 0 || airData.getO3() < 0 || airData.getNo2() < 0)
@@ -44,6 +54,11 @@ public class AirDataController {
         return HttpResponseEntity.response(success, "create airData ", null);
     }
 
+    /**
+     * modify airData
+     * @param airData need to be modified
+     * @return response contains the boolean result of the operation
+     */
     @PostMapping("/modifyAirData")
     public HttpResponseEntity modifyAirData(@RequestBody AirData airData) {
         if(airData.getPm25() < 0 || airData.getPm10() < 0 || airData.getSo2() < 0 || airData.getCo() < 0 || airData.getO3() < 0 || airData.getNo2() < 0)
@@ -61,12 +76,22 @@ public class AirDataController {
         return HttpResponseEntity.response(success, "modify airData", null);
     }
 
+    /**
+     * delete airData
+     * @param airData need to be deleted
+     * @return response contains the boolean result of the operation
+     */
     @PostMapping("/deleteAirData")
     public HttpResponseEntity deleteAirDataById(@RequestBody AirData airData) {
         boolean success = airDataService.removeById(airData);
         return HttpResponseEntity.response(success, "delete airData ", null);
     }
 
+    /**
+     * query airData list
+     * @param map contains the query parameters
+     * @return response contains the list of airData
+     */
     @PostMapping("/queryAirDataList")
     public HttpResponseEntity queryAirDataList(@RequestBody Map<String, Object> map) {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)

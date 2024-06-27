@@ -10,6 +10,10 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 
+/**
+ * Entity to decompose the login operation from the user CRUD operation
+ * This entity only participate the login and logout operations
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * The supervisor of the system
+ * Major function: report the forecasted air quality
+ */
 @Data
 @Builder
 @NoArgsConstructor

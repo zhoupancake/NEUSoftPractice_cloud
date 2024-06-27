@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * The administrator of the system
+ * Major function: appoint the report to the grid detector
+ */
 @Data
 @Builder
 @NoArgsConstructor

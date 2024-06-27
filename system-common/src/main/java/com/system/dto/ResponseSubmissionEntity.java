@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Entity to construct the response of submission
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -48,6 +51,15 @@ public class ResponseSubmissionEntity implements Serializable {
     private Integer aqiLevel;
     private Integer aqi;
 
+    /**
+     * Constructor
+     * @param submission submission
+     * @param task task
+     * @param report report
+     * @param airData airData
+     * @param city city
+     * @param reportSubmitterTel reportSubmitterTel get from report
+     */
     public ResponseSubmissionEntity(Submission submission, Task task, Report report, AirData airData, City city, String reportSubmitterTel) {
         this.submissionId = submission.getId();
         this.submissionSubmitterId = submission.getSubmitterId();

@@ -9,19 +9,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The interface AirData inner micro-service api.
+ */
 public interface AirDataAPI {
+    /**
+     * Add air data boolean.
+     *
+     * @param airData the air data
+     * @return the boolean to indicate whether the operation is successful
+     */
     @PostMapping("/api/airData/addAirData")
     public boolean addAirData(@RequestBody AirData airData);
-
-//    @PostMapping("/modifyAirData")
-//    public boolean modifyAirData(@RequestBody AirData airData);
-//
-//    @PostMapping("/deleteAirData")
-//    public boolean deleteAirDataById(@RequestBody AirData airData);
-//
-//    @PostMapping("/getAirDataById")
-//    public AirData getAirDataById(@RequestBody String id);
-//
-//    @PostMapping("/queryAirDataList")
-//    public List<AirData> queryAirDataList(@RequestBody Map<String, Object> map);
 }

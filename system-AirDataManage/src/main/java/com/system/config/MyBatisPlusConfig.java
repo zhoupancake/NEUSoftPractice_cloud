@@ -7,6 +7,9 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * The configuration class for invoking the paging query in MyBatis Plus.
+ */
 @Configuration
 public class MyBatisPlusConfig {
     @Bean

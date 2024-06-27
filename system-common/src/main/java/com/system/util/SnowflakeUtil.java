@@ -10,6 +10,9 @@ import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+/**
+ * Snowflake id generator
+ */
 public class SnowflakeUtil {
 
     private static final Snowflake snowflake;
@@ -20,6 +23,10 @@ public class SnowflakeUtil {
         snowflake = new Snowflake(datacenterId, workerId);
     }
 
+    /**
+     * generate id
+     * @return the snowflake id
+     */
     public static String genId() {
         return String.valueOf(snowflake.nextId());
     }
@@ -45,10 +52,5 @@ public class SnowflakeUtil {
             sums += i;
         }
         return (long)(sums % 32);
-    }
-
-    public static void main(String[] args) {
-        for (int i = 0; i < 10; i++)
-            System.out.println(genId());
     }
 }

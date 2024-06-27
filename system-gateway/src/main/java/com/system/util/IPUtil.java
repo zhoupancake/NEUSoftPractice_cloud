@@ -8,6 +8,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
 
+/**
+ * The IP util for detect the real IP address of the request.
+ */
 @Slf4j
 public class IPUtil {
 
@@ -29,7 +32,7 @@ public class IPUtil {
                     .map(address -> address.getAddress().getHostAddress())
                     .orElse("");
             if (IP_LOCAL.equals(ipAddress)|| IPV6_LOCAL.equals(ipAddress)) {
-                // 根据网卡取本机配置的IP
+                // Get the IP configured on this machine based on the network card
                 try {
                     InetAddress inet = InetAddress.getLocalHost();
                     ipAddress = inet.getHostAddress();
@@ -39,7 +42,7 @@ public class IPUtil {
             }
         }
 
-        // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
+        // For the case of multiple proxies, the first IP is the real IP of the client, and multiple IPs are divided according to ','
         if (ipAddress != null && ipAddress.length() > IP_LEN) {
             int index = ipAddress.indexOf(",");
             if (index > 0) {

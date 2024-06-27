@@ -2,6 +2,9 @@ package com.system.util;
 
 import java.util.Map;
 
+/**
+ * Util class for calculating AQI based on the given concentration.
+ */
 public class AQIUtil {
     private static final Map<String, int[]> AQI_range = Map.of(
             "pm25", new int[]{0, 35, 75, 115, 150, 250, 350, 500},

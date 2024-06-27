@@ -13,6 +13,9 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Map;
 
+/**
+ * Entity for parsing the user(including administrator,supervisor,gridDetector)
+ */
 @Data
 @Builder
 @AllArgsConstructor

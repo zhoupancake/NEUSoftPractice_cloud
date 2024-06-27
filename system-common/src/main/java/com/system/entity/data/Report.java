@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Data object created by the supervisor to submit
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -8,9 +8,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
+/**
+ *  The interface grid detector inner micro-service api.
+ */
 public interface GridDetectorAPI {
     @PostMapping("/getDetectorSameCity")
     List<GridDetector> getDetectorSameCity(@RequestBody Map<String, Integer> map);
+
     @PostMapping("/getDetectorSameProvince")
     public List<GridDetector> getDetectorSameProvince(@RequestBody List<Integer> ids,
                                                       @RequestParam("pageNum") int pageNum,

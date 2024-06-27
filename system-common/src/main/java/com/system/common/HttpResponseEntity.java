@@ -4,36 +4,38 @@ import lombok.Getter;
 
 @Getter
 public class HttpResponseEntity {
-    private String code;     // 响应状态码
-    private Object data;     // 响应数据
-    private String message;  // 响应消息
+    private String code;     // status code
+    private Object data;     // response data
+    private String message;  // response message
 
     public HttpResponseEntity() {
     }
 
-    // 构造方法，用于创建HttpResponseEntity对象
+    /** Constructor*/
     public HttpResponseEntity(String code, Object data, String message) {
         this.code = code;
         this.data = data;
         this.message = message;
     }
 
-    // 创建一个表示错误响应的HttpResponseEntity对象
+    /**
+     * Error Response without response data
+     */
     public static HttpResponseEntity error(String message) {
         return new HttpResponseEntity("0", null, message);
     }
 
-    // 创建一个表示成功响应的HttpResponseEntity对象，带有数据
+    /** success Response with response data */
     public static HttpResponseEntity success(String message, Object data) {
         return new HttpResponseEntity("200", data, message);
     }
 
-    // 创建一个表示成功响应的HttpResponseEntity对象，不带数据
+    /**success Response without response data*/
     public static HttpResponseEntity success(String message) {
         return new HttpResponseEntity("666", null, message);
     }
 
-    // 根据条件创建响应对象，如果条件为真，表示成功，否则表示失败
+    /** create the response according to the flag to determine whether the operation is successful */
     public static HttpResponseEntity response(boolean flag, String message, Object data) {
         if (flag) {
             message = message + "successfully";

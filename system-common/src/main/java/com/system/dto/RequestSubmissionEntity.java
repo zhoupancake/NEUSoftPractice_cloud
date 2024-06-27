@@ -11,6 +11,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
 
+/**
+ * Entity to parse the submission transmitted in
+ */
 @Data
 @Builder
 @AllArgsConstructor

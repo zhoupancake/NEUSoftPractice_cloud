@@ -17,6 +17,9 @@ import java.util.Map;
 import static com.system.util.AQIUtil.getAQI;
 import static com.system.util.AQIUtil.getAQILevel;
 
+/**
+ * The type Air data inner micro-service api impl.
+ */
 @RestController
 @RequestMapping("/api/airData")
 @Slf4j
@@ -24,6 +27,11 @@ import static com.system.util.AQIUtil.getAQILevel;
 public class AirDataAPIImpl  implements AirDataAPI{
     private final AirDataService airDataService;
 
+    /**
+     *
+     * @param airData the air data needed to be added
+     * @return boolean to indicate whether the operation is successful
+     */
     @Override
     @PostMapping("/addAirData")
     public boolean addAirData(@RequestBody AirData airData) {
@@ -41,33 +49,4 @@ public class AirDataAPIImpl  implements AirDataAPI{
 
         return airDataService.save(airData);
     }
-
-//    @Override
-//    @PostMapping("/modifyAirData")
-//    public boolean modifyAirData(@RequestBody AirData airData) {
-//        return airDataService.updateById(airData);
-//    }
-//
-//    @Override
-//    @PostMapping("/deleteAirData")
-//    public boolean deleteAirDataById(@RequestBody AirData airData) {
-//        return airDataService.removeById(airData);
-//    }
-//
-//    @Override
-//    @PostMapping("/getAirDataById")
-//    public AirData getAirDataById(String id) {
-//        return airDataService.getById(id);
-//    }
-//
-//    @Override
-//    @PostMapping("/queryAirDataList")
-//    public List<AirData> queryAirDataList(@RequestBody Map<String, Object> map) {
-//        Integer pageNum = (Integer) map.get("pageNum");
-//        Integer pageSize = (Integer) map.get("pageSize");
-//        Page<AirData> page = new Page<>(pageNum, pageSize);
-//        airDataService.query().eq("status", "1")
-//                .like("username", map.get("username")).page(page);
-//        return page.getRecords();
-//    }
 }

@@ -20,8 +20,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;;
 
-import static com.baomidou.mybatisplus.extension.toolkit.Db.list;
-
+/**
+ * The front-end interface to call the air data operation
+ */
 @RestController
 @RequestMapping("/airData")
 @Slf4j
@@ -30,6 +31,14 @@ public class ActionController {
     private final AirDataService airDataService;
     private final CityServiceFeignClient cityService;
 
+    /**
+     * select all air data with paging query
+     * @Request_character administrator
+     * @param map from front-end request
+     * @key_in_map pageNum: the page number in paging query
+     * @key_in_map pageSize: the page size in paging query
+     * @return HttpResponseEntity containing the all air data
+     */
     @PostMapping("/administrator/selectAll/page")
     public HttpResponseEntity selectAll(@RequestBody Map<String, Object> map) {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
@@ -49,6 +58,11 @@ public class ActionController {
         return HttpResponseEntity.success("query successfully", result);
     }
 
+    /**
+     * select all air data
+     * @Request_character administrator
+     * @return HttpResponseEntity containing the all air data
+     */
     @GetMapping("/administrator/selectAll")
     public HttpResponseEntity selectAll() {
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
@@ -63,6 +77,15 @@ public class ActionController {
         return HttpResponseEntity.response(success,"query ", result);
     }
 
+    /**
+     * select all air data in the corresponding province
+     * @Request_character administrator
+     * @param map from front-end request
+     * @key_in_map province: the province name required
+     * @key_in_map pageNum: the page number in paging query
+     * @key_in_map pageSize: the page size in paging query
+     * @return HttpResponseEntity containing the air data in the corresponding province
+     */
     @PostMapping("/administrator/selectByProvince")
     public HttpResponseEntity selectByProvince(@RequestBody Map<String, Object> map) {
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
@@ -83,6 +106,25 @@ public class ActionController {
         return HttpResponseEntity.success("query ", result);
     }
 
+    /**
+     * select all air data in the corresponding city
+     * @Request_character administrator
+     * @param map from front-end request
+     * @key_in_map id the air data id
+     * @key_in_map pageNum the page number in paging query(required)
+     * @key_in_map pageSize the page size in paging query(required)
+     * @key_in_map province the province name required
+     * @key_in_map city the city name required
+     * @key_in_map location the location required fuzzy matching
+     * @key_in_map startTime the start time in required range
+     * @key_in_map endTime the end time in required range
+     * @key_in_map aqiLevel the minimum aqi level
+     * @key_in_map pm25 the minimum pm25 level
+     * @key_in_map pm10 the minimum pm10 level
+     * @key_in_map no2 the minimum no2 level
+     * @key_in_map so2 the minimum so2 level
+     * @return HttpResponseEntity containing the air data in the corresponding city
+     */
     @PostMapping("/administrator/queryAirDataList")
     public HttpResponseEntity queryAirDataList(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
@@ -160,6 +202,19 @@ public class ActionController {
         return HttpResponseEntity.response(!airDataList.isEmpty(), "query air data ", result);
     }
 
+    /**
+     * get the count of air quality components exceeding the standard in each province
+     * @Request_character: administrator
+     * @param map from the front-end
+     * @key_in_map id of the air data
+     * @key_in_map pageNum the page number
+     * @key_in_map pageSize the page size
+     * @key_in_map aqi the minimum aqi level
+     * @key_in_map so2 the minimum so2 level
+     * @key_in_map co the minimum co level
+     * @key_in_map pm25 the minimum pm25 level
+     * @return the response contain the number of air quality components exceeding the standard in each province
+     */
     @PostMapping("/administrator/getProvinceCount")
     public HttpResponseEntity getProvinceCount(@RequestBody Map<String, Object> map) {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
@@ -213,6 +268,11 @@ public class ActionController {
         return HttpResponseEntity.success("get province count", resultMap);
     }
 
+    /**
+     * get the count of air data in each level
+     * @Request_character digitalScreen
+     * @return the number of air quality components exceeding the standard in each province
+     */
     @GetMapping("/digitalScreen/queryAirDataByLevel")
     public HttpResponseEntity queryAirDataByLevel() throws ParseException {
         int[] count = new int[6];
@@ -223,6 +283,11 @@ public class ActionController {
         return HttpResponseEntity.success("query air data by level", result);
     }
 
+    /**
+     * get the count of air data in each level in each province
+     * @Request_character digitalScreen
+     * @return the number of air quality components exceeding the standard in each province
+     */
     @GetMapping("/digitalScreen/getProvinceCount")
     public HttpResponseEntity getProvinceCount() {
         int level = 3;
@@ -256,6 +321,12 @@ public class ActionController {
         return HttpResponseEntity.success("get province count", result);
     }
 
+    /**
+     * get the record of the latest limitNum records within the limited number
+     * @Request_character digitalScreen
+     * @param limitNum the number of records to be returned
+     * @return the record of the latest limitNum records within the limited number
+     */
     @GetMapping("/digitalScreen/selectAll")
     public HttpResponseEntity selectAll_digitalScreen(@RequestParam("limitNum") Integer limitNum) {
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
@@ -275,6 +346,12 @@ public class ActionController {
         return HttpResponseEntity.response(success,"query ", result);
     }
 
+    /**
+     * get the record of the latest limitNum records within the limited number
+     * @Request_character digitalScreen
+     * @param limitNum the number of records to be returned
+     * @return the record of the latest limitNum records within the limited number
+     */
     @GetMapping("/digitalScreen/selectOrderList")
     public HttpResponseEntity selectOrderList_digitalScreen(@RequestParam("limitNum") Integer limitNum) {
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
@@ -288,7 +365,12 @@ public class ActionController {
         return HttpResponseEntity.success("query ", result);
     }
 
-
+    /**
+     * get the record of the latest limitNum records within the latest week
+     * @Request_character digitalScreen
+     * @param encodedProvince the province name using Base64 encoder to be queried(use request parameter to transmit)
+     * @return the record of the latest limitNum records within the latest week
+     */
     @GetMapping("/digitalScreen/WeeklyAirData")
     public HttpResponseEntity getWeeklyAirData(@RequestParam("province") String encodedProvince) {
         String province = "";
@@ -305,6 +387,11 @@ public class ActionController {
         return HttpResponseEntity.success("get weekly air data", result);
     }
 
+    /**
+     * get the record of the latest limitNum records within the latest week
+     * @Request_character function getWeeklyAirData
+     * @return the record of the latest limitNum records within the latest week
+     */
     private Map<String, Integer> getWeeklyAirData_China(){
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneWeekAgo = now.minusWeeks(1);
@@ -326,6 +413,12 @@ public class ActionController {
         return maxAqiByProvince;
     }
 
+    /**
+     * get the record of the latest limitNum records within the latest week
+     * @Request_character function getWeeklyAirData
+     * @param province: the province name using Base64 encoder to be queried(use request parameter to transmit)
+     * @return the record of the latest limitNum records within the latest week
+     */
     private Map<String, Integer> getWeeklyAirData_Province(String province) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneWeekAgo = now.minusWeeks(1);

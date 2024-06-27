@@ -16,6 +16,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Entity for parsing the report
+ */
 @Data
 @Builder
 @AllArgsConstructor

@@ -23,6 +23,11 @@ import java.util.Map;
 public class GridDetectorAPIImpl implements GridDetectorAPI{
     private final GridDetectorService gridDetectorService;
     private final UserService userService;
+    /**
+     * use the city id to get the grid detector list
+     * @param map
+     * @return
+     */
     @Override
     @PostMapping("/getDetectorSameCity")
     public List<GridDetector> getDetectorSameCity(@RequestBody Map<String, Integer> map) {

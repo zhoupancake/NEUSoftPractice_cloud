@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Entity to construct the response of report
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,6 +28,11 @@ public class ResponseReportEntity implements Serializable {
     private String location;
     private Integer forecastAqiLevel;
 
+    /**
+     * Constructor to construct the response of report with report and city
+     * @param report report object
+     * @param city city object
+     */
     public ResponseReportEntity(Report report, City city){
         this.id = report.getId();
         this.submitterId = report.getSubmitterId();

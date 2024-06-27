@@ -1,5 +1,8 @@
 package com.system.util;
 
+/**
+ * The util class for verify the encrypted keys.
+ */
 public class VerifyUtil {
     private static String encrypt(String input){
         String encryptedKeys = "6be629bc3fc86d8d";

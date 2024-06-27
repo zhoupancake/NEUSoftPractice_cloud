@@ -201,7 +201,8 @@ public class ActionController {
                 City city = cityService.getCityById(report.getCityId());
                 result.add(new ResponseReportEntity(report, city));
             }
-        return HttpResponseEntity.response(success, "query", result);
+        Map<String, Object> resultList = Map.of("total", reportService.list().size(), "list", result);
+        return HttpResponseEntity.response(success, "query", resultList);
     }
 
     @GetMapping("/digitalScreen/selectOrderList")

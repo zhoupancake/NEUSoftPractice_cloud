@@ -8,7 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-
+/**
+ * Image Util for storing the image to the server and get the url of it
+ */
 public class ImageUtil {
     private final static String SAVE_IMAGE_PATH = "L:/UploadImage/";
 

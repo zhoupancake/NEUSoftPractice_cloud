@@ -7,7 +7,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 
 @SpringBootApplication
+//annotation to enable nacos discovery client
 @EnableDiscoveryClient
+//annotation to enable feign client(provider)
 @EnableFeignClients
 public class AirDataManageApplication {
     public static void main(String[] args) {

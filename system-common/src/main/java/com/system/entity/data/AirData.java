@@ -18,6 +18,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Data object storing the air quality data with location and time
+ */
 @Data
 @Builder
 @NoArgsConstructor

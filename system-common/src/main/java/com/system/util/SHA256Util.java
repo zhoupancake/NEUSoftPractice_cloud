@@ -5,6 +5,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * SHA256 util class to encrypt
+ */
 public class SHA256Util {
 
     public static String encrypt(String input) {

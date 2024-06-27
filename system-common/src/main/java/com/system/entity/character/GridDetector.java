@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * The grid detector of the system
+ * Major function: Confirm the air data according to the appointed task
+ */
 @Data
 @Builder
 @NoArgsConstructor

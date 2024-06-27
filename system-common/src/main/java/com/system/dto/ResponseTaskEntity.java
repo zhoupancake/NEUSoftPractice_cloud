@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * Entity to construct the response of task
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -31,6 +34,13 @@ public class ResponseTaskEntity implements Serializable {
     private String tel;
     private Integer reportForecastAqiLevel;
 
+    /**
+     * Constructor
+     * @param task task
+     * @param report report
+     * @param city city
+     * @param supervisor supervisor to acquire name and tel
+     */
     public ResponseTaskEntity(Task task, Report report, City city, Supervisor supervisor) {
         this.id = task.getId();
         this.appointerId = task.getAppointerId();
