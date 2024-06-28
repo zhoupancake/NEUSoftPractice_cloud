@@ -453,6 +453,53 @@ public class ActionController {
     }
 
     /**
+     * get the number of cities with AQI higher than 3 in each month
+     * @Request_character administrator
+     * @return the number of cities with AQI higher than 3 in each month
+     */
+    @GetMapping("/administrator/getAQICount")
+    public HttpResponseEntity countCitiesWithHighAQI() {
+        QueryWrapper<AirData> aqiQueryWrapper = new QueryWrapper<>();
+        QueryWrapper<AirData> so2QueryWrapper = new QueryWrapper<>();
+        QueryWrapper<AirData> coQueryWrapper = new QueryWrapper<>();
+        QueryWrapper<AirData> pm25QueryWrapper = new QueryWrapper<>();
+        aqiQueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
+                .gt("aqi_level", 3)
+                .groupBy("DATE_FORMAT(date, '%Y-%m')")
+                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
+        so2QueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
+                .gt("so2", AQIUtil.AQILevel2value_so2(3))
+                .groupBy("DATE_FORMAT(date, '%Y-%m')")
+                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
+        coQueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
+                .gt("co", AQIUtil.AQILevel2value_co(3))
+                .groupBy("DATE_FORMAT(date, '%Y-%m')")
+                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
+        pm25QueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
+                .gt("pm25", AQIUtil.AQILevel2value_pm25(3))
+                .groupBy("DATE_FORMAT(date, '%Y-%m')")
+                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
+        List<Map<String,Object>> aqiMap = airDataService.listMaps(aqiQueryWrapper);
+        List<Map<String,Object>> so2Map = airDataService.listMaps(so2QueryWrapper);
+        List<Map<String,Object>> coMap = airDataService.listMaps(coQueryWrapper);
+        List<Map<String,Object>> pm25Map = airDataService.listMaps(pm25QueryWrapper);
+        List<String> dateList = new ArrayList<>();
+        List<Long> aqiList = new ArrayList<>();
+        List<Long> so2List = new ArrayList<>();
+        List<Long> coList = new ArrayList<>();
+        List<Long> pm25List = new ArrayList<>();
+        for(int i = 0; i < aqiMap.size(); i++){
+            dateList.add((String) aqiMap.get(i).get("month"));
+            aqiList.add((Long) aqiMap.get(i).get("num_cities"));
+            so2List.add((Long) so2Map.get(i).get("num_cities"));
+            coList.add((Long) coMap.get(i).get("num_cities"));
+            pm25List.add((Long) pm25Map.get(i).get("num_cities"));
+        }
+        Map<String, Object> map = Map.of("date", dateList, "aqi", aqiList, "so2", so2List, "co", coList, "pm25", pm25List);
+        return HttpResponseEntity.response(true, "count cities with high aqi", map);
+    }
+
+    /**
      * get the record of the latest limitNum records within the latest week
      * @Request_character function getWeeklyAirData
      * @return the record of the latest limitNum records within the latest week
