@@ -8,9 +8,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.*;
 import redis.clients.jedis.JedisPoolConfig;
 
+/**
+ * Redis configuration class
+ */
 @Configuration
 public class RedisConfig {
-
+    // acquire the configuration value from the configuration file(application.yaml)
     @Value("${redis.host}")
     private String redisHost;
 
@@ -29,6 +32,10 @@ public class RedisConfig {
     @Value("${redis.testOnBorrow}")
     private boolean testOnBorrow;
 
+    /**
+     * Connection pool configuration
+     * @return configuration jedis connection pool
+     */
     @Bean
     public JedisPoolConfig jedisPoolConfig() {
         JedisPoolConfig poolConfig = new JedisPoolConfig();
@@ -39,6 +46,10 @@ public class RedisConfig {
         return poolConfig;
     }
 
+    /**
+     * Connection factory configuration
+     * @return configuration jedis connection factory
+     */
     @Bean
     public JedisConnectionFactory jedisConnectionFactory(JedisPoolConfig poolConfig) {
         JedisConnectionFactory factory = new JedisConnectionFactory();
@@ -48,6 +59,10 @@ public class RedisConfig {
         return factory;
     }
 
+    /**
+     * Redis template configuration
+     * @return configuration redis template
+     */
     @Bean
     public RedisTemplate<String, Integer> redisTemplate(JedisConnectionFactory jedisConnectionFactory) {
         RedisTemplate<String, Integer> template = new RedisTemplate<>();

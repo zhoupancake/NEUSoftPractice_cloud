@@ -9,9 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
 /**
- * 自定义负载均衡器，配合OpenFeign完成具体的策略的
- * 随机策略
- * 不要加@Configuration
+ * self defined load balancer
+ * random strategy
  */
 public class RandomLoadBalancerConfig {
     @Bean

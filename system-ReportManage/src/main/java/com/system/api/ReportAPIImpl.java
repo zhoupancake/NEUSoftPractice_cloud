@@ -1,64 +1,52 @@
 package com.system.api;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.system.entity.data.Report;
 import com.system.service.ReportService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-
+/**
+ * The report inner micro-service api impl
+ */
 @RestController
 @RequestMapping("/api/report")
 @Slf4j
 @RequiredArgsConstructor
 public class ReportAPIImpl  implements ReportAPI{
     private final ReportService reportService;
-//
-//    @Override
-//    @PostMapping("/addReport")
-//    public boolean addReport(@RequestBody Report report) {
-//        return reportService.save(report);
-//    }
-//
-//    @Override
-//    @PostMapping("/modifyReport")
-//    public boolean modifyReport(@RequestBody Report report) {
-//        return reportService.updateById(report);
-//    }
-//
-//    @Override
-//    @PostMapping("/deleteReport")
-//    public boolean deleteReportById(@RequestBody Report report) {
-//        return reportService.removeById(report);
-//    }
 
+    /**
+     * get the report by id
+     * @param id the report id
+     * @return the report object
+     */
     @Override
     @PostMapping("/getReportById")
     public Report getReportById(@RequestBody String id) {
         return reportService.getById(id);
     }
 
+    /**
+     * update the report by id
+     * @param report the updated report object
+     * @return true if the report is updated successfully
+     */
     @Override
     @PostMapping("/updateReportById")
     public boolean updateReportById(@RequestBody Report report) {
         return reportService.updateById(report);
     }
-//    @Override
-//    @PostMapping("/queryReportList")
-//    public List<Report> queryReportList(@RequestBody Map<String, Object> map) {
-//        Integer pageNum = (Integer) map.get("pageNum");
-//        Integer pageSize = (Integer) map.get("pageSize");
-//        Page<Report> page = new Page<>(pageNum, pageSize);
-//        reportService.query().eq("status", "1")
-//                .like("username", map.get("username")).page(page);
-//        return page.getRecords();
-//    }
+
+    /**
+     * get the number of the reports in the database
+     * @return integer number of the reports
+     */
     @Override
     @GetMapping("/getReportCount")
     public int getReportCount(){
+        System.out.println("getReportCount");
         return reportService.query().list().size();
     }
 }

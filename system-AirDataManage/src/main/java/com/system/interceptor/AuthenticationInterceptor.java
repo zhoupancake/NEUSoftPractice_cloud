@@ -1,5 +1,6 @@
 package com.system.interceptor;
 
+import com.system.util.IPUtil;
 import com.system.util.VerifyUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,14 +17,16 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 @Slf4j
 public class AuthenticationInterceptor implements HandlerInterceptor {
-
     @Override
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
         String authToken = request.getHeader("token");
         String path = request.getRequestURI();
         PathMatcher pathMatcher = new AntPathMatcher();
-        if (pathMatcher.match("/api/**", path))
+        if (pathMatcher.match("/api/**", path)) {
+            String ip = IPUtil.getIpAddress(request);
+            System.out.println(ip);
             return true;
+        }
         if (!VerifyUtil.verify(authToken, path)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Access deny");

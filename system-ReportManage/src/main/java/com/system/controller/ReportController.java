@@ -26,7 +26,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * report controller for testing the CRUD operations
+ * can be called using super admin account to call
+ */
 @RestController
 @RequestMapping("/hide/report")
 @Slf4j
@@ -35,6 +38,12 @@ public class ReportController {
     private final ReportService reportService;
     private final SupervisorServiceFeignClient supervisorService;
     private final CityServiceFeignClient cityService;
+
+    /**
+     * add report
+     * @param requestReportEntity contains the report and location
+     * @return http response indicate whether the operation is successful
+     */
     @PostMapping("/addReport")
     public HttpResponseEntity addReport(@RequestBody RequestReportEntity requestReportEntity) {
         Report report = requestReportEntity.getReport_create();
@@ -53,6 +62,11 @@ public class ReportController {
         return HttpResponseEntity.response(reportSuccess, "create report ", null);
     }
 
+    /**
+     * modify report
+     * @param requestReportEntity contains the report needed to be modified
+     * @return http response indicate whether the operation is successful
+     */
     @PostMapping("/modifyReport")
     public HttpResponseEntity modifyReport(@RequestBody RequestReportEntity requestReportEntity) {
         Report report = requestReportEntity.getReport_modify();
@@ -70,6 +84,11 @@ public class ReportController {
         return HttpResponseEntity.response(success, "modify report ", report);
     }
 
+    /**
+     * delete report
+     * @param report the report needed to be deleted
+     * @return http response indicate whether the operation is successful
+     */
     @PostMapping("/deleteReport")
     public HttpResponseEntity deleteReportById(@RequestBody Report report) {
         if(null == reportService.getById(report.getId()))
@@ -77,7 +96,23 @@ public class ReportController {
         boolean success = reportService.removeById(report);
         return HttpResponseEntity.response(success, "delete report ", report);
     }
-    
+
+    /**
+     * query report list
+     * @param map the map contains the information of the page
+     * @key_in_map pageNum the page number
+     * @key_in_map pageSize the page size
+     * @key_in_map submitterId the submitter id of the report(supervisor id)
+     * @key_in_map province the province of the report
+     * @key_in_map city the city of the report
+     * @key_in_map startTime the start time of the report
+     * @key_in_map endTime the end time of the report
+     * @key_in_map status the status of the report(finish appointment or not)
+     * @key_in_map description the description of the report
+     * @key_in_map forecastAqiLevel the forecast AQI level of the report
+     * @return the http response entity contains the report list as required
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/queryReportList")
     public HttpResponseEntity queryReportListBySubmitterId(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)

@@ -9,6 +9,9 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * The micro-service interceptor to check whether the gateway allow the incoming request
+ */
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
 

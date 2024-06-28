@@ -17,6 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class SupervisorAPIImpl implements SupervisorAPI{
     @Resource
     private final SupervisorService supervisorService;
+
+    /**
+     * get the supervisor by id
+     * @param id the id of the supervisor
+     * @return the supervisor
+     */
     @Override
     @PostMapping("/getSupervisorById")
     public Supervisor getSupervisorById(@RequestBody String id){

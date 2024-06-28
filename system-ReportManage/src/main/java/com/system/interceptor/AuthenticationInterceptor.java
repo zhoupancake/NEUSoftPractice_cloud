@@ -1,5 +1,6 @@
 package com.system.interceptor;
 
+import com.system.util.IPUtil;
 import com.system.util.VerifyUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +10,9 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * The micro-service interceptor to check whether the gateway allow the incoming request
+ */
 @Component
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
@@ -17,8 +21,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         String authToken = request.getHeader("token");
         String path = request.getRequestURI();
         PathMatcher pathMatcher = new AntPathMatcher();
-        if (pathMatcher.match("/api/**", path))
+        if (pathMatcher.match("/api/**", path)) {
+            String ip = IPUtil.getIpAddress(request);
             return true;
+        }
         if (!VerifyUtil.verify(authToken, path)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Access deny");

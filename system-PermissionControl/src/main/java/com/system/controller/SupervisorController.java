@@ -23,6 +23,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * supervisor controller for testing the CRUD operations
+ * can be called using super admin account to call
+ */
 @RestController
 @RequestMapping("/hide/supervisor")
 @Slf4j
@@ -30,9 +34,13 @@ import java.util.regex.Pattern;
 public class SupervisorController {
     private final UserService userService;
     private final SupervisorService supervisorService;
-    @Resource
     private final CityServiceFeignClient cityService;
 
+    /**
+     * add supervisor
+     * @param requestCharacterEntity requestCharacterEntity contains the supervisor and user needed to create
+     * @return http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/addSupervisor")
     public HttpResponseEntity addSupervisor(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_create();
@@ -65,6 +73,11 @@ public class SupervisorController {
         return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "create supervisor", supervisor.getId());
     }
 
+    /**
+     * modify supervisor
+     * @param requestCharacterEntity requestCharacterEntity contains the supervisor and user needed to modify
+     * @return http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/modifySupervisor")
     public HttpResponseEntity modifySupervisor(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_modify();
@@ -95,6 +108,11 @@ public class SupervisorController {
         return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "modify supervisor account", null);
     }
 
+    /**
+     * delete supervisor
+     * @param requestCharacterEntity requestCharacterEntity contains the user needed to delete
+     * @return http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/deleteSupervisor")
     public HttpResponseEntity deleteSupervisorById(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         User user = requestCharacterEntity.getUser_modify();
@@ -111,6 +129,20 @@ public class SupervisorController {
         return HttpResponseEntity.response(supervisorSuccess&&userSuccess, "delete supervisor account ", null);
     }
 
+    /**
+     * query supervisor list
+     * @param map contains the query using information
+     * @key_in_map pageNum page number
+     * @key_in_map pageSize page size
+     * @key_in_map id supervisor id
+     * @key_in_map tel supervisor tel
+     * @key_in_map name supervisor name
+     * @key_in_map sex supervisor sex
+     * @key_in_map cityId the id of the city supervisor belongs to
+     * @key_in_map birthYear supervisor birth year
+     * @key_in_map status supervisor status whether the supervisor is active or not
+     * @return http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/querySupervisorList")
     public HttpResponseEntity querySupervisorList(@RequestBody Map<String, Object> map) {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)

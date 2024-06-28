@@ -25,6 +25,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * the external interface to log in, register and change the password
+ * this controller is exposed to the outside request
+ */
 @RestController
 @RequestMapping("/user")
 @Slf4j
@@ -39,8 +43,14 @@ public class UserController {
     private final SupervisorService supervisorService;
     private final CityServiceFeignClient cityService;
 
+    /**
+     * login
+     * @Request_character administrator, gridDetector, supervisor
+     * @param user the user object for login, contains username and password
+     * @return the response entity to indicate whether the login is successful
+     */
     @PostMapping("/login")
-    public HttpResponseEntity login(@RequestBody User user, HttpServletResponse response) {
+    public HttpResponseEntity login(@RequestBody User user) {
         System.out.println(user);
         // check whether the account exist and in usable status
         List<User> users = userService.query().eq("username", user.getUsername()).list();
@@ -109,6 +119,12 @@ public class UserController {
         }
     }
 
+    /**
+     * change the password
+     * @Request_character administrator, gridDetector, supervisor
+     * @param requestCharacterEntity the character object for changing the password, contains username, the original password and the new password
+     * @return the response entity to indicate whether the register is successful
+     */
     @PostMapping("/changePassword")
     public HttpResponseEntity changePassword(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Map<String, String> map = requestCharacterEntity.getUser_modifyPassword();
@@ -134,6 +150,12 @@ public class UserController {
         }
     }
 
+    /**
+     * register providing for supervisor
+     * @Request_character supervisor
+     * @param requestCharacterEntity the character object for registering, contains username, password, name, age, sex, tel, province, city, idCard, location
+     * @return the response entity to indicate whether the register is successful
+     */
     @PostMapping("/register")
     public HttpResponseEntity register(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_create();

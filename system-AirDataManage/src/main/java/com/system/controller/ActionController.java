@@ -55,7 +55,8 @@ public class ActionController {
                 City city = cityService.getCityById(airData.getCityId());
                 result.add(new ResponseAirDataEntity(airData, city));
             }
-        return HttpResponseEntity.success("query successfully", result);
+        Map<String, Object> resultMap = Map.of("count", airDataService.count(queryWrapper), "data", result);
+        return HttpResponseEntity.success("query successfully", resultMap);
     }
 
     /**
@@ -103,7 +104,8 @@ public class ActionController {
                 City city = cityService.getCityById(airData.getCityId());
                 result.add(new ResponseAirDataEntity(airData, city));
             }
-        return HttpResponseEntity.success("query ", result);
+        Map<String, Object> resultMap = Map.of("count", airDataService.count(queryWrapper), "result", result);
+        return HttpResponseEntity.success("query ", resultMap);
     }
 
     /**
@@ -199,7 +201,8 @@ public class ActionController {
                 City city = cityService.getCityById(airData.getCityId());
                 result.add(new ResponseAirDataEntity(airData, city));
             }
-        return HttpResponseEntity.response(!airDataList.isEmpty(), "query air data ", result);
+        Map<String, Object> resultMap = Map.of("count", airDataService.count(queryWrapper), "result", result);
+        return HttpResponseEntity.response(!airDataList.isEmpty(), "query air data ", resultMap);
     }
 
     /**
@@ -270,6 +273,64 @@ public class ActionController {
 
     /**
      * get the count of air data in each level
+     * @Request_character administrator
+     * @return the number of air quality components exceeding the standard in each province
+     */
+    @GetMapping("/administrator/queryAirDataByLevel")
+    public HttpResponseEntity queryAirDataByLevel_administrator() throws ParseException {
+        int[] count = new int[6];
+        for(int i = 1; i <= 6; i++)
+            count[i-1] = (int)airDataService.count(new QueryWrapper<AirData>().ge("aqi_level", i));
+        Map<String, Integer> result = Map.of("one", count[0],"two", count[1], "three", count[2],
+                "four", count[3], "five", count[4], "six", count[5]);
+        return HttpResponseEntity.success("query air data by level", result);
+    }
+
+    /**
+     * get the record of the latest limitNum records within the limited number
+     * @Request_character administrator
+     * @param limitNum the number of records to be returned
+     * @return the record of the latest limitNum records within the limited number
+     */
+    @GetMapping("/digitalScreen/selectOrderList")
+    public HttpResponseEntity selectOrderList_administrator(@RequestParam("limitNum") Integer limitNum) {
+        if(limitNum <= 0)
+            return HttpResponseEntity.error("limitNum must be positive");
+        QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
+        List<AirData> airDataList = airDataService.list(queryWrapper.orderByDesc("aqi"));
+        List<Map<String, Object>> result = new ArrayList<>();
+        for(int i = 0; i < limitNum; i++){
+            City city = cityService.getCityById(airDataList.get(i).getCityId());
+            Map<String, Object> map = Map.of("value", airDataList.get(i).getAqi(), "name", city.getProvince()+"/"+city.getName());
+            result.add(map);
+        }
+        return HttpResponseEntity.success("query ", result);
+    }
+
+    /**
+     * get the record of the latest limitNum records within the latest week
+     * @Request_character digitalScreen
+     * @param encodedProvince the province name using Base64 encoder to be queried(use request parameter to transmit)
+     * @return the record of the latest limitNum records within the latest week
+     */
+    @GetMapping("/administrator/weeklyAirData")
+    public HttpResponseEntity getWeeklyAirData_administrator(@RequestParam("province") String encodedProvince) {
+        String province = "";
+        if(encodedProvince != null)
+            province = Base64Util.decodeBase64ToString(encodedProvince);
+        Map<String, Integer> data = null;
+        if(province.equals("china"))
+            data = getWeeklyAirData_China();
+        else
+            data = getWeeklyAirData_Province(province);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for(String key : data.keySet())
+            result.add(Map.of("name", key, "value", data.get(key)));
+        return HttpResponseEntity.success("get weekly air data", result);
+    }
+
+    /**
+     * get the count of air data in each level
      * @Request_character digitalScreen
      * @return the number of air quality components exceeding the standard in each province
      */
@@ -289,7 +350,7 @@ public class ActionController {
      * @return the number of air quality components exceeding the standard in each province
      */
     @GetMapping("/digitalScreen/getProvinceCount")
-    public HttpResponseEntity getProvinceCount() {
+    public HttpResponseEntity getProvinceCount_digitalScreen() {
         int level = 3;
         Object[] provinces = cityService.getProvinceList().toArray();
         String[] provinceList = Arrays.copyOf(provinces, provinces.length, String[].class);
@@ -329,6 +390,8 @@ public class ActionController {
      */
     @GetMapping("/digitalScreen/selectAll")
     public HttpResponseEntity selectAll_digitalScreen(@RequestParam("limitNum") Integer limitNum) {
+        if(limitNum <= 0)
+            return HttpResponseEntity.error("limitNum must be positive");
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
         List<AirData> airDataList = airDataService.list(queryWrapper.orderByDesc("date"));
         List<ResponseAirDataEntity> result = new ArrayList<>();
@@ -354,6 +417,8 @@ public class ActionController {
      */
     @GetMapping("/digitalScreen/selectOrderList")
     public HttpResponseEntity selectOrderList_digitalScreen(@RequestParam("limitNum") Integer limitNum) {
+        if(limitNum <= 0)
+            return HttpResponseEntity.error("limitNum must be positive");
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
         List<AirData> airDataList = airDataService.list(queryWrapper.orderByDesc("aqi"));
         List<Map<String, Object>> result = new ArrayList<>();

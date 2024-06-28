@@ -1,5 +1,6 @@
 package com.system.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -15,9 +16,12 @@ import java.util.Optional;
 public class IPUtil {
 
     private static final String IP_UNKNOWN = "unknown";
+    private static final String SEPARATOR = ",";
     private static final String IP_LOCAL = "127.0.0.1";
     private static final String IPV6_LOCAL = "0:0:0:0:0:0:0:1";
     private static final int IP_LEN = 15;
+
+
     public static String getIpAddress(ServerHttpRequest request) {
         HttpHeaders headers = request.getHeaders();
         String ipAddress = headers.getFirst("x-forwarded-for");
@@ -50,5 +54,45 @@ public class IPUtil {
             }
         }
         return ipAddress;
+    }
+
+    public static String getIpAddress(HttpServletRequest request) {
+        if (request == null) {
+            return "unknown";
+        }
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Forwarded-For");
+        }
+        if (ip == null || ip.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getHeader("X-Real-IP");
+        }
+        if (ip == null || ip.isEmpty() || IP_UNKNOWN.equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+            if (IP_LOCAL.equalsIgnoreCase(ip) || IPV6_LOCAL.equalsIgnoreCase(ip)) {
+                // 根据网卡取本机配置的 IP
+                InetAddress iNet = null;
+                try {
+                    iNet = InetAddress.getLocalHost();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                }
+                if (iNet != null)
+                    ip = iNet.getHostAddress();
+            }
+        }
+        // 对于通过多个代理的情况，分割出第一个 IP
+        if (ip != null && ip.length() > 15) {
+            if (ip.indexOf(SEPARATOR) > 0) {
+                ip = ip.substring(0, ip.indexOf(SEPARATOR));
+            }
+        }
+        return IPV6_LOCAL.equals(ip) ? IP_LOCAL : ip;
     }
 }

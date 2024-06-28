@@ -54,26 +54,6 @@ public class DecisionMakerController {
         return userService.removeById(id) ? HttpResponseEntity.success("delete decisionMaker success") : HttpResponseEntity.error("delete decisionMaker failed");
    }
 
-//    @PostMapping("/queryDecisionMakerList")
-//    public HttpResponseEntity queryDecisionMakerList(@RequestBody Map<String, Object> map) {
-//        if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
-//            return HttpResponseEntity.error("pageNum and pageSize must be greater than 0");
-//        QueryWrapper<Administrator> queryWrapper = new QueryWrapper<>();
-//        if(map.containsKey("id") && map.get("id") != null)
-//            queryWrapper.like("id", map.get("id"));
-//        if (map.containsKey("idCard") && map.get("idCard") != null)
-//            queryWrapper.like("id_card", map.get("idCard"));
-//        if (map.containsKey("name") && map.get("name") != null)
-//            queryWrapper.like("name", map.get("name"));
-//
-//        Page<Administrator> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
-//        Page<Administrator> administratorPage = administratorService.page(page, queryWrapper);
-//
-//        List<Administrator> administratorList = administratorPage.getRecords();
-//        boolean success = !administratorList.isEmpty();
-//        return HttpResponseEntity.response(success, "query grid detector", administratorList);
-//    }
-
     @PostMapping("/modifyDecisionMaker")
     public HttpResponseEntity modifyDecisionMaker(@RequestBody Map<String, String> map) {
         String id = "";

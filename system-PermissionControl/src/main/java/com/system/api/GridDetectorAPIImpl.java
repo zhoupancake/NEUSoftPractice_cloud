@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type grid detector inner micro-service api impl.
+ */
 @RestController
 @RequestMapping("/api/gridDetector")
 @Slf4j
@@ -23,10 +26,14 @@ import java.util.Map;
 public class GridDetectorAPIImpl implements GridDetectorAPI{
     private final GridDetectorService gridDetectorService;
     private final UserService userService;
+
     /**
      * use the city id to get the grid detector list
-     * @param map
-     * @return
+     * @param map from the front end
+     * @key_in_map cityId the city needed to be queried
+     * @key_in_map pageNum
+     * @key_in_map pageSize
+     * @return the list of the grid detector in the corresponding city
      */
     @Override
     @PostMapping("/getDetectorSameCity")
@@ -43,6 +50,13 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
         return result;
     }
 
+    /**
+     * get the grid detector list in the province that the city in
+     * @param ids the list of the city id
+     * @param pageNum page number of paging query
+     * @param pageSize page size of paging query
+     * @return the list of the grid detector in the corresponding province
+     */
     @Override
     @PostMapping("/getDetectorSameProvince")
     public List<GridDetector> getDetectorSameProvince(@RequestBody List<Integer> ids,
@@ -60,6 +74,13 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
         return result;
     }
 
+    /**
+     * get the grid detector list in other province
+     * @param ids the list of the city id
+     * @param pageNum page number of paging query
+     * @param pageSize page size of paging query
+     * @return the list of the grid detector in the corresponding province
+     */
     @Override
     @PostMapping("/getDetectorOtherProvince")
     public List<GridDetector> getDetectorOtherProvince(@RequestBody List<Integer> ids,
@@ -77,12 +98,21 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
         return result;
     }
 
+    /**
+     * get the grid detector by id
+     * @param id the id of the grid detector
+     * @return the grid detector with the corresponding id
+     */
     @Override
     @PostMapping("/getGridDetectorById")
     public GridDetector getDetectorById(@RequestBody String id) {
         return gridDetectorService.getById(id);
     }
 
+    /**
+     * get the list of the cities that have grid detector
+     * @return the list of the cities that have grid detector
+     */
     @Override
     @GetMapping("/getDetectorCities")
     public List<Integer> getDetectorCities(){

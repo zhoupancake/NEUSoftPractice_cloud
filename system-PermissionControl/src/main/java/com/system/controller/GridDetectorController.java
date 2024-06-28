@@ -21,6 +21,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * grid detector controller for testing the CRUD operations
+ * can be called using super admin account to call
+ */
 @RestController
 @RequestMapping("/hide/gridDetector")
 @Slf4j
@@ -30,6 +34,11 @@ public class GridDetectorController {
     private final UserService userService;
     private final CityServiceFeignClient cityService;
 
+    /**
+     * add grid detector
+     * @param requestCharacterEntity contains grid detector and user information needed to creat
+     * @return http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/addGridDetector")
     public HttpResponseEntity addGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_create();
@@ -58,7 +67,11 @@ public class GridDetectorController {
         return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "create grid detector", gridDetector.getId());
     }
 
-
+    /**
+     * modify grid detector
+     * @param requestCharacterEntity contains grid detector and user information needed to modify
+     * @return http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/modifyGridDetector")
     public HttpResponseEntity modifyGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_modify();
@@ -86,6 +99,11 @@ public class GridDetectorController {
         return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "modify grid detector", null);
     }
 
+    /**
+     * delete grid detector
+     * @param requestCharacterEntity contains grid detector and user information needed to delete
+     * @return http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/deleteGridDetector")
     public HttpResponseEntity deleteGridDetectorById(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_modify();
@@ -102,6 +120,16 @@ public class GridDetectorController {
         return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "delete grid detector account", null);
     }
 
+    /**
+     * query grid detector list
+     * @param map contains query information
+     * @key_in_map pageNum page number
+     * @key_in_map pageSize page size
+     * @key_in_map id grid detector id
+     * @key_in_map idCard grid detector id card
+     * @key_in_map name grid detector name
+     * @return http response entity contains the grid detector list as the request
+     */
     @PostMapping("/queryGridDetectorList")
     public HttpResponseEntity queryGridDetectorList(@RequestBody Map<String, Object> map) {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)

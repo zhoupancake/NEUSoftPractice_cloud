@@ -21,7 +21,10 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
+/**
+ * the external interface for report-concerning operation
+ * this controller is exposed to the outside request
+ */
 @RestController
 @RequestMapping("/report")
 @Slf4j
@@ -31,8 +34,14 @@ public class ActionController {
     private final CityServiceFeignClient cityService;
     private final SupervisorServiceFeignClient supervisorService;
 
+    /**
+     * create a report
+     * @Request_character supervisor
+     * @param requestReportEntity the request report entity contains the report and the location
+     * @return http response entity to indicate the creating result
+     */
     @PostMapping("/supervisor/report")
-    public HttpResponseEntity addReport(@RequestBody RequestReportEntity requestReportEntity) {
+    public HttpResponseEntity report(@RequestBody RequestReportEntity requestReportEntity) {
         Report report = requestReportEntity.getReport_create();
         if (null == supervisorService.getSupervisorById(report.getSubmitterId()))
             return HttpResponseEntity.error("reported submitter is not exist");
@@ -49,6 +58,12 @@ public class ActionController {
         return HttpResponseEntity.response(reportSuccess, "create report ", null);
     }
 
+    /**
+     * get report by id
+     * @Request_character grid detector
+     * @param map the map contains the id of the needing report
+     * @return the corresponding report object
+     */
     @PostMapping("/gridDetector/getReportById")
     public HttpResponseEntity getReportById(@RequestBody Map<String,String> map) {
         Report report = reportService.getById(String.valueOf(map.get("id")));
@@ -57,6 +72,12 @@ public class ActionController {
         return HttpResponseEntity.response(true, "get report", report);
     }
 
+    /**
+     * get report by id
+     * @Request_character administrator
+     * @param map the map contains the id of the needing report
+     * @return the corresponding report object
+     */
     @PostMapping("/administrator/getReportById")
     public HttpResponseEntity getReportById_Administrator(@RequestBody Map<String,String> map) {
         Report report = reportService.getById(String.valueOf(map.get("id")));
@@ -66,6 +87,23 @@ public class ActionController {
         return HttpResponseEntity.response(true, "get report", responseReport);
     }
 
+    /**
+     * query report list
+     * @Request_character supervisor
+     * @param map the map contains the information of the page
+     * @key_in_map pageNum the page number
+     * @key_in_map pageSize the page size
+     * @key_in_map submitterId the submitter id of the report(supervisor id)
+     * @key_in_map province the province of the report
+     * @key_in_map city the city of the report
+     * @key_in_map startTime the start time of the report
+     * @key_in_map endTime the end time of the report
+     * @key_in_map status the status of the report(finish appointment or not)
+     * @key_in_map description the description of the report
+     * @key_in_map forecastAqiLevel the forecast AQI level of the report
+     * @return the http response entity contains the report list as required
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/supervisor/queryReportList")
     public HttpResponseEntity queryReportListBySubmitterId(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
@@ -135,9 +173,27 @@ public class ActionController {
                 City city = cityService.getCityById(report.getCityId());
                 result.add(new ResponseReportEntity(report, city));
             }
+        Map<String, Object> resultMap = Map.of("count", reportService.count(queryWrapper),"result", result);
         return HttpResponseEntity.response(success, "query ", result);
     }
 
+    /**
+     * query report list
+     * @Request_character supervisor
+     * @param map the map contains the information of the page
+     * @key_in_map pageNum the page number
+     * @key_in_map pageSize the page size
+     * @key_in_map submitterId the submitter id of the report(supervisor id)
+     * @key_in_map province the province of the report
+     * @key_in_map city the city of the report
+     * @key_in_map startTime the start time of the report
+     * @key_in_map endTime the end time of the report
+     * @key_in_map status the status of the report(finish appointment or not)
+     * @key_in_map description the description of the report
+     * @key_in_map forecastAqiLevel the forecast AQI level of the report
+     * @return the http response entity contains the report list as required
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/administrator/queryReportList")
     public HttpResponseEntity queryReportList(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
@@ -205,6 +261,12 @@ public class ActionController {
         return HttpResponseEntity.response(success, "query", resultList);
     }
 
+    /**
+     * get the top several reports in the report list sorted by time in descending order
+     * @Request_character digital screen
+     * @param limitNum the number of reports to be returned
+     * @return http response entity contains the top several reports as required
+     */
     @GetMapping("/digitalScreen/selectOrderList")
     public HttpResponseEntity selectOrderList_digitalScreen(@RequestParam("limitNum") Integer limitNum) {
         QueryWrapper<Report> queryWrapper = new QueryWrapper<>();

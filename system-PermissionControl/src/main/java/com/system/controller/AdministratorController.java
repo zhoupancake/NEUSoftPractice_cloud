@@ -27,6 +27,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * administrator controller for testing the CRUD operations
+ * can be called using super admin account to call
+ */
 @RestController
 @RequestMapping("/hide/administrator")
 @Slf4j
@@ -35,6 +39,11 @@ public class AdministratorController {
     private final AdministratorService administratorService;
     private final UserService userService;
 
+    /**
+     * add administrator
+     * @param requestCharacterEntity contains administrator and user information needed to create
+     * @return http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/addAdministrator")
     public HttpResponseEntity addAdministrator(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Administrator administrator = requestCharacterEntity.getAdministrator_create();
@@ -58,7 +67,11 @@ public class AdministratorController {
         return HttpResponseEntity.response(administratorSuccess&&userSuccess, "add administrator ", administrator.getId());
     }
 
-
+    /**
+     * modify administrator
+     * @param requestCharacterEntity contains administrator and user information needed to modify
+     * @return the http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/modifyAdministrator")
     public HttpResponseEntity modifyAdministrator(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Administrator administrator = requestCharacterEntity.getAdministrator_modify();
@@ -81,6 +94,11 @@ public class AdministratorController {
         return HttpResponseEntity.response(administratorSuccess&&userSuccess, "modify administrator ", null);
     }
 
+    /**
+     * delete administrator
+     * @param requestCharacterEntity contains administrator and user information needed to delete
+     * @return the http response entity to indicate whether the operation is successful
+     */
     @PostMapping("/deleteAdministrator")
     public HttpResponseEntity deleteAdministratorById(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Administrator administrator = requestCharacterEntity.getAdministrator_modify();
@@ -97,6 +115,16 @@ public class AdministratorController {
         return HttpResponseEntity.response(administratorSuccess&&userSuccess, "delete administrator account", null);
     }
 
+    /**
+     * query administrator list
+     * @param map contains query parameters
+     * @key_in_map pageNum page number(required)
+     * @key_in_map pageSize page size(required)
+     * @key_in_map id id of administrator
+     * @key_in_map idCard idCard of administrator
+     * @key_in_map name name of administrator
+     * @return the http response entity contains the required administrator list
+     */
     @PostMapping("/queryAdministratorList")
     public HttpResponseEntity queryAdministratorList(@RequestBody Map<String, Object> map) {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
