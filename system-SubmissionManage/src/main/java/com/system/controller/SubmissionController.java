@@ -24,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 /**
- * report controller for testing the CRUD operations
+ * submission controller for testing the CRUD operations
  * can be called using super admin account to call
  */
 @RestController

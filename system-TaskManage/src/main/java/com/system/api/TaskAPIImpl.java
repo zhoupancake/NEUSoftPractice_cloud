@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+/**
+ * The task inner micro-service api impl
+ */
 @RestController
 @RequestMapping("/api/task")
 @Slf4j
@@ -21,12 +23,23 @@ public class TaskAPIImpl  implements TaskAPI{
     private final TaskService taskService;
     private final ReportServiceFeignClient reportService;
     private final CharacterServiceFeignClient characterService;
+
+    /**
+     * get the task by id
+     * @param id the id of the task to be get
+     * @return the task object
+     */
     @Override
     @PostMapping("/getTaskById")
     public Task getTaskById(@RequestBody String id) {
         return taskService.getById(id);
     }
 
+    /**
+     * update the task by id
+     * @param task the updated task object to replace the old one
+     * @return boolean value to indicate the result
+     */
     @Override
     @PostMapping("/updateTaskById")
     public boolean updateTaskById(@RequestBody Task task){
@@ -41,6 +54,11 @@ public class TaskAPIImpl  implements TaskAPI{
         return taskService.updateById(task);
     }
 
+    /**
+     * get the task id by appointer id
+     * @param appointerId the administrator id to query the task he or she created
+     * @return the task id array that the administrator created
+     */
     @Override
     @PostMapping("/getTaskIdByAppointerId")
     public String[] getTaskIdByAppointerId(@RequestBody String appointerId) {
@@ -50,6 +68,10 @@ public class TaskAPIImpl  implements TaskAPI{
         return list.stream().map(Task::getId).toArray(String[]::new);
     }
 
+    /**
+     * get the task count
+     * @return the number of the task in database
+     */
     @Override
     @GetMapping("/getTaskCount")
     public int getTaskCount(){

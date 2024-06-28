@@ -22,29 +22,45 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CityController {
     private final CityService cityService;
+
+    /**
+     * add city
+     * @param city the city to be added
+     * @return the http response contains the result of the operation
+     */
     @PostMapping("/addCity")
     public HttpResponseEntity addCity(@RequestBody City city) {
         boolean success = cityService.save(city);
         return HttpResponseEntity.response(success, "create city ", null);
     }
 
+    /**
+     * modify city
+     * @param city the city to be modified
+     * @return the http response contains the result of the operation
+     */
     @PostMapping("/modifyCity")
     public HttpResponseEntity modifyCity(@RequestBody City city) {
         boolean success = cityService.updateById(city);
         return HttpResponseEntity.response(success, "modify city", null);
     }
 
+    /**
+     * delete city
+     * @param city the city to be deleted
+     * @return the http response contains the result of the operation
+     */
     @PostMapping("/deleteCity")
     public HttpResponseEntity deleteCityById(@RequestBody City city) {
         boolean success = cityService.removeById(city);
         return HttpResponseEntity.response(success, "delete city ", null);
     }
 
-    @PostMapping("/getCityById")
-    public City getCityById(String id) {
-        return cityService.getById(id);
-    }
-
+    /**
+     * get city by the province and city name
+     * @param location contains the province and city name
+     * @return the http response contains the result of the operation
+     */
     @PostMapping("/getCityByLocation")
     public City getCityByLocation(@RequestBody Map<String, String> location) {
         City result;
@@ -60,6 +76,12 @@ public class CityController {
         return result;
     }
 
+    /**
+     * query city list
+     * @param map contains the query fields and the page number and page size
+     * @key_in_map cityId, name, province, level
+     * @return
+     */
     @PostMapping("/queryCityList")
     public HttpResponseEntity queryCityList(@RequestBody Map<String, Object> map) {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)

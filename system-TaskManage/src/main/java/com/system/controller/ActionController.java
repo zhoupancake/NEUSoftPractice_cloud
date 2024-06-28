@@ -40,6 +40,16 @@ public class ActionController {
     private final CityServiceFeignClient cityService;
     private final CharacterServiceFeignClient characterService;
 
+    /**
+     * get the appointee list of the grid detector(same city appointment)
+     * @Request_character administrator
+     * @param map the information of the request
+     * @key_in_map "pageNum" the page number of the response list
+     * @key_in_map "pageSize" the page size of the
+     * @key_in_map "province" the province of the appointee city
+     * @key_in_map "city" the city of the appointee city
+     * @return the response entity contains the grid detector list can be appointed
+     */
     @PostMapping("/administrator/getAppointee/local")
     public HttpResponseEntity getAppointee_local(@RequestBody Map<String, Object> map) {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
@@ -55,6 +65,16 @@ public class ActionController {
         return HttpResponseEntity.response(!gridDetectors.isEmpty(), "get appointee", gridDetectors);
     }
 
+    /**
+     * get the appointee list of the grid detector(same province without the corresponding city appointment)
+     * @Request_character administrator
+     * @param map contains the query fields information
+     * @key_in_map "pageNum" the page number of the response list
+     * @key_in_map "pageSize" the page size of the response list
+     * @key_in_map "province" the province of the appointee city
+     * @key_in_map "city" the city of the appointee city
+     * @return the response entity contains the grid detector list can be appointed
+     */
     @PostMapping("/administrator/getAppointee/province")
     public HttpResponseEntity getAppointee_province(@RequestBody Map<String, Object> map) {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
@@ -71,6 +91,16 @@ public class ActionController {
         return HttpResponseEntity.response(!result.isEmpty(), "get appointee ", result);
     }
 
+    /**
+     * get the appointee list of the grid detector(other province without the corresponding province appointment)
+     * @Request_character administrator
+     * @param map contains the query fields information
+     * @key_in_map "pageNum" the page number of the response list
+     * @key_in_map "pageSize" the page size of the response list
+     * @key_in_map "province" the province of the appointee city
+     * @key_in_map "city" the city of the appointee city
+     * @return the response entity contains the grid detector list can be appointed
+     */
     @PostMapping("/administrator/getAppointee/other")
     public HttpResponseEntity getAppointee_other(@RequestBody Map<String, Object> map) {
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
@@ -86,6 +116,11 @@ public class ActionController {
         return HttpResponseEntity.response(!result.isEmpty(), "get appointee ", result);
     }
 
+    /** appoint a task based on a specific report
+     * @Request_character administrator
+     * @param task the task information contains the relative report id and the appointee id
+     * @return the response entity indicating the result of the operation
+     */
     @PostMapping("/administrator/appoint")
     public HttpResponseEntity addTask(@RequestBody Task task) {
         task.setId(SnowflakeUtil.genId());
@@ -104,6 +139,21 @@ public class ActionController {
         return HttpResponseEntity.response(success, "create task ", null);
     }
 
+    /**
+     * query the task list with specific query fields
+     * @Request_character grid detector
+     * @param map contains the query fields information
+     * @key_in_map "pageNum" the page number of the response list
+     * @key_in_map "pageSize" the page size of the response list
+     * @key_in_map "appointeeId" the id of the grid detector who is appointed in the task
+     * @key_in_map "id" the id of the task
+     * @key_in_map "appointerId" the id of the administrator who appointed in the task
+     * @key_in_map "status" the status of the task(finished or not)
+     * @key_in_map "startTime" the start time of the query time range
+     * @key_in_map "endTime" the end time of the query time range
+     * @return the response entity contains the task list
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/gridDetector/queryTaskList")
     public HttpResponseEntity queryReportListBySubmitterId_character(@RequestBody Map<String, Object> map) throws ParseException {
         System.out.println(map);
@@ -151,6 +201,21 @@ public class ActionController {
         return HttpResponseEntity.response(success, "query", result);
     }
 
+    /**
+     * query the task list with specific query fields
+     * @Request_character administrator
+     * @param map contains the query fields information
+     * @key_in_map "pageNum" the page number of the response list
+     * @key_in_map "pageSize" the page size of the response list
+     * @key_in_map "appointeeId" the id of the grid detector who is appointed in the task
+     * @key_in_map "id" the id of the task
+     * @key_in_map "appointerId" the id of the administrator who appointed in the task
+     * @key_in_map "status" the status of the task(finished or not)
+     * @key_in_map "startTime" the start time of the query time range
+     * @key_in_map "endTime" the end time of the query time range
+     * @return the response entity contains the task list
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/administrator/queryTaskList")
     public HttpResponseEntity queryReportListBySubmitterId_administrator(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)

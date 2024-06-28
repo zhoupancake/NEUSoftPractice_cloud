@@ -28,7 +28,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * task controller for testing the CRUD operations
+ * can be called using super admin account to call
+ */
 @RestController
 @RequestMapping("/hide/task")
 @Slf4j
@@ -38,6 +41,12 @@ public class TaskController {
     private final CityServiceFeignClient cityService;
     private final ReportServiceFeignClient reportService;
     private final CharacterServiceFeignClient characterService;
+
+    /**
+     * create a new task
+     * @param task the task object need to be created
+     * @return the response entity to indicate the result
+     */
     @PostMapping("/addTask")
     public HttpResponseEntity addTask(@RequestBody Task task) {
         task.setId(SnowflakeUtil.genId());
@@ -56,6 +65,11 @@ public class TaskController {
         return HttpResponseEntity.response(success, "create task", null);
     }
 
+    /**
+     * modify a task
+     * @param task the task object need to be modified
+     * @return the response entity to indicate the result
+     */
     @PostMapping("/modifyTask")
     public HttpResponseEntity modifyTask(@RequestBody Task task) {
         if(null == taskService.getById(task.getId()))
@@ -70,6 +84,11 @@ public class TaskController {
         return HttpResponseEntity.response(success, "modify ", null);
     }
 
+    /**
+     * delete a task
+     * @param task the task object need to be deleted
+     * @return the response entity to indicate the result
+     */
     @PostMapping("/deleteTask")
     public HttpResponseEntity deleteTaskById(@RequestBody Task task) {
         if(null == taskService.getById(task.getId()))
@@ -78,6 +97,21 @@ public class TaskController {
         return HttpResponseEntity.response(success, "delete task record", null);
     }
 
+    /**
+     * query the task list with specific query fields
+     * @Request_character administrator
+     * @param map contains the query fields information
+     * @key_in_map "pageNum" the page number of the response list
+     * @key_in_map "pageSize" the page size of the response list
+     * @key_in_map "appointeeId" the id of the grid detector who is appointed in the task
+     * @key_in_map "id" the id of the task
+     * @key_in_map "appointerId" the id of the administrator who appointed in the task
+     * @key_in_map "status" the status of the task(finished or not)
+     * @key_in_map "startTime" the start time of the query time range
+     * @key_in_map "endTime" the end time of the query time range
+     * @return the response entity contains the task list
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/queryTaskList")
     public HttpResponseEntity queryTaskList(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)

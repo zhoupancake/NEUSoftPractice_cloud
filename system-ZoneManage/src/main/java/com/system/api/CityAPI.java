@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Map;
-
+/**
+ *  The interface city inner micro-service api.
+ */
 public interface CityAPI {
     @PostMapping("/api/city/getCityById")
     public City getCityById(@RequestBody Integer id);
