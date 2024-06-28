@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * the external interface for submission-concerning operation
+ * this controller is exposed to the outside request
+ */
 @RestController
 @RequestMapping("/submission")
 @Slf4j
@@ -35,6 +38,13 @@ public class ActionController {
     private final AirDataServiceFeignClient airDataService;
     private final CityServiceFeignClient cityService;
     private final CharacterServiceFeignClient characterService;
+
+    /**
+     * submit a submission when confirming the report based on task
+     * @Request_character grid detector
+     * @param requestSubmissionEntity contains the necessary information of the submission
+     * @return http response entity to indicate whether the submission is successful
+     */
     @PostMapping("/gridDetector/submit")
     public HttpResponseEntity submit(@RequestBody RequestSubmissionEntity requestSubmissionEntity) {
         Submission submission = requestSubmissionEntity.getSubmission_create();
@@ -63,17 +73,36 @@ public class ActionController {
         return HttpResponseEntity.response(airDataSuccess&&taskSuccess&&submissionSuccess, "create submission ", null);
     }
 
-//    @PostMapping("/selectAll/gridDetector")
-//    public HttpResponseEntity selectAll_gridDetector(@RequestBody Map<String, Object> map) {
-//        QueryWrapper<Submission> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.eq("submitter_id", map.get("submitterId"));
-//        Page<Submission> page = new Page<>((Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
-//        Page<Submission> submissionPage = submissionService.page(page, queryWrapper);
-//
-//        List<Submission> submissionList = submissionPage.getRecords();
-//        return HttpResponseEntity.success("select all submission", submissionList);
-//    }
-
+    /**
+     * get submission by id
+     * @Request_character administrator
+     * @param map contains the id of the submission
+     * @return the submission object
+     */
+    @PostMapping("/administrator/getSubmissionById")
+    public HttpResponseEntity getSubmissionById(@RequestBody Map<String, Object> map) {
+        String id = (String) map.get("id");
+        Submission submission = submissionService.getById(id);
+        if(null == submission)
+            return HttpResponseEntity.error("submission not exist");
+        return HttpResponseEntity.success("get submission", submission);
+    }
+    /**
+     * query submission list
+     * @Request_character grid detector
+     * @param map contains the necessary information of the query
+     * @key_in_map pageNum page number
+     * @key_in_map pageSize page size
+     * @key_in_map submitterId the id of the grid detector who submits the submission
+     * @key_in_map city the city of the submission
+     * @key_in_map province the province of the submission
+     * @key_in_map startTime the start time of the submission query range
+     * @key_in_map endTime the end time of the submission query range
+     * @key_in_map taskId the id of the task the submission belongs to
+     * @key_in_map description the description of the submission
+     * @return http response entity to indicate whether the query is successful
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/gridDetector/querySubmissionList")
     public HttpResponseEntity querySubmissionList_gridDetector(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
@@ -129,9 +158,26 @@ public class ActionController {
         Page<Submission> submissionPage = submissionService.page(page, queryWrapper);
 
         List<Submission> submissionList = submissionPage.getRecords();
-        return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", submissionList);
+        Map<String, Object> result = Map.of("count", submissionService.count(queryWrapper), "result", submissionList);
+        return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", result);
     }
 
+    /**
+     * query submission list
+     * @Request_character administrator
+     * @param map contains the necessary information of the query
+     * @key_in_map pageNum page number
+     * @key_in_map pageSize page size
+     * @key_in_map submitterId the id of the grid detector who submits the submission
+     * @key_in_map city the city of the submission
+     * @key_in_map province the province of the submission
+     * @key_in_map startTime the start time of the submission query range
+     * @key_in_map endTime the end time of the submission query range
+     * @key_in_map taskId the id of the task the submission belongs to
+     * @key_in_map description the description of the submission
+     * @return http response entity to indicate whether the query is successful
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/administrator/querySubmissionList")
     public HttpResponseEntity querySubmissionList_administrator(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
@@ -187,17 +233,19 @@ public class ActionController {
         List<Submission> submissionList = submissionPage.getRecords();
         if(map.containsKey("administratorId") && map.get("administratorId") != null)
             submissionList.removeIf(submission -> !taskService.getTaskById(submission.getTaskId()).getAppointerId().equals(map.get("administratorId")));
-        return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", submissionList);
+        Map<String, Object> result = Map.of("count", submissionService.count(queryWrapper), "result", submissionList);
+        return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", result);
     }
 
+    /**
+     * get the number of the submission, task, and report in the database
+     * @return http response entity contains the number of the submission, task, and report in the database
+     */
     @GetMapping("/digitalScreen/getProcession")
     public HttpResponseEntity getProcession() {
-        System.out.println("fuck");
         Map<String,Integer> result = Map.of("report", reportService.getReportCount(),
                                             "task", taskService.getTaskCount(),
                                             "submission", submissionService.query().list().size());
-        System.out.println(result);
         return HttpResponseEntity.response(true, "get procession", result);
     }
-
 }

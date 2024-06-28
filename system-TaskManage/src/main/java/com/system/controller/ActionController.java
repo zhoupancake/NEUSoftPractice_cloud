@@ -26,7 +26,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * the external interface for task-concerning operation
+ * this controller is exposed to the outside request
+ */
 @RestController
 @RequestMapping("/task")
 @Slf4j

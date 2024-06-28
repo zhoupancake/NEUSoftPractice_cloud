@@ -292,7 +292,7 @@ public class ActionController {
      * @param limitNum the number of records to be returned
      * @return the record of the latest limitNum records within the limited number
      */
-    @GetMapping("/digitalScreen/selectOrderList")
+    @GetMapping("/administrator/selectOrderList")
     public HttpResponseEntity selectOrderList_administrator(@RequestParam("limitNum") Integer limitNum) {
         if(limitNum <= 0)
             return HttpResponseEntity.error("limitNum must be positive");

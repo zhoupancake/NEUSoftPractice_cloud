@@ -174,7 +174,7 @@ public class ActionController {
                 result.add(new ResponseReportEntity(report, city));
             }
         Map<String, Object> resultMap = Map.of("count", reportService.count(queryWrapper),"result", result);
-        return HttpResponseEntity.response(success, "query ", result);
+        return HttpResponseEntity.response(success, "query ", resultMap);
     }
 
     /**
@@ -257,7 +257,7 @@ public class ActionController {
                 City city = cityService.getCityById(report.getCityId());
                 result.add(new ResponseReportEntity(report, city));
             }
-        Map<String, Object> resultList = Map.of("total", reportService.list().size(), "list", result);
+        Map<String, Object> resultList = Map.of("total", reportService.count(queryWrapper), "list", result);
         return HttpResponseEntity.response(success, "query", resultList);
     }
 
@@ -269,6 +269,8 @@ public class ActionController {
      */
     @GetMapping("/digitalScreen/selectOrderList")
     public HttpResponseEntity selectOrderList_digitalScreen(@RequestParam("limitNum") Integer limitNum) {
+        if(limitNum == null || limitNum < 1)
+            return HttpResponseEntity.error("limitNum is not valid");
         QueryWrapper<Report> queryWrapper = new QueryWrapper<>();
         List<Report> reportList = reportService.list(queryWrapper.orderByDesc("created_time"));
         List<ResponseReportEntity> result = new ArrayList<>();

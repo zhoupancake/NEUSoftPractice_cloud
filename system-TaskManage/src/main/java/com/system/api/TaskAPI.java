@@ -4,7 +4,9 @@ import com.system.entity.data.Task;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
+/**
+ *  The interface report inner micro-service api.
+ */
 public interface TaskAPI {
     @PostMapping("/api/getTaskById")
     public Task getTaskById(@RequestBody String id);

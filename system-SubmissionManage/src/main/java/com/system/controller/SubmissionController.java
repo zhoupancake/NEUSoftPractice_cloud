@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * report controller for testing the CRUD operations
+ * can be called using super admin account to call
+ */
 @RestController
 @RequestMapping("/hide/submission")
 @Slf4j
@@ -35,6 +38,11 @@ public class SubmissionController {
     private final CityServiceFeignClient cityService;
     private final CharacterServiceFeignClient characterService;
 
+    /**
+     * add submission
+     * @param requestSubmissionEntity contains submission and airData needed to be added
+     * @return http response entity to indicate the result
+     */
     @PostMapping("/addSubmission")
     public HttpResponseEntity addSubmission(@RequestBody RequestSubmissionEntity requestSubmissionEntity) {
         System.out.println(requestSubmissionEntity);
@@ -64,6 +72,11 @@ public class SubmissionController {
         return HttpResponseEntity.response(airDataSuccess&&taskSuccess&&submissionSuccess, "create submission ", null);
     }
 
+    /**
+     * modify submission
+     * @param submission to be modified
+     * @return http response entity to indicate the result
+     */
     @PostMapping("/modifySubmission")
     public HttpResponseEntity modifySubmission(@RequestBody Submission submission) {
         if(null == submissionService.getById(submission.getId()))
@@ -72,6 +85,11 @@ public class SubmissionController {
         return HttpResponseEntity.response(success, "modify ", null);
     }
 
+    /**
+     * delete submission
+     * @param submission to be deleted
+     * @return http response entity to indicate whether the deletion is successful
+     */
     @PostMapping("/deleteSubmission")
     public HttpResponseEntity deleteSubmissionById(@RequestBody Submission submission) {
         if(null == submissionService.getById(submission.getId()))
@@ -80,6 +98,22 @@ public class SubmissionController {
         return HttpResponseEntity.response(success, "delete ", null);
     }
 
+    /**
+     * query submission list
+     * @Request_character grid detector
+     * @param map contains the necessary information of the query
+     * @key_in_map pageNum page number
+     * @key_in_map pageSize page size
+     * @key_in_map submitterId the id of the grid detector who submits the submission
+     * @key_in_map city the city of the submission
+     * @key_in_map province the province of the submission
+     * @key_in_map startTime the start time of the submission query range
+     * @key_in_map endTime the end time of the submission query range
+     * @key_in_map taskId the id of the task the submission belongs to
+     * @key_in_map description the description of the submission
+     * @return http response entity to indicate whether the query is successful
+     * @throws ParseException if the start time or end time is not valid
+     */
     @PostMapping("/querySubmissionList")
     public HttpResponseEntity querySubmissionList(@RequestBody Map<String, Object> map) throws ParseException {
         if((Integer)map.get("pageNum") < 1 && (Integer)map.get("pageSize") < 1)
