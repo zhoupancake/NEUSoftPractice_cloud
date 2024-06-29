@@ -61,7 +61,7 @@ public class ActionController {
             return HttpResponseEntity.error("request city is not supported");
         Map<String, Integer> paraMap = Map.of("cityId", city.getId(),
                 "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
-        List<GridDetector> gridDetectors = characterService.getDetectorSameCity(paraMap);
+        Map<String, Object> gridDetectors = characterService.getDetectorSameCity(paraMap);
         return HttpResponseEntity.response(!gridDetectors.isEmpty(), "get appointee", gridDetectors);
     }
 
@@ -87,8 +87,10 @@ public class ActionController {
         List<Integer> cities = cityService.getCitiesSameProvince((city.getId()));
         if(cities == null || cities.isEmpty())
             return HttpResponseEntity.error("request province has no other supported city");
-        List<GridDetector> result = characterService.getDetectorSameProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
-        return HttpResponseEntity.response(!result.isEmpty(), "get appointee ", result);
+        Map<String, Integer> paraMap = Map.of("cityId", city.getId(),
+                "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
+        Map<String, Object> gridDetectors = characterService.getDetectorSameCity(paraMap);
+        return HttpResponseEntity.response(!gridDetectors.isEmpty(), "get appointee", gridDetectors);
     }
 
     /**
@@ -112,8 +114,10 @@ public class ActionController {
             return HttpResponseEntity.error("request city is not supported");
         List<Integer> cities = cityService.getCitiesSameProvince((city.getId()));
         cities.add(city.getId());
-        List<GridDetector> result = characterService.getDetectorOtherProvince(cities, (Integer)map.get("pageNum"), (Integer)map.get("pageSize"));
-        return HttpResponseEntity.response(!result.isEmpty(), "get appointee ", result);
+        Map<String, Integer> paraMap = Map.of("cityId", city.getId(),
+                "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
+        Map<String, Object> gridDetectors = characterService.getDetectorSameCity(paraMap);
+        return HttpResponseEntity.response(!gridDetectors.isEmpty(), "get appointee", gridDetectors);
     }
 
     /** appoint a task based on a specific report

@@ -1,5 +1,6 @@
 package com.system.interceptor;
 
+import com.system.util.IPUtil;
 import com.system.util.VerifyUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,8 +20,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
         String path = request.getRequestURI();
         PathMatcher pathMatcher = new AntPathMatcher();
-        if (path.equals("/user/login") || pathMatcher.match("/api/**", path))
+        if (path.equals("/user/login"))
             return true;
+        if (pathMatcher.match("/api/**", path)) {
+            String ip = IPUtil.getIpAddress(request);
+            String localIp = IPUtil.getLocalIP();
+            return ip.equals(localIp);
+        }
         String authToken = request.getHeader("token");
         if (VerifyUtil.verify(authToken, path)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

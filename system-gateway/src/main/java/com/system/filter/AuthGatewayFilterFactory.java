@@ -42,8 +42,7 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
             return chain.filter(exchange);
         if(pathMatcher.match("/api/**", path)){
             //simple mode: allow all the ip in the database to access the api
-            String remote_ip = IPUtil.getIpAddress(exchange.getRequest());
-            if(ipService.getById(remote_ip) == null){
+            if(ipCheck(exchange)){
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
@@ -60,11 +59,8 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
 
         //allow the marked ip to access the digitalScreen
         if(passVerify("digitalScreen", pathMatcher, path)){
-            String remote_ip = IPUtil.getIpAddress(exchange.getRequest());
-            if(ipService.getById(remote_ip) != null) {
-                System.out.println(path);
+            if(ipCheck(exchange))
                 return chain.filter(pass(path, exchange));
-            }
         }
 
         String token = Objects.requireNonNull(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
@@ -103,16 +99,20 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
                     return exchange.getResponse().setComplete();
                 }
             }
-//            case "DecisionMaker" -> {
-//                if (passVerify("decisionMaker", pathMatcher, path)||
-//                    pathMatcher.match("/decisionMaker/**", path)||
-//                    pathMatcher.match("/digitalScreen/**", path))
-//                    return chain.filter(pass(path, exchange));
-//                else {
-//                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-//                    return exchange.getResponse().setComplete();
-//                }
-//            }
+            case "Super" -> {
+                if (pathMatcher.match("/super/**", path)) {
+                    if (ipCheck(exchange))
+                        return chain.filter(pass(path, exchange));
+                    else {
+                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                        return exchange.getResponse().setComplete();
+                    }
+                }
+                else {
+                    exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                    return exchange.getResponse().setComplete();
+                }
+            }
             default -> {
                 exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
@@ -132,8 +132,9 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
                 pathMatcher.match("/report/"+character+"/**", path)||
                 pathMatcher.match("/task/"+character+"/**", path)||
                 pathMatcher.match("/submission/"+character+"/**", path)||
-                pathMatcher.match("/city/**", path)||
-                pathMatcher.match("/user/**", path);
+                pathMatcher.match("/city/all/**", path)||
+                pathMatcher.match("/user/**", path)||
+                pathMatcher.match("/city/"+character+"/**", path);
     }
 
     /**
@@ -146,6 +147,16 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
         String encrypt = encrypt(path);
         ServerHttpRequest host = exchange.getRequest().mutate().header("token", encrypt).build();
         return exchange.mutate().request(host).build();
+    }
+
+    /**
+     * Check whether the ip is allowed
+     * @param exchange the exchange to get the ip
+     * @return boolean true if the ip is allowed
+     */
+    private boolean ipCheck(ServerWebExchange exchange) {
+        String remote_ip = IPUtil.getIpAddress(exchange.getRequest());
+        return ipService.getById(remote_ip) == null;
     }
 
     /**

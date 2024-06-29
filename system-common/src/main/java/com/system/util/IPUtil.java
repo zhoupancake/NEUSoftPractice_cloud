@@ -95,4 +95,14 @@ public class IPUtil {
         }
         return IPV6_LOCAL.equals(ip) ? IP_LOCAL : ip;
     }
+
+    public static String getLocalIP(){
+        String local_ip = null;
+        try {
+            local_ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+        return local_ip;
+    }
 }

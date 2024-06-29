@@ -1,11 +1,6 @@
 package com.system.api;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.system.common.HttpResponseEntity;
-import com.system.dto.User;
 import com.system.entity.character.GridDetector;
-import com.system.entity.data.City;
 import com.system.service.GridDetectorService;
 import com.system.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,21 +28,21 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
      * @key_in_map cityId the city needed to be queried
      * @key_in_map pageNum
      * @key_in_map pageSize
-     * @return the list of the grid detector in the corresponding city
+     * @return the map contains the of the grid detector in the corresponding city
      */
     @Override
     @PostMapping("/getDetectorSameCity")
-    public List<GridDetector> getDetectorSameCity(@RequestBody Map<String, Integer> map) {
+    public Map<String, Object> getDetectorSameCity(@RequestBody Map<String, Integer> map) {
         List<GridDetector> gridDetectorList = gridDetectorService.query().eq("city_id", map.get("cityId")).list();
         List<GridDetector> result = new ArrayList<GridDetector>();
         gridDetectorList.removeIf(gridDetector -> userService.getById(gridDetector.getId()).getStatus() == 0);
         int count = (Integer) map.get("pageNum") * (Integer) map.get("pageSize");
         if(count > gridDetectorList.size() + (Integer) map.get("pageSize"))
-            return result;
+            return Map.of("count", gridDetectorList.size(),"result", result);
         else
             for(int i = count - (Integer) map.get("pageSize");i < Math.min(count, gridDetectorList.size());i++)
                 result.add(gridDetectorList.get(i));
-        return result;
+        return Map.of("count", gridDetectorList.size(),"result", result);
     }
 
     /**
@@ -55,11 +50,11 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
      * @param ids the list of the city id
      * @param pageNum page number of paging query
      * @param pageSize page size of paging query
-     * @return the list of the grid detector in the corresponding province
+     * @return the map contains the of the grid detector in the corresponding province
      */
     @Override
     @PostMapping("/getDetectorSameProvince")
-    public List<GridDetector> getDetectorSameProvince(@RequestBody List<Integer> ids,
+    public Map<String, Object> getDetectorSameProvince(@RequestBody List<Integer> ids,
                                                       @RequestParam("pageNum") int pageNum,
                                                       @RequestParam("pageSize") int pageSize) {
         List<GridDetector> gridDetectorList = gridDetectorService.query().in("city_id", ids).list();
@@ -67,11 +62,11 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
         gridDetectorList.removeIf(gridDetector -> userService.getById(gridDetector.getId()).getStatus() == 0);
         int count = pageNum * pageSize;
         if(count > gridDetectorList.size() + pageSize)
-            return result;
+            return Map.of("count", gridDetectorList.size(),"result", result);
         else
             for(int i = count - pageSize;i < Math.min(count, gridDetectorList.size());i++)
                 result.add(gridDetectorList.get(i));
-        return result;
+        return Map.of("count", gridDetectorList.size(),"result", result);
     }
 
     /**
@@ -79,11 +74,11 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
      * @param ids the list of the city id
      * @param pageNum page number of paging query
      * @param pageSize page size of paging query
-     * @return the list of the grid detector in the corresponding province
+     * @return the map contains the list of the grid detector in the corresponding province
      */
     @Override
     @PostMapping("/getDetectorOtherProvince")
-    public List<GridDetector> getDetectorOtherProvince(@RequestBody List<Integer> ids,
+    public Map<String, Object> getDetectorOtherProvince(@RequestBody List<Integer> ids,
                                                        @RequestParam("pageNum") int pageNum,
                                                        @RequestParam("pageSize") int pageSize) {
         List<GridDetector> gridDetectorList = gridDetectorService.query().notIn("city_id", ids).list();
@@ -91,11 +86,11 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
         gridDetectorList.removeIf(gridDetector -> userService.getById(gridDetector.getId()).getStatus() == 0);
         int count = pageNum * pageSize;
         if(count > gridDetectorList.size() + pageSize)
-            return result;
+            return Map.of("count", gridDetectorList.size(),"result", result);
         else
             for(int i = count - pageSize;i < Math.min(count, gridDetectorList.size());i++)
                 result.add(gridDetectorList.get(i));
-        return result;
+        return Map.of("count", gridDetectorList.size(),"result", result);
     }
 
     /**

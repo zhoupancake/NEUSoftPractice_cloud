@@ -13,15 +13,15 @@ import java.util.Map;
  */
 public interface GridDetectorAPI {
     @PostMapping("/getDetectorSameCity")
-    List<GridDetector> getDetectorSameCity(@RequestBody Map<String, Integer> map);
+    public Map<String, Object> getDetectorSameCity(@RequestBody Map<String, Integer> map);
 
     @PostMapping("/getDetectorSameProvince")
-    public List<GridDetector> getDetectorSameProvince(@RequestBody List<Integer> ids,
+    public Map<String, Object> getDetectorSameProvince(@RequestBody List<Integer> ids,
                                                       @RequestParam("pageNum") int pageNum,
                                                       @RequestParam("pageSize") int pageSize);
 
     @PostMapping("/getDetectorOtherProvince")
-    public List<GridDetector> getDetectorOtherProvince(@RequestBody List<Integer> ids,
+    public Map<String, Object> getDetectorOtherProvince(@RequestBody List<Integer> ids,
                                                        @RequestParam("pageNum") int pageNum,
                                                        @RequestParam("pageSize") int pageSize);
 

@@ -53,4 +53,8 @@ public class SnowflakeUtil {
         }
         return (long)(sums % 32);
     }
+
+    public static void main(String[] args) {
+        System.out.println(genId());
+    }
 }

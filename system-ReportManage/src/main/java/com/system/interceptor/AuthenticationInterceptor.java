@@ -23,7 +23,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         PathMatcher pathMatcher = new AntPathMatcher();
         if (pathMatcher.match("/api/**", path)) {
             String ip = IPUtil.getIpAddress(request);
-            return true;
+            String localIp = IPUtil.getLocalIP();
+            return ip.equals(localIp);
         }
         if (!VerifyUtil.verify(authToken, path)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -10,15 +10,12 @@ import com.system.service.*;
 
 import com.system.util.JWTUtil;
 import com.system.util.SnowflakeUtil;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -83,29 +80,21 @@ public class UserController {
             switch (loginUser.getRole()) {
                 case "Administrator" -> {
                     Administrator administrator = administratorService.getById(loginUser.getId());
-//                    Cookie cookie = new Cookie("administratorId", administrator.getId());
-//                    cookie.setSecure(true);
-//                    cookie.setHttpOnly(true);
-//                    response.addCookie(cookie);
                     Map<String, String> result = Map.of("id", administrator.getId(), "token", token);
                     return HttpResponseEntity.response(true, "Login successfully", result);
                 }
                 case "GridDetector" -> {
                     GridDetector gridDetector = gridManagerService.getById(loginUser.getId());
-//                    Cookie cookie = new Cookie("gridDetectorId", gridDetector.getId());
-//                    cookie.setSecure(true);
-//                    cookie.setHttpOnly(true);
-//                    response.addCookie(cookie);
                     Map<String, String> result = Map.of("id", gridDetector.getId(), "token", token);
                     return HttpResponseEntity.response(true, "Login successfully", result);
                 }
                 case "Supervisor" -> {
                     Supervisor supervisor = supervisorService.getById(loginUser.getId());
-//                    Cookie cookie = new Cookie("supervisorId", supervisor.getId());
-//                    cookie.setSecure(true);
-//                    cookie.setHttpOnly(true);
-//                    response.addCookie(cookie);
                     Map<String, String> result = Map.of("id", supervisor.getId(), "token", token);
+                    return HttpResponseEntity.response(true, "Login successfully", result);
+                }
+                case "Super" -> {
+                    Map<String, String> result = Map.of("id", loginUser.getId(), "token", token);
                     return HttpResponseEntity.response(true, "Login successfully", result);
                 }
                 default -> {

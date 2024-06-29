@@ -24,7 +24,7 @@ public class ActionController {
      * select all the cities in the database
      * @return http response contains all the cities
      */
-    @GetMapping("/selectAll")
+    @GetMapping("/all/selectAll")
     public HttpResponseEntity selectAll(){
         List<City> cities = cityService.query().list();
         return HttpResponseEntity.success("query ",cities);
@@ -32,11 +32,14 @@ public class ActionController {
 
     /**
      * select cities in the selected province
-     * @param province the name of the selected province
+     * @param map the map contains the name of the selected province
      * @return the http response contains the cities in the selected province
      */
-    @PostMapping("/selectByProvince")
-    public HttpResponseEntity selectByProvince(@RequestBody String province){
+    @PostMapping("/all/selectByProvince")
+    public HttpResponseEntity selectByProvince(@RequestBody Map<String, String> map){
+        String province = "";
+        if(map.containsKey("province") && !map.get("province").isEmpty() && !map.get("province").isEmpty())
+             province = map.get("province");
         List<City> cities = cityService.query().eq("province",province).list();
         return HttpResponseEntity.response(!cities.isEmpty(), "query ",cities);
     }

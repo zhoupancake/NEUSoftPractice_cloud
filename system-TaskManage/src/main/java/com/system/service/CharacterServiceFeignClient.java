@@ -13,15 +13,15 @@ import java.util.Map;
 @FeignClient(name="system-PermissionControl", url="localhost:8081") //  远程服务的名称
 public interface CharacterServiceFeignClient {
     @PostMapping("/api/gridDetector/getDetectorSameCity")
-    public List<GridDetector> getDetectorSameCity(Map<String, Integer> map);
+    public Map<String, Object> getDetectorSameCity(Map<String, Integer> map);
 
     @PostMapping("/api/gridDetector/getDetectorSameProvince")
-    public List<GridDetector> getDetectorSameProvince(@RequestBody List<Integer> ids,
+    public Map<String, Object> getDetectorSameProvince(@RequestBody List<Integer> ids,
                                                       @RequestParam("pageNum") int pageNum,
                                                       @RequestParam("pageSize") int pageSize);
 
     @PostMapping("/api/gridDetector/getDetectorOtherProvince")
-    public List<GridDetector> getDetectorOtherProvince(@RequestBody List<Integer> ids,
+    public Map<String, Object> getDetectorOtherProvince(@RequestBody List<Integer> ids,
                                                        @RequestParam("pageNum") int pageNum,
                                                        @RequestParam("pageSize") int pageSize);
 
