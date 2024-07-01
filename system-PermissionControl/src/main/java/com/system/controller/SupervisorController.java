@@ -9,6 +9,7 @@ import com.system.entity.data.City;
 import com.system.service.CityServiceFeignClient;
 import com.system.service.SupervisorService;
 import com.system.service.UserService;
+import com.system.util.SHA256Util;
 import com.system.util.SnowflakeUtil;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -120,7 +121,7 @@ public class SupervisorController {
         Supervisor supervisor = supervisorService.getById(user.getId());
         if(null == dbUser)
             return HttpResponseEntity.response(false, "delete supervisor for the deleted supervisor is not exist", null);
-        if(!dbUser.getPassword().equals(user.getPassword()))
+        if(!dbUser.getPassword().equals(SHA256Util.encrypt(user.getPassword())))
             return HttpResponseEntity.response(false, "delete supervisor for the password is wrong", null);
 
         boolean supervisorSuccess = supervisorService.removeById(supervisor);

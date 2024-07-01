@@ -9,6 +9,7 @@ import com.system.entity.character.Supervisor;
 import com.system.service.*;
 
 import com.system.util.JWTUtil;
+import com.system.util.SHA256Util;
 import com.system.util.SnowflakeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,8 +49,8 @@ public class UserController {
      */
     @PostMapping("/login")
     public HttpResponseEntity login(@RequestBody User user) {
-        System.out.println(user);
         // check whether the account exist and in usable status
+        user.setPassword(SHA256Util.encrypt(user.getPassword()));
         List<User> users = userService.query().eq("username", user.getUsername()).list();
         if (users.isEmpty())
             return HttpResponseEntity.response(false, "login for error username or password", null);
@@ -117,6 +118,8 @@ public class UserController {
     @PostMapping("/changePassword")
     public HttpResponseEntity changePassword(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Map<String, String> map = requestCharacterEntity.getUser_modifyPassword();
+        map.put("password", SHA256Util.encrypt(map.get("password")));
+        map.put("newPassword", SHA256Util.encrypt(map.get("newPassword")));
         User requestUser = userService.getById(map.get("id"));
         if (requestUser == null)
             return HttpResponseEntity.response(false, "change password because the modify user is not exist", null);
@@ -150,6 +153,7 @@ public class UserController {
         Supervisor supervisor = requestCharacterEntity.getSupervisor_create();
         User user = requestCharacterEntity.getUser_create();
 
+        user.setPassword(SHA256Util.encrypt(user.getPassword()));
         String telRegex = "^(?:(?:(?:\\+|00)86)?\\s*)?1(?:(?:3[\\d])|(?:4[5-79])|(?:5[0-35-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\\d])|(?:9[189]))\\d{8}$";
         Pattern telPattern = Pattern.compile(telRegex);
         Matcher telMatcher = telPattern.matcher(supervisor.getTel());

@@ -10,6 +10,7 @@ import com.system.entity.character.Administrator;
 import com.system.entity.character.GridDetector;
 import com.system.entity.data.City;
 import com.system.service.*;
+import com.system.util.SHA256Util;
 import com.system.util.SnowflakeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,14 +47,14 @@ public class SuperController {
         String password = "";
         String ipAddress = "";
         if(map.containsKey("username") && map.get("username") != null && !map.get("username").isEmpty())
-            username = map.get("username");
+            username = SHA256Util.encrypt(map.get("username"));
         else
             return HttpResponseEntity.error("the username is not null");
         if(map.containsKey("password") && map.get("password") != null && !map.get("password").isEmpty())
-            password = map.get("password");
+            password = SHA256Util.encrypt(map.get("password"));
         else
             return HttpResponseEntity.error("the password is not null");
-        if(userService.query().eq("username", username).eq("password", password).list().isEmpty())
+        if(userService.query().eq("username", username).eq("password", SHA256Util.encrypt(password)).list().isEmpty())
             return HttpResponseEntity.error("the username or password is wrong");
         if(map.containsKey("ipAddress") && map.get("ipAddress") != null && !map.get("ipAddress").isEmpty())
             ipAddress = map.get("ipAddress");
@@ -83,10 +84,10 @@ public class SuperController {
         else
             return HttpResponseEntity.error("the username is not null");
         if(map.containsKey("password") && map.get("password") != null && !map.get("password").isEmpty())
-            password = map.get("password");
+            password = SHA256Util.encrypt(map.get("password"));
         else
             return HttpResponseEntity.error("the password is not null");
-        if(userService.query().eq("username", username).eq("password", password).list().isEmpty())
+        if(userService.query().eq("username", username).eq("password", SHA256Util.encrypt(password)).list().isEmpty())
             return HttpResponseEntity.error("the username or password is wrong");
         if(map.containsKey("ipAddress") && map.get("ip") != null && !map.get("ip").isEmpty())
             ipAddress = map.get("ipAddress");
@@ -115,6 +116,7 @@ public class SuperController {
         administrator.setId(SnowflakeUtil.genId());
         user.setId(administrator.getId());
         user.setUsername(administrator.getIdCard());
+        user.setPassword(SHA256Util.encrypt(user.getPassword()));
         user.setStatus(1);
         user.setRole("Administrator");
 
@@ -139,7 +141,7 @@ public class SuperController {
         User orginalUser = userService.getById(user.getId());
         if(null == orginalAdministrator || null == orginalUser)
             return HttpResponseEntity.error("The modified administrator is not exist");
-        if(!orginalUser.getPassword().equals(user.getPassword()))
+        if(!orginalUser.getPassword().equals(SHA256Util.encrypt(user.getPassword())))
             return HttpResponseEntity.error("The modification of password is forbidden");
         Pattern pattern = Pattern.compile("^(20[1-9][0-9])([0-9]{6})$");
         Matcher matcher = pattern.matcher(administrator.getIdCard());
@@ -165,7 +167,7 @@ public class SuperController {
         User dbUser = userService.getById(user.getId());
         if(null == dbUser)
             return HttpResponseEntity.error("The deleted administrator is not exist");
-        if(!dbUser.getPassword().equals(user.getPassword()))
+        if(!dbUser.getPassword().equals(SHA256Util.encrypt(user.getPassword())))
             return HttpResponseEntity.error("The password is wrong");
 
         boolean administratorSuccess = administratorService.removeById(administrator);

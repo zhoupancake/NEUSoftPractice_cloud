@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
 
 /**
  * SHA256 util class to encrypt
@@ -23,6 +24,18 @@ public class SHA256Util {
             return String.format("%064x", new BigInteger(1, hashBytes));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        String input = "123456";
+        String encrypted = encrypt(input);
+        System.out.println("Encrypted: " + encrypted);
+        String check = new Scanner(System.in).nextLine();
+        if (encrypted.equals(check)) {
+            System.out.println("Correct");
+        } else {
+            System.out.println("Wrong");
         }
     }
 }

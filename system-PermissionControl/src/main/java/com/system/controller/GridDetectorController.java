@@ -11,6 +11,7 @@ import com.system.entity.data.City;
 import com.system.service.CityServiceFeignClient;
 import com.system.service.GridDetectorService;
 import com.system.service.UserService;
+import com.system.util.SHA256Util;
 import com.system.util.SnowflakeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,7 +85,7 @@ public class GridDetectorController {
 
         if(null == orginalGridDetector || null == orginalUser)
             return HttpResponseEntity.error("The modified gridDetector is not exist");
-        if(!orginalUser.getPassword().equals(user.getPassword()))
+        if(!orginalUser.getPassword().equals(SHA256Util.encrypt(user.getPassword())))
             return HttpResponseEntity.error("The modification of password is forbidden");
         Pattern pattern = Pattern.compile("^(20[1-9][0-9])([0-9]{6})$");
         Matcher matcher = pattern.matcher(gridDetector.getIdCard());
@@ -111,7 +112,7 @@ public class GridDetectorController {
         User dbUser = userService.getById(user.getId());
         if(null == dbUser)
             return HttpResponseEntity.error("The deleted grid detector is not exist");
-        if(!dbUser.getPassword().equals(user.getPassword()))
+        if(!dbUser.getPassword().equals(SHA256Util.encrypt(user.getPassword())))
             return HttpResponseEntity.error("The password is wrong");
 
         boolean gridDetectorSuccess = gridDetectorService.removeById(gridDetector);

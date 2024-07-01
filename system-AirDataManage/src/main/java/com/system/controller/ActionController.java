@@ -10,6 +10,7 @@ import com.system.service.AirDataService;
 import com.system.service.CityServiceFeignClient;
 import com.system.util.AQIUtil;
 import com.system.util.Base64Util;
+import com.system.util.PythonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,11 @@ import java.util.*;;
 public class ActionController {
     private final AirDataService airDataService;
     private final CityServiceFeignClient cityService;
+
+    @PostMapping("/digitalScreen/test")
+    public void digitalScreenTest() {
+        PythonUtil.execute();
+   }
 
     /**
      * select all air data with paging query
@@ -489,6 +495,8 @@ public class ActionController {
         LocalDateTime oneWeekAgo = now.minusWeeks(1);
 
         List<Integer> citiesId = cityService.getCitiesIdByProvince(province);
+        if(citiesId.isEmpty())
+            return new HashMap<>();
         QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
         queryWrapper.between("date", oneWeekAgo, now);
         queryWrapper.in("city_id", citiesId);

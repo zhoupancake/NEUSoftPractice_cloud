@@ -11,6 +11,7 @@ import com.system.entity.data.City;
 import com.system.entity.data.Report;
 import com.system.service.AdministratorService;
 import com.system.service.UserService;
+import com.system.util.SHA256Util;
 import com.system.util.SnowflakeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +82,7 @@ public class AdministratorController {
         User orginalUser = userService.getById(user.getId());
         if(null == orginalAdministrator || null == orginalUser)
             return HttpResponseEntity.error("The modified administrator is not exist");
-        if(!orginalUser.getPassword().equals(user.getPassword()))
+        if(!orginalUser.getPassword().equals(SHA256Util.encrypt(user.getPassword())))
             return HttpResponseEntity.error("The modification of password is forbidden");
         Pattern pattern = Pattern.compile("^(20[1-9][0-9])([0-9]{6})$");
         Matcher matcher = pattern.matcher(administrator.getIdCard());
@@ -106,7 +107,7 @@ public class AdministratorController {
         User dbUser = userService.getById(user.getId());
         if(null == dbUser)
             return HttpResponseEntity.error("The deleted administrator is not exist");
-        if(!dbUser.getPassword().equals(user.getPassword()))
+        if(!dbUser.getPassword().equals(SHA256Util.encrypt(user.getPassword())))
             return HttpResponseEntity.error("The password is wrong");
 
         boolean administratorSuccess = administratorService.removeById(administrator);

@@ -156,7 +156,7 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
      */
     private boolean ipCheck(ServerWebExchange exchange) {
         String remote_ip = IPUtil.getIpAddress(exchange.getRequest());
-        return ipService.getById(remote_ip) == null;
+        return ipService.getById(remote_ip) != null || remote_ip.equals(IPUtil.getLocalIP());
     }
 
     /**
