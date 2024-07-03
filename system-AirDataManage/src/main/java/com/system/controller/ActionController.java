@@ -10,7 +10,6 @@ import com.system.service.AirDataService;
 import com.system.service.CityServiceFeignClient;
 import com.system.util.AQIUtil;
 import com.system.util.Base64Util;
-import com.system.util.PythonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +30,6 @@ import java.util.*;;
 public class ActionController {
     private final AirDataService airDataService;
     private final CityServiceFeignClient cityService;
-
-    @PostMapping("/digitalScreen/test")
-    public void digitalScreenTest() {
-        PythonUtil.execute();
-   }
 
     /**
      * select all air data with paging query

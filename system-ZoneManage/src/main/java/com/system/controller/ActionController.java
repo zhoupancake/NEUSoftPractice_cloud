@@ -1,5 +1,7 @@
 package com.system.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.system.common.HttpResponseEntity;
 import com.system.entity.data.City;
 import com.system.service.CityService;
@@ -28,6 +30,17 @@ public class ActionController {
     public HttpResponseEntity selectAll(){
         List<City> cities = cityService.query().list();
         return HttpResponseEntity.success("query ",cities);
+    }
+
+    /**
+     * select the provinces in the database
+     * @return http response contains the provinces list
+     */
+    @GetMapping("/all/selectProvince")
+    public HttpResponseEntity selectProvince(){
+        QueryWrapper<City> queryWrapper = Wrappers.<City>query().select("distinct province");
+        List<String> province = cityService.list(queryWrapper).stream().map(City::getProvince).toList();
+        return HttpResponseEntity.response(province.isEmpty(), "get province", province);
     }
 
     /**

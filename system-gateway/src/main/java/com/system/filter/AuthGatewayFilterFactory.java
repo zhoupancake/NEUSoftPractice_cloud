@@ -38,7 +38,9 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().toString();
         PathMatcher pathMatcher = new AntPathMatcher();
-        if(pathMatcher.match("/user/login", path) || pathMatcher.match("/user/register", path))
+        if(pathMatcher.match("/user/login", path) ||
+           pathMatcher.match("/user/register", path) ||
+           pathMatcher.match("/city/all/**", path))
             return chain.filter(exchange);
         if(pathMatcher.match("/api/**", path)){
             //simple mode: allow all the ip in the database to access the api
@@ -58,7 +60,8 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
         }
 
         //allow the marked ip to access the digitalScreen
-        if(passVerify("digitalScreen", pathMatcher, path)){
+        if(passVerify("digitalScreen", pathMatcher, path)||
+           pathMatcher.match("/digitalScreen/**", path)){
             if(ipCheck(exchange))
                 return chain.filter(pass(path, exchange));
         }

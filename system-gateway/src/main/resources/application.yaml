@@ -6,7 +6,7 @@ spring:
   application:
     name: system-gateway
   datasource:
-    url: jdbc:mysql://localhost:3306/NEUSoftPractice_public?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/NEUSoftPractice_service?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -75,6 +75,12 @@ spring:
           order: 1
           predicates:
             - Path=/city/**
+
+        - id: LSTM-forecast
+          uri: http://localhost:5000
+          order: 1
+          predicates:
+            - Path=/digitalScreen/forecast
   data:
     redis:
       database: 0
