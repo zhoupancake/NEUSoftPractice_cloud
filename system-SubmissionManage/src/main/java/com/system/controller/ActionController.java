@@ -231,10 +231,14 @@ public class ActionController {
         Page<Submission> submissionPage = submissionService.page(page, queryWrapper);
 
         List<Submission> submissionList = submissionPage.getRecords();
-        if(map.containsKey("administratorId") && map.get("administratorId") != null)
-            submissionList.removeIf(submission -> !taskService.getTaskById(submission.getTaskId()).getAppointerId().equals(map.get("administratorId")));
         Map<String, Object> result = Map.of("count", submissionService.count(queryWrapper), "result", submissionList);
         return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", result);
+
+//        List<Submission> submissionList = submissionPage.getRecords();
+////        if(map.containsKey("administratorId") && map.get("administratorId") != null)
+////            submissionList.removeIf(submission -> !taskService.getTaskById(submission.getTaskId()).getAppointerId().equals(map.get("administratorId")));
+//        Map<String, Object> result = Map.of("count", submissionService.count(queryWrapper), "result", submissionList);
+//        return HttpResponseEntity.response(!submissionList.isEmpty(), "query submission ", result);
     }
 
     /**

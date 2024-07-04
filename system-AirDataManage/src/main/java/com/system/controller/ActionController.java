@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.*;;
+import java.util.*;
 
 /**
  * The front-end interface to call the air data operation
@@ -174,7 +174,7 @@ public class ActionController {
         if(map.containsKey("aqiLevel") && map.get("aqiLevel") != null && !map.get("aqiLevel").equals("")) {
             if((Integer) map.get("aqiLevel") < 1)
                 return HttpResponseEntity.error("aqiLevel must be positive");
-            queryWrapper.ge("aqi_level", (Integer) map.get("aqiLevel"));
+            queryWrapper.ge("aqi_level", map.get("aqiLevel"));
         }
         if(map.containsKey("pm25Level") && map.get("pm25Level") != null && !map.get("pm25Level").equals("")) {
             if((Integer) map.get("aqiLevel") < 1)
@@ -194,7 +194,7 @@ public class ActionController {
         Page<AirData> page = new Page<>((Integer) map.get("pageNum"), (Integer) map.get("pageSize"));
         Page<AirData> airDataPage = airDataService.page(page, queryWrapper);
         List<AirData> airDataList = airDataPage.getRecords();
-        List<ResponseAirDataEntity> result = new ArrayList<ResponseAirDataEntity>();
+        List<ResponseAirDataEntity> result = new ArrayList<>();
         boolean success = !airDataList.isEmpty();
         if(success)
             for(AirData airData: airDataList) {
@@ -277,7 +277,7 @@ public class ActionController {
      * @return the number of air quality components exceeding the standard in each province
      */
     @GetMapping("/administrator/queryAirDataByLevel")
-    public HttpResponseEntity queryAirDataByLevel_administrator() throws ParseException {
+    public HttpResponseEntity queryAirDataByLevel_administrator() {
         int[] count = new int[6];
         for(int i = 1; i <= 6; i++)
             count[i-1] = (int)airDataService.count(new QueryWrapper<AirData>().ge("aqi_level", i));
@@ -318,7 +318,7 @@ public class ActionController {
         String province = "";
         if(encodedProvince != null)
             province = Base64Util.decodeBase64ToString(encodedProvince);
-        Map<String, Integer> data = null;
+        Map<String, Integer> data;
         if(province.equals("china"))
             data = getWeeklyAirData_China();
         else
@@ -335,7 +335,7 @@ public class ActionController {
      * @return the number of air quality components exceeding the standard in each province
      */
     @GetMapping("/digitalScreen/queryAirDataByLevel")
-    public HttpResponseEntity queryAirDataByLevel() throws ParseException {
+    public HttpResponseEntity queryAirDataByLevel() {
         int[] count = new int[6];
         for(int i = 1; i <= 6; i++)
             count[i-1] = (int)airDataService.count(new QueryWrapper<AirData>().ge("aqi_level", i));
@@ -441,7 +441,7 @@ public class ActionController {
         String province = "";
         if(encodedProvince != null)
             province = Base64Util.decodeBase64ToString(encodedProvince);
-        Map<String, Integer> data = null;
+        Map<String, Integer> data;
         if(province.equals("china"))
             data = getWeeklyAirData_China();
         else
