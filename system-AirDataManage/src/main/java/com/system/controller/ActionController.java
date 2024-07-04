@@ -500,6 +500,19 @@ public class ActionController {
     }
 
     /**
+     * waiting for test
+     * get the numbers of all air data in database and the number of cities with AQI higher than 3
+     * @Request_character administrator
+     * @return the numbers of all air data in database and the number of cities with AQI higher than 3
+     */
+    @GetMapping("/administrator/otherInfo")
+    public HttpResponseEntity getOtherInfo() {
+        Long allCount = airDataService.count()%Integer.MAX_VALUE;
+        Long highCount = airDataService.lambdaQuery().lt(AirData::getAqiLevel, 3).count()%Integer.MAX_VALUE;
+        return HttpResponseEntity.response(true, "get other info", Map.of("allCount", allCount, "goodCount", highCount));
+    }
+
+    /**
      * get the record of the latest limitNum records within the latest week
      * @Request_character function getWeeklyAirData
      * @return the record of the latest limitNum records within the latest week
