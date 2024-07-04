@@ -16,14 +16,10 @@ public interface GridDetectorAPI {
     public Map<String, Object> getDetectorSameCity(@RequestBody Map<String, Integer> map);
 
     @PostMapping("/getDetectorSameProvince")
-    public Map<String, Object> getDetectorSameProvince(@RequestBody List<Integer> ids,
-                                                      @RequestParam("pageNum") int pageNum,
-                                                      @RequestParam("pageSize") int pageSize);
+    public Map<String, Object> getDetectorSameProvince(@RequestBody List<Integer> ids);
 
     @PostMapping("/getDetectorOtherProvince")
-    public Map<String, Object> getDetectorOtherProvince(@RequestBody List<Integer> ids,
-                                                       @RequestParam("pageNum") int pageNum,
-                                                       @RequestParam("pageSize") int pageSize);
+    public Map<String, Object> getDetectorOtherProvince(@RequestBody List<Integer> ids);
 
     @PostMapping("/getDetectorById")
     public GridDetector getDetectorById(@RequestBody String id);

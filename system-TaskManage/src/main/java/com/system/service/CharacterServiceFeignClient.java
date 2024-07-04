@@ -16,14 +16,10 @@ public interface CharacterServiceFeignClient {
     public Map<String, Object> getDetectorSameCity(Map<String, Integer> map);
 
     @PostMapping("/api/gridDetector/getDetectorSameProvince")
-    public Map<String, Object> getDetectorSameProvince(@RequestBody List<Integer> ids,
-                                                      @RequestParam("pageNum") int pageNum,
-                                                      @RequestParam("pageSize") int pageSize);
+    public Map<String, Object> getDetectorSameProvince(@RequestBody List<Integer> ids);
 
     @PostMapping("/api/gridDetector/getDetectorOtherProvince")
-    public Map<String, Object> getDetectorOtherProvince(@RequestBody List<Integer> ids,
-                                                       @RequestParam("pageNum") int pageNum,
-                                                       @RequestParam("pageSize") int pageSize);
+    public Map<String, Object> getDetectorOtherProvince(@RequestBody List<Integer> ids);
 
     @PostMapping("/api/supervisor/getSupervisorById")
     public Supervisor getSupervisorById(@RequestBody String id);

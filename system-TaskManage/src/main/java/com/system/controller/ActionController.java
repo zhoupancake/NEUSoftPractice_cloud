@@ -41,6 +41,33 @@ public class ActionController {
     private final CharacterServiceFeignClient characterService;
 
     /**
+     * waiting for test
+     * get the appointee list of the grid detector(combine the local, province and other)
+     * @Request_character administrator
+     * @param map the information of the request
+     * @key_in_map "pageNum" the page number of the response list
+     * @key_in_map "pageSize" the page size of the
+     * @key_in_map "province" the province of the appointee city
+     * @key_in_map "city" the city of the appointee city
+     * @return the response entity contains the grid detector list can be appointed
+     */
+    @PostMapping("/administrator/getAppointee/normal")
+    public HttpResponseEntity getAppointee_normal(@RequestBody Map<String, Object> map) {
+        HttpResponseEntity temp = getAppointee_local(map);
+        if(getAppointee_local(map).getCode().equals("200"))
+            return HttpResponseEntity.response(true, "get appointee ", temp.getData());
+        temp = getAppointee_province(map);
+        if(getAppointee_province(map).getCode().equals("200"))
+            return HttpResponseEntity.response(true, "get appointee ", temp.getData());
+        temp = getAppointee_other(map);
+        if(getAppointee_other(map).getCode().equals("200"))
+            return HttpResponseEntity.response(true, "get appointee ", temp.getData());
+        return HttpResponseEntity.error("get appointee failed");
+    }
+
+
+    /**
+     * waiting for test
      * get the appointee list of the grid detector(same city appointment)
      * @Request_character administrator
      * @param map the information of the request
@@ -52,15 +79,13 @@ public class ActionController {
      */
     @PostMapping("/administrator/getAppointee/local")
     public HttpResponseEntity getAppointee_local(@RequestBody Map<String, Object> map) {
-        if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
-            return HttpResponseEntity.error("The page size and the page number should be positive");
-        Map<String, String> location = Map.of("province", String.valueOf(map.get("province")),
-                "city", String.valueOf(map.get("city")));
-        City city = cityService.getCityByLocation((location));
+        Report report = reportService.getReportById(String.valueOf(map.get("reportId")));
+        if(report == null)
+            return HttpResponseEntity.error("request report is not exist");
+        City city = cityService.getCityById(report.getCityId());
         if(city == null)
             return HttpResponseEntity.error("request city is not supported");
-        Map<String, Integer> paraMap = Map.of("cityId", city.getId(),
-                "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
+        Map<String, Integer> paraMap = Map.of("cityId", city.getId());
         Map<String, Object> gridDetectors = characterService.getDetectorSameCity(paraMap);
         return HttpResponseEntity.response(!gridDetectors.isEmpty(), "get appointee", gridDetectors);
     }
@@ -77,18 +102,16 @@ public class ActionController {
      */
     @PostMapping("/administrator/getAppointee/province")
     public HttpResponseEntity getAppointee_province(@RequestBody Map<String, Object> map) {
-        if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
-            return HttpResponseEntity.error("The page size and the page number should be positive");
-        Map<String, String> location = Map.of("province", String.valueOf(map.get("province")),
-                "city", String.valueOf(map.get("city")));
-        City city = cityService.getCityByLocation((location));
+        Report report = reportService.getReportById(String.valueOf(map.get("reportId")));
+        if(report == null)
+            return HttpResponseEntity.error("request report is not exist");
+        City city = cityService.getCityById(report.getCityId());
         if(city == null)
             return HttpResponseEntity.error("request city is not supported");
         List<Integer> cities = cityService.getCitiesSameProvince((city.getId()));
         if(cities == null || cities.isEmpty())
             return HttpResponseEntity.error("request province has no other supported city");
-        Map<String, Integer> paraMap = Map.of("cityId", city.getId(),
-                "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
+        Map<String, Integer> paraMap = Map.of("cityId", city.getId());
         Map<String, Object> gridDetectors = characterService.getDetectorSameCity(paraMap);
         return HttpResponseEntity.response(!gridDetectors.isEmpty(), "get appointee", gridDetectors);
     }
@@ -105,17 +128,15 @@ public class ActionController {
      */
     @PostMapping("/administrator/getAppointee/other")
     public HttpResponseEntity getAppointee_other(@RequestBody Map<String, Object> map) {
-        if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
-            return HttpResponseEntity.error("The page size and the page number should be positive");
-        Map<String, String> location = Map.of("province", String.valueOf(map.get("province")),
-                "city", String.valueOf(map.get("city")));
-        City city = cityService.getCityByLocation((location));
+        Report report = reportService.getReportById(String.valueOf(map.get("reportId")));
+        if(report == null)
+            return HttpResponseEntity.error("request report is not exist");
+        City city = cityService.getCityById(report.getCityId());
         if(city == null)
             return HttpResponseEntity.error("request city is not supported");
         List<Integer> cities = cityService.getCitiesSameProvince((city.getId()));
         cities.add(city.getId());
-        Map<String, Integer> paraMap = Map.of("cityId", city.getId(),
-                "pageNum", (Integer)map.get("pageNum"), "pageSize", (Integer)map.get("pageSize"));
+        Map<String, Integer> paraMap = Map.of("cityId", city.getId());
         Map<String, Object> gridDetectors = characterService.getDetectorSameCity(paraMap);
         return HttpResponseEntity.response(!gridDetectors.isEmpty(), "get appointee", gridDetectors);
     }
