@@ -37,7 +37,6 @@ public class AuthGatewayFilterFactory implements GlobalFilter  {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().toString();
-//        System.out.println(path);
         PathMatcher pathMatcher = new AntPathMatcher();
         if(pathMatcher.match("/user/login", path) ||
            pathMatcher.match("/user/register", path) ||
