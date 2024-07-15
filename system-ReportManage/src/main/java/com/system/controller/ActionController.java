@@ -106,6 +106,7 @@ public class ActionController {
      */
     @PostMapping("/supervisor/queryReportList")
     public HttpResponseEntity queryReportListBySubmitterId(@RequestBody Map<String, Object> map) throws ParseException {
+        log.info("start");
         if((Integer) map.get("pageNum") < 1 || (Integer) map.get("pageSize") < 1)
             return HttpResponseEntity.error("pageNum or pageSize is not valid");
         QueryWrapper<Report> queryWrapper = new QueryWrapper<>();
@@ -128,6 +129,8 @@ public class ActionController {
         else{
             if(map.containsKey("province") && map.get("province") != null && !map.get("province").equals("")){
                 List<Integer> citiesList = cityService.getCitiesIdByProvince((String) map.get("province"));
+                if(citiesList.isEmpty())
+                    return HttpResponseEntity.error("the selected province is not exist in the list");
                 for (Integer cityId : citiesList)
                     queryWrapper.or().eq("city_id", cityId);
             }
@@ -174,6 +177,7 @@ public class ActionController {
                 result.add(new ResponseReportEntity(report, city));
             }
         Map<String, Object> resultMap = Map.of("count", reportService.count(queryWrapper),"result", result);
+        log.info("finish");
         return HttpResponseEntity.response(success, "query ", resultMap);
     }
 

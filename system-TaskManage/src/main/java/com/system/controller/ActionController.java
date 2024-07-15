@@ -91,6 +91,7 @@ public class ActionController {
     }
 
     /**
+     * waiting for test
      * get the appointee list of the grid detector(same province without the corresponding city appointment)
      * @Request_character administrator
      * @param map contains the query fields information
@@ -117,6 +118,7 @@ public class ActionController {
     }
 
     /**
+     * waiting for test
      * get the appointee list of the grid detector(other province without the corresponding province appointment)
      * @Request_character administrator
      * @param map contains the query fields information
@@ -181,7 +183,6 @@ public class ActionController {
      */
     @PostMapping("/gridDetector/queryTaskList")
     public HttpResponseEntity queryReportListBySubmitterId_character(@RequestBody Map<String, Object> map) throws ParseException {
-        System.out.println(map);
         if((Integer)map.get("pageNum") < 1 || (Integer)map.get("pageSize") < 1)
             return HttpResponseEntity.error("The page size and the page number should be positive");
         QueryWrapper<Task> queryWrapper = new QueryWrapper<>();
@@ -223,7 +224,7 @@ public class ActionController {
                 City city = cityService.getCityById(report.getCityId());
                 result.add(new ResponseTaskEntity(task,report, city, supervisor));
             }
-        return HttpResponseEntity.response(success, "query", result);
+        return HttpResponseEntity.response(true, "query", result);
     }
 
     /**

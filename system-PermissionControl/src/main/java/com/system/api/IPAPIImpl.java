@@ -4,6 +4,8 @@ import com.system.service.IPService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +13,8 @@ import java.util.regex.Pattern;
 /**
  * the implementation of the IPAPI
  */
+@RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class IPAPIImpl implements IPAPI{
     private final IPService ipService;
@@ -20,7 +24,7 @@ public class IPAPIImpl implements IPAPI{
      * @param ip the ip to be checked
      * @return boolean result to indicate the result
      */
-    @PostMapping("/api/IPExist")
+    @PostMapping("/IPExist")
     public boolean IPExist(@RequestBody String ip){
         String ipv4Pattern = "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
         Pattern pattern = Pattern.compile(ipv4Pattern);

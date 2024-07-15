@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -54,7 +55,11 @@ public class RequestCharacterEntity implements Serializable {
     }
 
     public Map<String,String> getUser_modifyPassword(){
-        return Map.of("id",id,"newPassword",newPassword, "password", password);
+        Map<String, String> map = new HashMap<String,String>(3);
+        map.put("id",id);
+        map.put("newPassword",newPassword);
+        map.put("password",password);
+        return map;
     }
 
     public Map<String,String> getLocation(){

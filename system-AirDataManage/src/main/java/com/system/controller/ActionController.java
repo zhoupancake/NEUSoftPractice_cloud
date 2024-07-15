@@ -177,18 +177,18 @@ public class ActionController {
             queryWrapper.ge("aqi_level", map.get("aqiLevel"));
         }
         if(map.containsKey("pm25Level") && map.get("pm25Level") != null && !map.get("pm25Level").equals("")) {
-            if((Integer) map.get("aqiLevel") < 1)
-                return HttpResponseEntity.error("aqiLevel must be positive");
+            if((Integer) map.get("pm25Level") < 1)
+                return HttpResponseEntity.error("pm25Level must be positive");
             queryWrapper.ge("pm25", AQIUtil.AQILevel2value_pm25((Integer) map.get("pm25Level")));
         }
         if(map.containsKey("so2Level") && map.get("so2Level") != null && !map.get("so2Level").equals("")) {
-            if((Integer) map.get("aqiLevel") < 1)
-                return HttpResponseEntity.error("aqiLevel must be positive");
+            if((Integer) map.get("so2Level") < 1)
+                return HttpResponseEntity.error("so2Level must be positive");
             queryWrapper.ge("so2", AQIUtil.AQILevel2value_so2((Integer) map.get("so2Level")));
         }
         if(map.containsKey("coLevel") && map.get("coLevel") != null && !map.get("coLevel").equals("")) {
-            if((Integer) map.get("aqiLevel") < 1)
-                return HttpResponseEntity.error("aqiLevel must be positive");
+            if((Integer) map.get("coLevel") < 1)
+                return HttpResponseEntity.error("coLevel must be positive");
             queryWrapper.ge("co", AQIUtil.AQILevel2value_co((Integer) map.get("coLevel")));
         }
         Page<AirData> page = new Page<>((Integer) map.get("pageNum"), (Integer) map.get("pageSize"));
@@ -287,46 +287,63 @@ public class ActionController {
     }
 
     /**
-     * get the record of the latest limitNum records within the limited number
+     * get the number of cities with AQI higher than 3 in each month
      * @Request_character administrator
-     * @param limitNum the number of records to be returned
-     * @return the record of the latest limitNum records within the limited number
+     * @return the number of cities with AQI higher than 3 in each month
      */
-    @GetMapping("/administrator/selectOrderList")
-    public HttpResponseEntity selectOrderList_administrator(@RequestParam("limitNum") Integer limitNum) {
-        if(limitNum <= 0)
-            return HttpResponseEntity.error("limitNum must be positive");
-        QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
-        List<AirData> airDataList = airDataService.list(queryWrapper.orderByDesc("aqi"));
-        List<Map<String, Object>> result = new ArrayList<>();
-        for(int i = 0; i < limitNum; i++){
-            City city = cityService.getCityById(airDataList.get(i).getCityId());
-            Map<String, Object> map = Map.of("value", airDataList.get(i).getAqi(), "name", city.getProvince()+"/"+city.getName());
-            result.add(map);
+    @GetMapping("/administrator/getAQICount")
+    public HttpResponseEntity countCitiesWithHighAQI() {
+        QueryWrapper<AirData> aqiQueryWrapper = new QueryWrapper<>();
+        QueryWrapper<AirData> so2QueryWrapper = new QueryWrapper<>();
+        QueryWrapper<AirData> coQueryWrapper = new QueryWrapper<>();
+        QueryWrapper<AirData> pm25QueryWrapper = new QueryWrapper<>();
+        aqiQueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
+                .gt("aqi_level", 3)
+                .groupBy("DATE_FORMAT(date, '%Y-%m')")
+                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
+        so2QueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
+                .gt("so2", AQIUtil.AQILevel2value_so2(3))
+                .groupBy("DATE_FORMAT(date, '%Y-%m')")
+                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
+        coQueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
+                .gt("co", AQIUtil.AQILevel2value_co(3))
+                .groupBy("DATE_FORMAT(date, '%Y-%m')")
+                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
+        pm25QueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
+                .gt("pm25", AQIUtil.AQILevel2value_pm25(3))
+                .groupBy("DATE_FORMAT(date, '%Y-%m')")
+                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
+        List<Map<String,Object>> aqiMap = airDataService.listMaps(aqiQueryWrapper);
+        List<Map<String,Object>> so2Map = airDataService.listMaps(so2QueryWrapper);
+        List<Map<String,Object>> coMap = airDataService.listMaps(coQueryWrapper);
+        List<Map<String,Object>> pm25Map = airDataService.listMaps(pm25QueryWrapper);
+        List<String> dateList = new ArrayList<>();
+        List<Long> aqiList = new ArrayList<>();
+        List<Long> so2List = new ArrayList<>();
+        List<Long> coList = new ArrayList<>();
+        List<Long> pm25List = new ArrayList<>();
+        for(int i = 0; i < aqiMap.size(); i++){
+            dateList.add((String) aqiMap.get(i).get("month"));
+            aqiList.add((Long) aqiMap.get(i).get("num_cities"));
+            so2List.add((Long) so2Map.get(i).get("num_cities"));
+            coList.add((Long) coMap.get(i).get("num_cities"));
+            pm25List.add((Long) pm25Map.get(i).get("num_cities"));
         }
-        return HttpResponseEntity.success("query ", result);
+        Map<String, Object> map = Map.of("date", dateList, "aqi", aqiList, "so2", so2List, "co", coList, "pm25", pm25List);
+        return HttpResponseEntity.response(true, "count cities with high aqi", map);
     }
 
     /**
-     * get the record of the latest limitNum records within the latest week
-     * @Request_character digitalScreen
-     * @param encodedProvince the province name using Base64 encoder to be queried(use request parameter to transmit)
-     * @return the record of the latest limitNum records within the latest week
+     * waiting for test
+     * get the numbers of all air data in database and the number of cities with AQI higher than 3
+     * @Request_character administrator
+     * @return the numbers of all air data in database and the number of cities with AQI higher than 3
      */
-    @GetMapping("/administrator/weeklyAirData")
-    public HttpResponseEntity getWeeklyAirData_administrator(@RequestParam("province") String encodedProvince) {
-        String province = "";
-        if(encodedProvince != null)
-            province = Base64Util.decodeBase64ToString(encodedProvince);
-        Map<String, Integer> data;
-        if(province.equals("china"))
-            data = getWeeklyAirData_China();
-        else
-            data = getWeeklyAirData_Province(province);
-        List<Map<String, Object>> result = new ArrayList<>();
-        for(String key : data.keySet())
-            result.add(Map.of("name", key, "value", data.get(key)));
-        return HttpResponseEntity.success("get weekly air data", result);
+    @GetMapping("/administrator/otherInfo")
+    public HttpResponseEntity getOtherInfo() {
+        Long allCount = airDataService.count()%Integer.MAX_VALUE;
+        Long highCount = airDataService.lambdaQuery().lt(AirData::getAqiLevel, 3).count()%Integer.MAX_VALUE;
+        return HttpResponseEntity.response(true, "get other info", Map.of("allCount", allCount, "goodCount", highCount));
     }
 
     /**
@@ -409,26 +426,6 @@ public class ActionController {
         return HttpResponseEntity.response(success,"query ", result);
     }
 
-    /**
-     * get the record of the latest limitNum records within the limited number
-     * @Request_character digitalScreen
-     * @param limitNum the number of records to be returned
-     * @return the record of the latest limitNum records within the limited number
-     */
-    @GetMapping("/digitalScreen/selectOrderList")
-    public HttpResponseEntity selectOrderList_digitalScreen(@RequestParam("limitNum") Integer limitNum) {
-        if(limitNum <= 0)
-            return HttpResponseEntity.error("limitNum must be positive");
-        QueryWrapper<AirData> queryWrapper = new QueryWrapper<>();
-        List<AirData> airDataList = airDataService.list(queryWrapper.orderByDesc("aqi"));
-        List<Map<String, Object>> result = new ArrayList<>();
-        for(int i = 0; i < limitNum; i++){
-            City city = cityService.getCityById(airDataList.get(i).getCityId());
-            Map<String, Object> map = Map.of("value", airDataList.get(i).getAqi(), "name", city.getProvince()+"/"+city.getName());
-            result.add(map);
-        }
-        return HttpResponseEntity.success("query ", result);
-    }
 
     /**
      * get the record of the latest limitNum records within the latest week
@@ -450,66 +447,6 @@ public class ActionController {
         for(String key : data.keySet())
             result.add(Map.of("name", key, "value", data.get(key)));
         return HttpResponseEntity.success("get weekly air data", result);
-    }
-
-    /**
-     * get the number of cities with AQI higher than 3 in each month
-     * @Request_character administrator
-     * @return the number of cities with AQI higher than 3 in each month
-     */
-    @GetMapping("/administrator/getAQICount")
-    public HttpResponseEntity countCitiesWithHighAQI() {
-        QueryWrapper<AirData> aqiQueryWrapper = new QueryWrapper<>();
-        QueryWrapper<AirData> so2QueryWrapper = new QueryWrapper<>();
-        QueryWrapper<AirData> coQueryWrapper = new QueryWrapper<>();
-        QueryWrapper<AirData> pm25QueryWrapper = new QueryWrapper<>();
-        aqiQueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
-                .gt("aqi_level", 3)
-                .groupBy("DATE_FORMAT(date, '%Y-%m')")
-                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
-        so2QueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
-                .gt("so2", AQIUtil.AQILevel2value_so2(3))
-                .groupBy("DATE_FORMAT(date, '%Y-%m')")
-                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
-        coQueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
-                .gt("co", AQIUtil.AQILevel2value_co(3))
-                .groupBy("DATE_FORMAT(date, '%Y-%m')")
-                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
-        pm25QueryWrapper.select("DATE_FORMAT(date, '%Y-%m') AS month", "COUNT(DISTINCT city_id) AS num_cities")
-                .gt("pm25", AQIUtil.AQILevel2value_pm25(3))
-                .groupBy("DATE_FORMAT(date, '%Y-%m')")
-                .orderByAsc("DATE_FORMAT(date, '%Y-%m')");
-        List<Map<String,Object>> aqiMap = airDataService.listMaps(aqiQueryWrapper);
-        List<Map<String,Object>> so2Map = airDataService.listMaps(so2QueryWrapper);
-        List<Map<String,Object>> coMap = airDataService.listMaps(coQueryWrapper);
-        List<Map<String,Object>> pm25Map = airDataService.listMaps(pm25QueryWrapper);
-        List<String> dateList = new ArrayList<>();
-        List<Long> aqiList = new ArrayList<>();
-        List<Long> so2List = new ArrayList<>();
-        List<Long> coList = new ArrayList<>();
-        List<Long> pm25List = new ArrayList<>();
-        for(int i = 0; i < aqiMap.size(); i++){
-            dateList.add((String) aqiMap.get(i).get("month"));
-            aqiList.add((Long) aqiMap.get(i).get("num_cities"));
-            so2List.add((Long) so2Map.get(i).get("num_cities"));
-            coList.add((Long) coMap.get(i).get("num_cities"));
-            pm25List.add((Long) pm25Map.get(i).get("num_cities"));
-        }
-        Map<String, Object> map = Map.of("date", dateList, "aqi", aqiList, "so2", so2List, "co", coList, "pm25", pm25List);
-        return HttpResponseEntity.response(true, "count cities with high aqi", map);
-    }
-
-    /**
-     * waiting for test
-     * get the numbers of all air data in database and the number of cities with AQI higher than 3
-     * @Request_character administrator
-     * @return the numbers of all air data in database and the number of cities with AQI higher than 3
-     */
-    @GetMapping("/administrator/otherInfo")
-    public HttpResponseEntity getOtherInfo() {
-        Long allCount = airDataService.count()%Integer.MAX_VALUE;
-        Long highCount = airDataService.lambdaQuery().lt(AirData::getAqiLevel, 3).count()%Integer.MAX_VALUE;
-        return HttpResponseEntity.response(true, "get other info", Map.of("allCount", allCount, "goodCount", highCount));
     }
 
     /**

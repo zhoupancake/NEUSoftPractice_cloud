@@ -88,7 +88,7 @@ public class IPUtil {
             }
         }
         // 对于通过多个代理的情况，分割出第一个 IP
-        if (ip != null && ip.length() > 15) {
+        if (ip != null && ip.length() > IP_LEN) {
             if (ip.indexOf(SEPARATOR) > 0) {
                 ip = ip.substring(0, ip.indexOf(SEPARATOR));
             }

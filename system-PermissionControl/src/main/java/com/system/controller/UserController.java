@@ -8,6 +8,7 @@ import com.system.entity.character.GridDetector;
 import com.system.entity.character.Supervisor;
 import com.system.service.*;
 
+import com.system.util.IPUtil;
 import com.system.util.JWTUtil;
 import com.system.util.SHA256Util;
 import com.system.util.SnowflakeUtil;
@@ -59,7 +60,6 @@ public class UserController {
             return HttpResponseEntity.response(false, "login for error username or password", null);
         if (loginUser.getStatus() == 0)
             return HttpResponseEntity.response(false, "login, The account is banned", null);
-
         // check whether the account is locked because of too many login attempts
         boolean boos = Boolean.TRUE.equals(countRedisTemplate.hasKey(loginUser.getId()));
         if (boos) {
@@ -82,21 +82,21 @@ public class UserController {
                 case "Administrator" -> {
                     Administrator administrator = administratorService.getById(loginUser.getId());
                     Map<String, String> result = Map.of("id", administrator.getId(), "token", token);
-                    return HttpResponseEntity.response(true, "Login successfully", result);
+                    return HttpResponseEntity.response(true, "login ", result);
                 }
                 case "GridDetector" -> {
                     GridDetector gridDetector = gridManagerService.getById(loginUser.getId());
                     Map<String, String> result = Map.of("id", gridDetector.getId(), "token", token);
-                    return HttpResponseEntity.response(true, "Login successfully", result);
+                    return HttpResponseEntity.response(true, "login ", result);
                 }
                 case "Supervisor" -> {
                     Supervisor supervisor = supervisorService.getById(loginUser.getId());
                     Map<String, String> result = Map.of("id", supervisor.getId(), "token", token);
-                    return HttpResponseEntity.response(true, "Login successfully", result);
+                    return HttpResponseEntity.response(true, "login ", result);
                 }
                 case "Super" -> {
                     Map<String, String> result = Map.of("id", loginUser.getId(), "token", token);
-                    return HttpResponseEntity.response(true, "Login successfully", result);
+                    return HttpResponseEntity.response(true, "login", result);
                 }
                 default -> {
                     return HttpResponseEntity.response(false, "Access Deny", null);
@@ -118,8 +118,8 @@ public class UserController {
     @PostMapping("/changePassword")
     public HttpResponseEntity changePassword(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Map<String, String> map = requestCharacterEntity.getUser_modifyPassword();
-        map.put("password", SHA256Util.encrypt(map.get("password")));
-        map.put("newPassword", SHA256Util.encrypt(map.get("newPassword")));
+        map.replace("password", SHA256Util.encrypt(map.get("password")));
+        map.replace("newPassword", SHA256Util.encrypt(map.get("newPassword")));
         User requestUser = userService.getById(map.get("id"));
         if (requestUser == null)
             return HttpResponseEntity.response(false, "change password because the modify user is not exist", null);

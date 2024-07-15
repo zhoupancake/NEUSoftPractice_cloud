@@ -20,7 +20,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
         String path = request.getRequestURI();
         PathMatcher pathMatcher = new AntPathMatcher();
-        if (path.equals("/user/login"))
+        if (path.equals("/user/login")|| path.equals("/user/register"))
             return true;
         if (pathMatcher.match("/api/**", path)) {
             String ip = IPUtil.getIpAddress(request);
@@ -28,7 +28,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             return ip.equals(localIp);
         }
         String authToken = request.getHeader("token");
-        if (VerifyUtil.verify(authToken, path)) {
+        if (!VerifyUtil.verify(authToken, path)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Access deny");
             return false;

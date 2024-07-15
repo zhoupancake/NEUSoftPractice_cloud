@@ -33,15 +33,8 @@ public class GridDetectorAPIImpl implements GridDetectorAPI{
     @Override
     @PostMapping("/getDetectorSameCity")
     public Map<String, Object> getDetectorSameCity(@RequestBody Map<String, Integer> map) {
-        List<GridDetector> gridDetectorList = gridDetectorService.query().eq("city_id", map.get("cityId")).list();
-//        List<GridDetector> result = new ArrayList<GridDetector>();
+        List<GridDetector> gridDetectorList = gridDetectorService.query().eq("city_id", (Integer)map.get("cityId")).list();
         gridDetectorList.removeIf(gridDetector -> userService.getById(gridDetector.getId()).getStatus() == 0);
-//        int count = (Integer) map.get("pageNum") * (Integer) map.get("pageSize");
-//        if(count > gridDetectorList.size() + (Integer) map.get("pageSize"))
-//            return Map.of("count", gridDetectorList.size(),"result", result);
-//        else
-//            for(int i = count - (Integer) map.get("pageSize");i < Math.min(count, gridDetectorList.size());i++)
-//                result.add(gridDetectorList.get(i));
         return Map.of("count", gridDetectorList.size(),"result", gridDetectorList);
     }
 

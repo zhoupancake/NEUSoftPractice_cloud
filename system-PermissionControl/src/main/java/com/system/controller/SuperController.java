@@ -47,18 +47,20 @@ public class SuperController {
         String password = "";
         String ipAddress = "";
         if(map.containsKey("username") && map.get("username") != null && !map.get("username").isEmpty())
-            username = SHA256Util.encrypt(map.get("username"));
+            username = map.get("username");
         else
             return HttpResponseEntity.error("the username is not null");
         if(map.containsKey("password") && map.get("password") != null && !map.get("password").isEmpty())
             password = SHA256Util.encrypt(map.get("password"));
         else
             return HttpResponseEntity.error("the password is not null");
-        if(userService.query().eq("username", username).eq("password", SHA256Util.encrypt(password)).list().isEmpty())
+        if(userService.query().eq("username", username).eq("password", password).list().isEmpty())
             return HttpResponseEntity.error("the username or password is wrong");
         if(map.containsKey("ipAddress") && map.get("ipAddress") != null && !map.get("ipAddress").isEmpty())
             ipAddress = map.get("ipAddress");
-        Pattern pattern = Pattern.compile("^((2((5[0-5])|([0-4]\\d)))|([0-1]?\\d{1,2}))(\\.((2((5[0-5])|([0-4]\\d)))|([0-1]?\\d{1,2}))){3}$");
+        if(ipService.exists(new QueryWrapper<IP>().eq("ip_address", ipAddress)))
+            return HttpResponseEntity.error("this ipAddress is already exist in the system");
+        Pattern pattern = Pattern.compile("^((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\.){3}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$");
         Matcher matcher = pattern.matcher(ipAddress);
         if(!matcher.matches())
             return HttpResponseEntity.error("the ipAddress is not correct");
@@ -87,11 +89,11 @@ public class SuperController {
             password = SHA256Util.encrypt(map.get("password"));
         else
             return HttpResponseEntity.error("the password is not null");
-        if(userService.query().eq("username", username).eq("password", SHA256Util.encrypt(password)).list().isEmpty())
+        if(userService.query().eq("username", username).eq("password", password).list().isEmpty())
             return HttpResponseEntity.error("the username or password is wrong");
-        if(map.containsKey("ipAddress") && map.get("ip") != null && !map.get("ip").isEmpty())
+        if(map.containsKey("ipAddress") && map.get("ipAddress") != null && !map.get("ipAddress").isEmpty())
             ipAddress = map.get("ipAddress");
-        if(ipService.query().eq("ip_address", ipAddress).list().isEmpty())
+        if(ipService.exists(new QueryWrapper<IP>().eq("ip_address", ipAddress)))
             return HttpResponseEntity.error("the ipAddress is not exist");
         return ipService.removeById(ipAddress) ? HttpResponseEntity.success("delete ip success") : HttpResponseEntity.error("delete ip failed");
     }
@@ -136,12 +138,13 @@ public class SuperController {
     public HttpResponseEntity modifyAdministrator(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         Administrator administrator = requestCharacterEntity.getAdministrator_modify();
         User user = requestCharacterEntity.getUser_modify();
+        user.setPassword(SHA256Util.encrypt(user.getPassword()));
 
         Administrator orginalAdministrator = administratorService.getById(administrator.getId());
         User orginalUser = userService.getById(user.getId());
         if(null == orginalAdministrator || null == orginalUser)
             return HttpResponseEntity.error("The modified administrator is not exist");
-        if(!orginalUser.getPassword().equals(SHA256Util.encrypt(user.getPassword())))
+        if(!orginalUser.getPassword().equals(user.getPassword()))
             return HttpResponseEntity.error("The modification of password is forbidden");
         Pattern pattern = Pattern.compile("^(20[1-9][0-9])([0-9]{6})$");
         Matcher matcher = pattern.matcher(administrator.getIdCard());
@@ -217,13 +220,14 @@ public class SuperController {
     public HttpResponseEntity addGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_create();
         User user = requestCharacterEntity.getUser_create();
+        user.setPassword(SHA256Util.encrypt(user.getPassword()));
 
         if(!gridDetectorService.query().eq("id_card", gridDetector.getIdCard()).list().isEmpty())
             return HttpResponseEntity.error("this person is already exist in the system");
         Pattern pattern = Pattern.compile("^(20[1-9][0-9])([0-9]{6})$");
         Matcher matcher = pattern.matcher(gridDetector.getIdCard());
         if(!matcher.matches())
-            return HttpResponseEntity.error("idCard is not correct");
+            return HttpResponseEntity.error("idC3ard is not correct");
 
         gridDetector.setId(SnowflakeUtil.genId());
         City city = cityService.getCityByLocation(requestCharacterEntity.getLocation());
@@ -238,7 +242,7 @@ public class SuperController {
         boolean gridDetectorSuccess = gridDetectorService.save(gridDetector);
         boolean userSuccess = userService.save(user);
 
-        return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "create grid detector", gridDetector.getId());
+        return HttpResponseEntity.response(gridDetectorSuccess&&userSuccess, "create grid detector ", gridDetector.getId());
     }
 
     /**
@@ -251,6 +255,7 @@ public class SuperController {
     public HttpResponseEntity modifyGridDetector(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_modify();
         User user = requestCharacterEntity.getUser_modify();
+        user.setPassword(SHA256Util.encrypt(user.getPassword()));
         City city = cityService.getCityByLocation(requestCharacterEntity.getLocation());
         if(city == null)
             return HttpResponseEntity.error("the selected city is not exist");
@@ -284,6 +289,7 @@ public class SuperController {
     public HttpResponseEntity deleteGridDetectorById(@RequestBody RequestCharacterEntity requestCharacterEntity) {
         GridDetector gridDetector = requestCharacterEntity.getGridDetector_modify();
         User user = requestCharacterEntity.getUser_modify();
+        user.setPassword(SHA256Util.encrypt(user.getPassword()));
         User dbUser = userService.getById(user.getId());
         if(null == dbUser)
             return HttpResponseEntity.error("The deleted grid detector is not exist");

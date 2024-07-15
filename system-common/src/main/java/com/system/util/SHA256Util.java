@@ -28,7 +28,7 @@ public class SHA256Util {
     }
 
     public static void main(String[] args) {
-        String input = "123456";
+        String input = "super";
         String encrypted = encrypt(input);
         System.out.println("Encrypted: " + encrypted);
         String check = new Scanner(System.in).nextLine();

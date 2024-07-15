@@ -52,6 +52,12 @@ spring:
           predicates:
             - Path=/supervisor/**
 
+        - id: system-PermissionControl_supervisor
+          uri: lb://system-PermissionControl
+          order: 1
+          predicates:
+            - Path=/super/**
+
         - id: system-ReportManage
           uri: lb://system-ReportManage
           order: 1

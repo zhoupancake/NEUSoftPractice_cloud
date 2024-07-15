@@ -46,7 +46,6 @@ public class ReportAPIImpl  implements ReportAPI{
     @Override
     @GetMapping("/getReportCount")
     public int getReportCount(){
-        System.out.println("getReportCount");
         return reportService.query().list().size();
     }
 }
